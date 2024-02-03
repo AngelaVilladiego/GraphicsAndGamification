@@ -1,0 +1,3 @@
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Exercises\Exercise1\Exercise1\x64\Debug\Exercise1.vcxproj.AssemblyReference.cache
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Exercises\Exercise1\Exercise1\x64\Debug\Exercise1.ToolWindow.resources
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Exercises\Exercise1\Exercise1\x64\Debug\Exercise1.vcxproj.GenerateResource.cache
