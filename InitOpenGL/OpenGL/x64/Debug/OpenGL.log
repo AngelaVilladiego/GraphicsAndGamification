@@ -1,4 +1,9 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  GameController.cpp
+  Mesh.cpp
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\OpenGL\Mesh.cpp(70,52): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Shader.cpp
+  main.cpp
+  Generating Code...
   OpenGL.vcxproj -> C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\x64\Debug\OpenGL.exe
