@@ -14,6 +14,12 @@ WindowController::~WindowController()
 	}
 }
 
+Resolution WindowController::GetResolution()
+{
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	return Resolution(mode->width, mode->height);
+}
+
 void WindowController::NewWindow()
 {
 	M_ASSERT(glfwInit(), "Failed to initialize GLFW."); // Initialise GLFW
