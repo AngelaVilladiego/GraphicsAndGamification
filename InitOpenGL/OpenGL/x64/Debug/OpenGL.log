@@ -1,5 +1,8 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
+  GameController.cpp
   Mesh.cpp
-C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\OpenGL\Mesh.cpp(70,57): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\OpenGL\Mesh.cpp(93,47): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  main.cpp
+  Generating Code...
   OpenGL.vcxproj -> C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\x64\Debug\OpenGL.exe

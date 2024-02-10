@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef MESH_H
 #define MESH_H
 
@@ -21,7 +19,9 @@ public:
 private:
 	Shader* m_shader;
 	GLuint m_vertexBuffer;
+	GLuint m_indexBuffer;
 	std::vector<GLfloat> m_vertexData;
+	std::vector<GLubyte> m_indexData;
 	glm::mat4 m_world;
 };
 
