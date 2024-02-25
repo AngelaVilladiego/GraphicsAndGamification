@@ -21,8 +21,12 @@ public:
 private:
 	Shader m_shader;
 	Camera m_camera;
-	Mesh m_mesh;
 	PlayerTriangle m_player;
+	const glm::vec3 UP_VEC = { 0, 1, 0 };
+	const glm::vec3 DOWN_VEC = { 0, -1, 0 };
+	const glm::vec3 LEFT_VEC = { -1, 0, 0 };	
+	const glm::vec3 RIGHT_VEC = { 1, 0, 0 };
+	
 };
 
 #endif // GAME_CONTROLLER_H

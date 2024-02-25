@@ -2,8 +2,9 @@
 #define PLAYER_TRIANGLE_H
 
 #include "Triangle.h"
+#include "Mesh.h"
 
-class PlayerTriangle
+class PlayerTriangle : public Mesh
 {
 public:
 	// Constructors / Destructors
@@ -12,6 +13,8 @@ public:
 
 	// methods
 	std::vector<GLfloat> GetVertexData();
+	void Create(Shader* _shader);
+	void Translate(glm::vec3 _direction) override;
 
 	// accessors/modifiers
 	glm::vec3 GetPosition() { return m_position; }

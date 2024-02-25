@@ -5,11 +5,21 @@ PlayerTriangle::PlayerTriangle()
 	m_position = { 0, 0, 0 };
 	m_vertices = Triangle::GetVerticesAtPosition(m_position[0], m_position[1], m_position[2]);
 	m_color = { 1, 0, 0, 1 };
-	m_speed = 0.1f;
+	m_speed = 0.05f;
 }
 
 PlayerTriangle::~PlayerTriangle()
 {
+}
+
+void PlayerTriangle::Create(Shader* _shader)
+{
+	Mesh::Create(_shader, GetVertexData());
+}
+
+void PlayerTriangle::Translate(glm::vec3 _direction)
+{
+	Mesh::Translate(_direction * m_speed);
 }
 
 void PlayerTriangle::SetPosition(glm::vec3 position) 

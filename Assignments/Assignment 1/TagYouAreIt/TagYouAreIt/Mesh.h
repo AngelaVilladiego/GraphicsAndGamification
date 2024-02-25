@@ -15,12 +15,12 @@ public:
 	void Create(Shader* _shader, std::vector<GLfloat> _vertexData);
 	void Cleanup();
 	void Render(glm::mat4 _wvp);
-	void Translate(glm::vec3 _pos);
+	virtual void Translate(glm::vec3 _trans);
 
 	// accessors/mutators
 	
 
-private:
+protected:
 	Shader* m_shader;
 	GLuint m_vertexBuffer;
 	GLuint m_indexBuffer;

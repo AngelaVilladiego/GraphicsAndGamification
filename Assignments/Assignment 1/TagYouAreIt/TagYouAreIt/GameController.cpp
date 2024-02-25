@@ -7,7 +7,6 @@ GameController::GameController()
 {
 	m_shader = { };
 	m_camera = { };
-	m_mesh = { };
 	m_player = PlayerTriangle();
 }
 
@@ -31,31 +30,41 @@ void GameController::RunGame()
 	m_shader = Shader();
 	m_shader.LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
-	m_mesh = Mesh();
-	m_mesh.Create(&m_shader, m_player.GetVertexData());
+	m_player.Create(&m_shader);
 
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 	do
 	{
 		glm::vec3 playerDir = { 0, 0, 0 };
-		glm::vec3 upVec = { 0, 1, 0 };
 
 		//check button presses
 		if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS) {
-			playerDir += upVec;
-			m_mesh.Translate(upVec * m_player.GetSpeed());
+			playerDir += UP_VEC;
 		}
+		if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS) {
+			playerDir += LEFT_VEC;
+		}
+		if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS) {
+			playerDir += DOWN_VEC;
+		}
+		if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS) {
+			playerDir += RIGHT_VEC;
+		}
+		
 
-		playerDir = glm::normalize(playerDir);
-		m_player.SetPosition(m_player.GetPosition() + playerDir * m_player.GetSpeed());
+		if (glm::length(playerDir) != 0)
+		{
+			playerDir = glm::normalize(playerDir);
+			m_player.Translate(playerDir);
+		}		
 
 		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
-		m_mesh.Render(m_camera.GetProjection() * m_camera.GetView());
+		m_player.Render(m_camera.GetProjection() * m_camera.GetView());
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
 	} while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(win) == 0); // Check if window was closed
 
-	m_mesh.Cleanup();
+	m_player.Cleanup();
 	m_shader.Cleanup();
 }
