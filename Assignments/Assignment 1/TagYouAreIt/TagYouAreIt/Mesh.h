@@ -12,7 +12,7 @@ public:
 	virtual ~Mesh();
 
 	// Methods
-	void Create(Shader* _shader);
+	void Create(Shader* _shader, std::vector<GLfloat> _vertexData);
 	void Cleanup();
 	void Render(glm::mat4 _wvp);
 

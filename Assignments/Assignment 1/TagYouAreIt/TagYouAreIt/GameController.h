@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include "PlayerTriangle.h"
 
 class GameController : public Singleton<GameController>
 {
