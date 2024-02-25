@@ -15,6 +15,10 @@ public:
 	void Create(Shader* _shader, std::vector<GLfloat> _vertexData);
 	void Cleanup();
 	void Render(glm::mat4 _wvp);
+	void Translate(glm::vec3 _pos);
+
+	// accessors/mutators
+	
 
 private:
 	Shader* m_shader;

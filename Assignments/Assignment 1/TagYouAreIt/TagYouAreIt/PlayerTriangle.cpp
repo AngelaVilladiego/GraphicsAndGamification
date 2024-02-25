@@ -5,16 +5,17 @@ PlayerTriangle::PlayerTriangle()
 	m_position = { 0, 0, 0 };
 	m_vertices = Triangle::GetVerticesAtPosition(m_position[0], m_position[1], m_position[2]);
 	m_color = { 1, 0, 0, 1 };
+	m_speed = 0.1f;
 }
 
 PlayerTriangle::~PlayerTriangle()
 {
 }
 
-void PlayerTriangle::SetPosition(std::vector<GLfloat> position) 
+void PlayerTriangle::SetPosition(glm::vec3 position) 
 {
 	m_position = position;
-	m_vertices = Triangle::GetVerticesAtPosition(m_position[0], m_position[1], m_position[2]);
+	//m_vertices = Triangle::GetVerticesAtPosition(m_position[0], m_position[1], m_position[2]);
 }
 
 std::vector<GLfloat> PlayerTriangle::GetVertexData()

@@ -22,6 +22,7 @@ private:
 	Shader m_shader;
 	Camera m_camera;
 	Mesh m_mesh;
+	PlayerTriangle m_player;
 };
 
 #endif // GAME_CONTROLLER_H

@@ -3,7 +3,7 @@
 
 #include "Triangle.h"
 
-class PlayerTriangle : public Singleton<PlayerTriangle>
+class PlayerTriangle
 {
 public:
 	// Constructors / Destructors
@@ -14,14 +14,15 @@ public:
 	std::vector<GLfloat> GetVertexData();
 
 	// accessors/modifiers
-	std::vector<GLfloat> GetPosition() { return m_position; }
-	void SetPosition(std::vector<GLfloat> position);
+	glm::vec3 GetPosition() { return m_position; }
+	void SetPosition(glm::vec3 position);
+	float GetSpeed() { return m_speed; }
 
 private:
-	std::vector<GLfloat> m_position;
+	glm::vec3 m_position;
 	std::vector<GLfloat> m_vertices;
 	std::vector<GLfloat> m_color;
-	GLfloat speed;
+	float m_speed;
 };
 
 #endif // TRIANGLE_H

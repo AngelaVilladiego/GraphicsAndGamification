@@ -62,3 +62,8 @@ void Mesh::Render(glm::mat4 _wvp)
 	glDisableVertexAttribArray(m_shader->GetAttrColors());
 	glDisableVertexAttribArray(m_shader->GetAttrVertices());
 }
+
+void Mesh::Translate(glm::vec3 _pos)
+{
+	m_world = glm::translate(m_world, _pos);
+}

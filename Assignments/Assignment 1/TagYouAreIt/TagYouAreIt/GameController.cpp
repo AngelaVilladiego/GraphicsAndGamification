@@ -8,6 +8,7 @@ GameController::GameController()
 	m_shader = { };
 	m_camera = { };
 	m_mesh = { };
+	m_player = PlayerTriangle();
 }
 
 void GameController::Initialize(string title = "Sample")
@@ -31,11 +32,23 @@ void GameController::RunGame()
 	m_shader.LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
 	m_mesh = Mesh();
-	m_mesh.Create(&m_shader, PlayerTriangle::GetInstance().GetVertexData());
+	m_mesh.Create(&m_shader, m_player.GetVertexData());
 
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 	do
 	{
+		glm::vec3 playerDir = { 0, 0, 0 };
+		glm::vec3 upVec = { 0, 1, 0 };
+
+		//check button presses
+		if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS) {
+			playerDir += upVec;
+			m_mesh.Translate(upVec * m_player.GetSpeed());
+		}
+
+		playerDir = glm::normalize(playerDir);
+		m_player.SetPosition(m_player.GetPosition() + playerDir * m_player.GetSpeed());
+
 		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
 		m_mesh.Render(m_camera.GetProjection() * m_camera.GetView());
 		glfwSwapBuffers(win); // Swap the front and back buffers
