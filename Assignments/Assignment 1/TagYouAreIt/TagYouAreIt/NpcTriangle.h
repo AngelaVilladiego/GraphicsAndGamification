@@ -12,11 +12,13 @@ public:
 	virtual ~NpcTriangle();
 
 	void Tag();
-	void ApplyBehavior(glm::vec3 _playerPos);
+	void Render(glm::mat4 _wvp) override;
 
 private:
 	void KeepDistance(glm::vec3 _playerPos);
 	void FaceLocation(glm::vec3 _playerPos);
+
+	bool m_tagged;
 };
 
 #endif // NPC_TRIANGLE_H

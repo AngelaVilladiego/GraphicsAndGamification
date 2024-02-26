@@ -10,6 +10,7 @@ public:
 	// Constructors / Destructors
 	PlayerTriangle();
 	virtual ~PlayerTriangle();
+	virtual void Render(glm::mat4 _wvp);
 private:
 };
 

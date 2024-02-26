@@ -2,12 +2,12 @@
 
 in vec3 vertices; // Value sent from application to this attribute
 in vec4 colors; // input color from application
-uniform mat4 WVP;
+uniform mat4 world, view, projection;
 
 out vec4 retColor; // output a color to the fragment shader
 
 void main()
 {
-	gl_Position = WVP * vec4(vertices, 1.0); // Transform the model to screen projection
+	gl_Position = projection * view * world * vec4(vertices, 1.0); // Transform the model to screen projection
 	retColor = colors;
 }

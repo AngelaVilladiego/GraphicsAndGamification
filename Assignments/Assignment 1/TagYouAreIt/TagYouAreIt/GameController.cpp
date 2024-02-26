@@ -7,6 +7,7 @@ GameController::GameController()
 	m_shader = { };
 	m_camera = { };
 	m_player = { };	
+	m_npcs = { };
 }
 
 void GameController::Initialize(string title = "Sample")
@@ -30,12 +31,12 @@ void GameController::RunGame()
 	m_shader.LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
 
 	m_player = PlayerTriangle();
-	m_player.Create(&m_shader);
+	m_player.Create(&m_shader, m_camera);
 
-	for (int i = 0; i < m_npcs.size(); i++)
+	for (int i = 0; i < NPC_COUNT; i++)
 	{
-		m_npcs[i] = NpcTriangle();
-		m_npcs[i].Create(&m_shader);
+		m_npcs.push_back(NpcTriangle());
+		m_npcs[i].Create(&m_shader, m_camera);
 	}
 
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
@@ -72,12 +73,10 @@ void GameController::RunGame()
 		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
 		m_player.Render(m_camera.GetProjection() * m_camera.GetView());
 
-		/*
-		for (int i = 0; i < m_npcs.size(); i++)
+		for (int i = 0; i < NPC_COUNT; i++)
 		{
 			m_npcs[i].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
-		*/
 
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
@@ -86,7 +85,7 @@ void GameController::RunGame()
 
 	m_player.Cleanup();
 
-	for (int i = 0; i < m_npcs.size(); i++) {
+	for (int i = 0; i < NPC_COUNT; i++) {
 		m_npcs[i].Cleanup();
 	}
 

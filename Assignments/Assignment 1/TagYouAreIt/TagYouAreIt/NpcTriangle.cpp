@@ -3,6 +3,8 @@
 
 NpcTriangle::NpcTriangle()
 {
+
+	m_tagged = false;
 	m_position = { 0, 0, 0 };
 
 	//randomizer retrieved from https://coliru.stacked-crooked.com/a/c5b94870fdcd13f2
@@ -29,8 +31,6 @@ NpcTriangle::NpcTriangle()
 	m_position[2] = 0;
 	
 	m_color = { 0, 1, 0, 1 };
-	m_speed = 0.05f;
-	m_vertices = Triangle::GetVerticesAtPosition(m_position[0], m_position[1], m_position[2]);
 }
 
 NpcTriangle::~NpcTriangle()
@@ -40,13 +40,22 @@ NpcTriangle::~NpcTriangle()
 
 void NpcTriangle::Tag()
 {
+	if (m_tagged) {
+		return;
+	}
 
+	m_tagged = true;
+	SetColor({ 0, 0, 1, 1 });
 }
 
-void NpcTriangle::ApplyBehavior(glm::vec3 _playerPos)
+void NpcTriangle::Render(glm::mat4 _wvp)
 {
+	//apply necessary behaviour
+	FaceLocation({ 0, 0, 0 });
 
+	GameEntity::Render(_wvp);
 }
+
 
 void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 {
@@ -55,5 +64,12 @@ void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 	
 void NpcTriangle::FaceLocation(glm::vec3 _playerPos)
 {
-
+	//demo rotates one degree per frame
+	if (m_angle == 355) {
+		m_angle = 0;
+	}
+	else {
+		m_angle += 0.5;
+	}
 }
+

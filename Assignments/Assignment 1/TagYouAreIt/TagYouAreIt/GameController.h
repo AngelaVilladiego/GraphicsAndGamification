@@ -25,7 +25,9 @@ private:
 	Shader m_shader;
 	Camera m_camera;
 	PlayerTriangle m_player;
-	array<NpcTriangle, 10> m_npcs;
+	std::vector<NpcTriangle> m_npcs;
+
+	const int NPC_COUNT = 2;
 
 	const glm::vec3 UP_VEC = { 0, 1, 0 };
 	const glm::vec3 DOWN_VEC = { 0, -1, 0 };

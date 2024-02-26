@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "StandardIncludes.h"
+#include "Camera.h"
 class Shader;
 
 class Mesh
@@ -12,23 +13,20 @@ public:
 	virtual ~Mesh();
 
 	// Methods
-	virtual void Create(Shader* _shader, std::vector<GLfloat> _vertexData);
+	virtual void Create(Shader* _shader, Camera _camera);
 	void Cleanup();
-	void Render(glm::mat4 _wvp);
-	virtual void Translate(glm::vec3 _trans);
-	virtual void Rotate();
+	virtual void Render(glm::mat4 _wvp);
 
 	// accessors/mutators
-	
-
 
 protected:
 	Shader* m_shader;
 	GLuint m_vertexBuffer;
 	std::vector<GLfloat> m_vertexData;
 	glm::mat4 m_world;
-
-	void SetVertexData(std::vector<GLfloat> _vertexData) { m_vertexData = _vertexData; }
+	glm::mat4 m_view;
+	glm::mat4 m_projection;
+	GLint m_worldMatrixId;
 };
 
 #endif // MESH_H
