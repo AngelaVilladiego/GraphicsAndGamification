@@ -13,8 +13,10 @@ public:
 	// Accessors
 	GLuint GetProgramId() { return m_programID; }
 	GLuint GetAttrVertices() { return m_attrVertices; }
-	GLuint GetAttrColors() { return m_attrColors; }
-	GLuint GetAttrWVP() { return m_attrWVP; }
+	GLuint GetAttrColor() { return m_attrColor; }
+	GLuint GetAttrWorld() { return m_attrWorld; }
+	GLuint GetAttrView() { return m_attrView; }
+	GLuint GetAttrProjection() { return m_attrProjection; }
 
 	// Methods
 	void LoadShaders(const char* _vertexFilePath, const char* _fragmentFilePath);
@@ -31,8 +33,10 @@ private:
 	// Members
 	GLuint m_programID; // ID of our shader program
 	GLuint m_attrVertices; // Handle for the attribute vertex buffer
-	GLuint m_attrColors;
-	GLuint m_attrWVP;
+	GLuint m_attrColor;
+	GLuint m_attrWorld;
+	GLuint m_attrView;
+	GLuint m_attrProjection;
 	GLint m_result = GL_FALSE;
 	int m_infoLogLength;
 };

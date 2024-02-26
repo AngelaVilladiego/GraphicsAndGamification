@@ -42,6 +42,8 @@ void GameController::RunGame()
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 	do
 	{
+		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
+
 		glm::vec3 playerDir = { 0, 0, 0 };
 
 		//check button presses
@@ -62,24 +64,23 @@ void GameController::RunGame()
 			m_player.SetColor({ 0, 0, 1, 1 });
 		}
 
-		
-
 		if (glm::length(playerDir) != 0)
 		{
 			playerDir = glm::normalize(playerDir);
 			m_player.Translate(playerDir);
 		}		
 
-		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
-		m_player.Render(m_camera.GetProjection() * m_camera.GetView());
+		m_player.Render();
 
 		for (int i = 0; i < NPC_COUNT; i++)
 		{
-			m_npcs[i].Render(m_camera.GetProjection() * m_camera.GetView());
+			m_npcs[i].ApplyBehaviour(m_player.GetPosition());
+			m_npcs[i].Render();
 		}
 
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
+
 	} while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(win) == 0); // Check if window was closed
 

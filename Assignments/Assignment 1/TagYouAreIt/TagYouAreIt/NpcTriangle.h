@@ -11,8 +11,10 @@ public:
 	NpcTriangle();
 	virtual ~NpcTriangle();
 
+	virtual void Create(Shader* _shader, Camera _camera) override;
+
 	void Tag();
-	void Render(glm::mat4 _wvp) override;
+	void ApplyBehaviour(glm::vec3 _playerPos);
 
 private:
 	void KeepDistance(glm::vec3 _playerPos);

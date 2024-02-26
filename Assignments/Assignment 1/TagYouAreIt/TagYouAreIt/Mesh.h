@@ -15,9 +15,10 @@ public:
 	// Methods
 	virtual void Create(Shader* _shader, Camera _camera);
 	void Cleanup();
-	virtual void Render(glm::mat4 _wvp);
+	virtual void Render();
 
 	// accessors/mutators
+	void SetColor(glm::vec4 _color) { m_color = _color; }
 
 protected:
 	Shader* m_shader;
@@ -26,7 +27,7 @@ protected:
 	glm::mat4 m_world;
 	glm::mat4 m_view;
 	glm::mat4 m_projection;
-	GLint m_worldMatrixId;
+	glm::vec4 m_color;
 };
 
 #endif // MESH_H

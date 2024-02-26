@@ -10,7 +10,9 @@ public:
 	// Constructors / Destructors
 	PlayerTriangle();
 	virtual ~PlayerTriangle();
-	virtual void Render(glm::mat4 _wvp);
+
+	virtual void Create(Shader* _shader, Camera _camera) override;
+
 private:
 };
 

@@ -4,8 +4,10 @@ Shader::Shader()
 {
 	m_programID = 0;
 	m_attrVertices = 0;
-	m_attrColors = 0;
-	m_attrWVP = 0;
+	m_attrColor = 0;
+	m_attrWorld = 0;
+	m_attrView = 0;
+	m_attrProjection = 0;
 	m_result = GL_FALSE;
 	m_infoLogLength = 0;
 }
@@ -18,8 +20,10 @@ void Shader::Cleanup()
 void Shader::LoadAttributes()
 {
 	m_attrVertices = glGetAttribLocation(m_programID, "vertices"); // Get a handle for the vertex buffer
-	m_attrColors = glGetAttribLocation(m_programID, "colors"); // Get a handle for the colors buffer
-	m_attrWVP = glGetUniformLocation(m_programID, "WVP"); // Get a hanle for the WVP matrix
+	m_attrColor = glGetUniformLocation(m_programID, "color"); // Get a handle for the colors buffer
+	m_attrWorld = glGetUniformLocation(m_programID, "world"); // Get a hanle for the world matrix
+	m_attrView = glGetUniformLocation(m_programID, "view"); // Get a hanle for the world matrix
+	m_attrProjection = glGetUniformLocation(m_programID, "projection"); // Get a hanle for the world matrix
 }
 
 void Shader::EvaluateShader(int _infoLength, GLuint _id)
@@ -39,7 +43,7 @@ GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 	// Read the Shader code from the file
 	std::string shaderCode;
 	std::ifstream shaderStream(_filePath, std::ios::in);
-	M_ASSERT(shaderStream.is_open(), ("Impossible to open %s. Are you in the right directory? Don't forget to read teh FAQ!\n", _filePath));
+	M_ASSERT(shaderStream.is_open(), ("Impossible to open %s. Are you in the right directory? Don't forget to read the FAQ!\n", _filePath));
 
 	std::string Line;
 	while (getline(shaderStream, Line))

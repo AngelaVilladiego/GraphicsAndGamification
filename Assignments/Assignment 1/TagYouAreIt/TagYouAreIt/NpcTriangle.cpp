@@ -3,10 +3,15 @@
 
 NpcTriangle::NpcTriangle()
 {
-
 	m_tagged = false;
-	m_position = { 0, 0, 0 };
+}
 
+NpcTriangle::~NpcTriangle()
+{
+}
+
+void NpcTriangle::Create(Shader* _shader, Camera _camera)
+{
 	//randomizer retrieved from https://coliru.stacked-crooked.com/a/c5b94870fdcd13f2
 	const float range_from = 2;
 	const float range_to = 10;
@@ -29,13 +34,12 @@ NpcTriangle::NpcTriangle()
 	}
 
 	m_position[2] = 0;
-	
+
 	m_color = { 0, 1, 0, 1 };
-}
 
-NpcTriangle::~NpcTriangle()
-{
+	m_speed = 0.025f;
 
+	GameEntity::Create(_shader, _camera);
 }
 
 void NpcTriangle::Tag()
@@ -45,21 +49,19 @@ void NpcTriangle::Tag()
 	}
 
 	m_tagged = true;
-	SetColor({ 0, 0, 1, 1 });
+	Mesh::SetColor({ 0, 0, 1, 1 });
 }
 
-void NpcTriangle::Render(glm::mat4 _wvp)
+void NpcTriangle::ApplyBehaviour(glm::vec3 _playerPos)
 {
 	//apply necessary behaviour
-	FaceLocation({ 0, 0, 0 });
-
-	GameEntity::Render(_wvp);
+	FaceLocation(_playerPos);
+	KeepDistance(_playerPos);
 }
 
 
 void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 {
-
 }
 	
 void NpcTriangle::FaceLocation(glm::vec3 _playerPos)

@@ -1,16 +1,16 @@
 #include "PlayerTriangle.h"
 
 PlayerTriangle::PlayerTriangle()
-{
-	m_color = { 1, 0, 0, 1 };
-	m_speed = 0.05f;
+{	
 }
 
 PlayerTriangle::~PlayerTriangle()
 {
 }
 
-void PlayerTriangle::Render(glm::mat4 _wvp)
+void PlayerTriangle::Create(Shader* _shader, Camera _camera)
 {
-	GameEntity::Render(_wvp);
+	m_color = { 1, 0, 0, 1 };
+	m_speed = 0.05f;
+	GameEntity::Create(_shader, _camera);
 }
