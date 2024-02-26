@@ -59,19 +59,29 @@ void NpcTriangle::ApplyBehaviour(glm::vec3 _playerPos)
 	KeepDistance(_playerPos);
 }
 
-
 void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 {
+	if (glm::distance(_playerPos, m_position) >= 10)
+	{
+		return;
+	}
+
+	// get "away" direction
+	glm::vec3 direction = m_position - _playerPos;
+	direction = glm::normalize(direction);
+	Translate(direction);
 }
 	
 void NpcTriangle::FaceLocation(glm::vec3 _playerPos)
 {
 	//demo rotates one degree per frame
+	/*
 	if (m_angle == 355) {
 		m_angle = 0;
 	}
 	else {
 		m_angle += 0.5;
 	}
+	*/
 }
 

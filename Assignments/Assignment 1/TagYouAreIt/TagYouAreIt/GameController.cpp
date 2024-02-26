@@ -17,6 +17,8 @@ void GameController::Initialize(string title = "Sample")
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	WindowController::GetInstance().SetWindowTitle(title.c_str());
 
@@ -42,7 +44,7 @@ void GameController::RunGame()
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 	do
 	{
-		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
 
 		glm::vec3 playerDir = { 0, 0, 0 };
 
@@ -68,15 +70,17 @@ void GameController::RunGame()
 		{
 			playerDir = glm::normalize(playerDir);
 			m_player.Translate(playerDir);
-		}		
+		}
 
-		m_player.Render();
 
 		for (int i = 0; i < NPC_COUNT; i++)
 		{
 			m_npcs[i].ApplyBehaviour(m_player.GetPosition());
 			m_npcs[i].Render();
 		}
+
+		glClear(GL_DEPTH_BUFFER_BIT);
+		m_player.Render();
 
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
