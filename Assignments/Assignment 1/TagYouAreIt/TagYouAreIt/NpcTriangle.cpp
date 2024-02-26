@@ -45,10 +45,6 @@ void NpcTriangle::Create(Shader* _shader, Camera _camera)
 
 void NpcTriangle::Tag()
 {
-	if (m_tagged) {
-		return;
-	}
-
 	m_tagged = true;
 	Mesh::SetColor({ 0, 0, 1, 1 });
 }
@@ -58,6 +54,18 @@ void NpcTriangle::ApplyBehaviour(glm::vec3 _playerPos)
 	//apply necessary behaviour
 	FaceLocation(_playerPos);
 	KeepDistance(_playerPos);
+
+	if (m_tagged)
+	{
+		return;
+	}
+
+	//check if needs to be tagged
+	float distance = glm::distance(_playerPos, m_position);
+	if (distance < 1)
+	{
+		Tag();
+	}
 }
 
 void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
