@@ -62,10 +62,6 @@ void GameController::RunGame()
 			playerDir += RIGHT_VEC;
 		}
 
-		if (glfwGetKey(win, GLFW_KEY_ENTER) == GLFW_PRESS) {
-			m_player.SetColor({ 0, 0, 1, 1 });
-		}
-
 		if (glm::length(playerDir) != 0)
 		{
 			playerDir = glm::normalize(playerDir);

@@ -38,7 +38,7 @@ void NpcTriangle::Create(Shader* _shader, Camera _camera)
 
 	m_color = { 0, 1, 0, 1 };
 
-	m_speed = 0.025f;
+	m_speed = 0.02f;
 
 	GameEntity::Create(_shader, _camera);
 }

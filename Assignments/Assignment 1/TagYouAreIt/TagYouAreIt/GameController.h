@@ -27,7 +27,7 @@ private:
 	PlayerTriangle m_player;
 	std::vector<NpcTriangle> m_npcs;
 
-	const int NPC_COUNT = 2;
+	const int NPC_COUNT = 10;
 
 	const glm::vec3 UP_VEC = { 0, 1, 0 };
 	const glm::vec3 DOWN_VEC = { 0, -1, 0 };
