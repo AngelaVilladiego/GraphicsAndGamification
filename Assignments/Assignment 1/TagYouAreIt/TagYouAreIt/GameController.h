@@ -18,7 +18,7 @@ public:
 	virtual ~GameController() { }
 
 	//Methods
-	void Initialize(string title);
+	void Initialize(string title, bool fullscreen);
 	void RunGame();
 
 private:

@@ -30,13 +30,11 @@ void Mesh::Create(Shader* _shader, Camera _camera)
 	glBufferData(GL_ARRAY_BUFFER, m_vertexData.size() * sizeof(float), m_vertexData.data(), GL_STATIC_DRAW);
 
 	
-	// send view and projection matrices to the shader
+	// send world, view, and projection matrices to the shader
 	glUseProgram(m_shader->GetProgramId());
 	
 	glUniformMatrix4fv(m_shader->GetAttrView() , 1, GL_FALSE, &m_view[0][0]);
 	glUniformMatrix4fv(m_shader->GetAttrProjection() , 1, GL_FALSE, &m_projection[0][0]);
-
-	// this can go after where you initialize your cube or triangle vertex information
 	glUniformMatrix4fv(m_shader->GetAttrWorld(), 1, GL_FALSE, &m_world[0][0]); //modelMatrix can be a global glm::mat4
 }
 
@@ -49,7 +47,7 @@ void Mesh::Render()
 {
 	glUseProgram(m_shader->GetProgramId()); // Use our shader
 
-	// First attribute buffer : vertices
+	// vertices attribute buffer
 	glEnableVertexAttribArray(m_shader->GetAttrVertices());
 	glVertexAttribPointer(m_shader->GetAttrVertices(), // The attribute we want to configure
 		3,			/*size*/
@@ -58,12 +56,10 @@ void Mesh::Render()
 		0,			/*stride*/
 		(void*)0);	/*array buffer offset*/
 
-	// Second attribute buffer : colors
+	// color attribute buffer
 	glUniform4fv(m_shader->GetAttrColor(), 1, &m_color[0]);
 
-	// Third attribute buffer : WVP
-	//_wvp *= m_world;
-	//glUniformMatrix4fv(m_shader->GetAttrWVP(), 1, GL_FALSE, &_wvp[0][0]);
+	// world attribute buffer
 	glUniformMatrix4fv(m_shader->GetAttrWorld(), 1, GL_FALSE, &m_world[0][0]);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);

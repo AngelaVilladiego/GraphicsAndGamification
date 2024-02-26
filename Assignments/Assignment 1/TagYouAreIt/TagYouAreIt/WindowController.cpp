@@ -20,18 +20,23 @@ Resolution WindowController::GetResolution()
 	return Resolution(mode->width, mode->height);
 }
 
-void WindowController::NewWindow()
+void WindowController::NewWindow(bool fullscreen)
 {
 	M_ASSERT(glfwInit(), "Failed to initialize GLFW."); // Initialise GLFW
 
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
+	if (!fullscreen)
+	{
+		monitor = NULL;
+	}
+
 	// Open a window and create its OpenGL context
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-	M_ASSERT((m_window = glfwCreateWindow(mode->width, mode->height, "Sample scene", NULL, NULL)) != nullptr, "Failed to open GLFW window.");
+	M_ASSERT((m_window = glfwCreateWindow(mode->width, mode->height, "Sample scene", monitor, NULL)) != nullptr, "Failed to open GLFW window.");
 	glfwMakeContextCurrent(m_window);
 }
 

@@ -143,7 +143,7 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.9\lib-vc2022\glfw3.dll" "$(TargetDir)"
     <ClCompile Include="NpcTriangle.cpp" />
     <ClCompile Include="PlayerTriangle.cpp" />
     <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="Singleton.h" />
     <ClCompile Include="WindowController.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +155,7 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.9\lib-vc2022\glfw3.dll" "$(TargetDir)"
     <ClInclude Include="PlayerTriangle.h" />
     <ClInclude Include="Resolution.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="StandardIncludes.h" />
-    <ClInclude Include="Triangle.h" />
     <ClInclude Include="WindowController.h" />
   </ItemGroup>
   <ItemGroup>

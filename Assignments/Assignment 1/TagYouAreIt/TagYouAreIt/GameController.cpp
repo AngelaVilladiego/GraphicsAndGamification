@@ -10,15 +10,14 @@ GameController::GameController()
 	m_npcs = { };
 }
 
-void GameController::Initialize(string title = "Sample")
+void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 {
-	GLFWwindow* window = WindowController::GetInstance().GetWindow(); // Call this first as it creates a window required by GLEW
+	GLFWwindow* window = WindowController::GetInstance().GetWindow(fullscreen); // Call this first as it creates a window required by GLEW
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
 	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST); // so that we can later refresh the depth buffer and keep player triangle rendered in front
 
 	WindowController::GetInstance().SetWindowTitle(title.c_str());
 
@@ -68,13 +67,13 @@ void GameController::RunGame()
 			m_player.Translate(playerDir);
 		}
 
-
 		for (int i = 0; i < NPC_COUNT; i++)
 		{
 			m_npcs[i].ApplyBehaviour(m_player.GetPosition());
 			m_npcs[i].Render();
 		}
 
+		//draw player in front of npcs
 		glClear(GL_DEPTH_BUFFER_BIT);
 		m_player.Render();
 

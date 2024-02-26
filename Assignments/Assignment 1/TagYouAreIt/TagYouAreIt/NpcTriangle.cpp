@@ -13,12 +13,13 @@ NpcTriangle::~NpcTriangle()
 
 void NpcTriangle::Create(Shader* _shader, Camera _camera)
 {
-	//randomizer retrieved from https://coliru.stacked-crooked.com/a/c5b94870fdcd13f2
+	// randomizer retrieved from https://coliru.stacked-crooked.com/a/c5b94870fdcd13f2
 	const float range_from = 2;
 	const float range_to = 10;
 	std::random_device                  rand_dev;
 	std::mt19937                        generator(rand_dev());
 	std::uniform_real_distribution<float>  distr(range_from, range_to);
+	// end referenced code
 
 
 	for (int i = 0; i < 2; i++) {
@@ -90,19 +91,18 @@ void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 	
 void NpcTriangle::FaceLocation(glm::vec3 _playerPos)
 {
-	//get angle to player triangle
 
 	const glm::vec3 Y_VEC = { 0, 1, 0 };
 	const glm::vec3 Z_VEC = { 0, 0, 1 };
 
-	//vector from npc to player
+	//get direction vector from npc to player
 	glm::vec3 direction = _playerPos - m_position;
 	direction = glm::normalize(direction);
 
 	//get angle between the up vector and the direction vector
 	float newAngle = acos(glm::dot(Y_VEC, direction));
 
-	//get the direction of the angle (clockwise or counterclockwise)
+	//get the rotation mode of the angle (clockwise or counterclockwise)
 	glm::vec3 cross = glm::cross(Y_VEC, direction);
 	bool clockwise = glm::dot(Z_VEC, cross) < 0;
 
@@ -112,15 +112,5 @@ void NpcTriangle::FaceLocation(glm::vec3 _playerPos)
 	}
 
 	m_angle = newAngle;
-
-	//demo rotates one degree per frame
-	/*
-	if (m_angle == 355) {
-		m_angle = 0;
-	}
-	else {
-		m_angle += 0.5;
-	}
-	*/
 }
 

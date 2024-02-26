@@ -11,10 +11,11 @@ public:
 	virtual ~WindowController();
 
 	//Accessors
-	GLFWwindow* GetWindow() { if (m_window == nullptr) { NewWindow(); } return m_window; }
+	GLFWwindow* GetWindow(bool fullscreen) { if (m_window == nullptr) { NewWindow(fullscreen); } return m_window; }
+	GLFWwindow* GetWindow() { if (m_window == nullptr) { NewWindow(true); } return m_window; }
 
 	//Methods
-	void NewWindow();
+	void NewWindow(bool fullscreen);
 	void SetWindowFullscreen();
 	void SetWindowTitle(string title);
 	Resolution GetResolution();
