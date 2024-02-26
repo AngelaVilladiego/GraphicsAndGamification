@@ -67,3 +67,9 @@ void Mesh::Translate(glm::vec3 _trans)
 {
 	m_world = glm::translate(m_world, _trans);
 }
+
+void Mesh::Rotate()
+{
+
+}
+
