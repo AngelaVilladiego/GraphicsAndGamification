@@ -61,15 +61,23 @@ void NpcTriangle::ApplyBehaviour(glm::vec3 _playerPos)
 
 void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 {
-	if (glm::distance(_playerPos, m_position) >= 10)
+	float distance = glm::distance(_playerPos, m_position);
+	if (distance < 10)
 	{
-		return;
+		// get "away" direction
+		glm::vec3 direction = m_position - _playerPos;
+		direction = glm::normalize(direction);
+		Translate(direction);
+	}
+	else if (distance > 11)
+	{
+		// get "towards" direction
+		glm::vec3 direction = _playerPos - m_position;
+		direction = glm::normalize(direction);
+		Translate(direction);
 	}
 
-	// get "away" direction
-	glm::vec3 direction = m_position - _playerPos;
-	direction = glm::normalize(direction);
-	Translate(direction);
+	
 }
 	
 void NpcTriangle::FaceLocation(glm::vec3 _playerPos)
