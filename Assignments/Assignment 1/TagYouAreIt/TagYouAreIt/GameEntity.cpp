@@ -61,7 +61,7 @@ void GameEntity::Render()
 	//create the world matrix to pass to the renderer
 	glm::mat4 world = glm::mat4(1.f);
 	world = glm::translate(world, m_position);
-	world = glm::rotate(world, float(m_angle * (M_PI/180)), {0, 0, 1});
+	world = glm::rotate(world, m_angle, {0, 0, 1});
 
 	m_world = world;
 

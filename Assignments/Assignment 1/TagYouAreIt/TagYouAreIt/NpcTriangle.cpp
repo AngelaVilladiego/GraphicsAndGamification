@@ -1,5 +1,6 @@
 #include "NpcTriangle.h"
 #include <random>
+#include <math.h>
 
 NpcTriangle::NpcTriangle()
 {
@@ -62,6 +63,7 @@ void NpcTriangle::ApplyBehaviour(glm::vec3 _playerPos)
 void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 {
 	float distance = glm::distance(_playerPos, m_position);
+
 	if (distance < 10)
 	{
 		// get "away" direction
@@ -75,13 +77,34 @@ void NpcTriangle::KeepDistance(glm::vec3 _playerPos)
 		glm::vec3 direction = _playerPos - m_position;
 		direction = glm::normalize(direction);
 		Translate(direction);
-	}
-
-	
+	}	
 }
 	
 void NpcTriangle::FaceLocation(glm::vec3 _playerPos)
 {
+	//get angle to player triangle
+
+	const glm::vec3 Y_VEC = { 0, 1, 0 };
+	const glm::vec3 Z_VEC = { 0, 0, 1 };
+
+	//vector from npc to player
+	glm::vec3 direction = _playerPos - m_position;
+	direction = glm::normalize(direction);
+
+	//get angle between the up vector and the direction vector
+	float newAngle = acos(glm::dot(Y_VEC, direction));
+
+	//get the direction of the angle (clockwise or counterclockwise)
+	glm::vec3 cross = glm::cross(Y_VEC, direction);
+	bool clockwise = glm::dot(Z_VEC, cross) < 0;
+
+	if (clockwise)
+	{
+		newAngle *= -1;
+	}
+
+	m_angle = newAngle;
+
 	//demo rotates one degree per frame
 	/*
 	if (m_angle == 355) {
