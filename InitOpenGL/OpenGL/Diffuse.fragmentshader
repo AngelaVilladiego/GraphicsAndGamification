@@ -5,10 +5,11 @@ in vec2 retTexCoord; // from the vertex shader
 
 out vec4 FragColor;
 
+uniform vec3 DiffuseColor;
 uniform sampler2D sampler1; // sampler for the texture mapping
 uniform sampler2D sampler2; // a second sampler for the second texture
 
 void main()
 {
-	FragColor = texture(sampler1, retTexCoord); // Texture only
+	FragColor = vec4(DiffuseColor, 1.0f) * texture(sampler1, retTexCoord); // Texture and diffuse color
 }

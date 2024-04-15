@@ -96,6 +96,8 @@ void Mesh::Render(glm::mat4 _wvp)
 {
 	glUseProgram(m_shader->GetProgramId()); // Use our shader
 
+	m_shader->SetVec3("DiffuseColor", { 1.0f, 0.0f, 0.0f }); //set the diffuse color to red
+
 	// First attribute buffer : vertices
 	glEnableVertexAttribArray(m_shader->GetAttrVertices());
 	glVertexAttribPointer(m_shader->GetAttrVertices(), // The attribute we want to configure
