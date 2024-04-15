@@ -97,7 +97,9 @@ void Mesh::Render(glm::mat4 _wvp)
 	glUseProgram(m_shader->GetProgramId()); // Use our shader
 
 	m_shader->SetVec3("AmbientLight", { 0.1f, 0.1, 0.1f }); //set the ambient lighting
-	m_shader->SetVec3("DiffuseColor", { 1.0f, 0.0f, 0.0f }); //set the diffuse color to red
+	m_shader->SetVec3("DiffuseColor", { 1.0f, 1.0f, 1.0f }); //set the diffuse color to white
+	m_shader->SetVec3("LightDirection", { 1.0f, 0.5f, 0.0f }); //Light direction
+	m_shader->SetVec3("LightColor", { 0.5f, 0.9f, 0.5f }); //Light color
 
 	// First attribute buffer : vertices
 	glEnableVertexAttribArray(m_shader->GetAttrVertices());
