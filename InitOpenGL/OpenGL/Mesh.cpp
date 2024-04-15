@@ -8,9 +8,12 @@ Mesh::Mesh()
 	m_texture2 = { };
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	//m_world = glm::mat4(1.0f);
+	m_world = glm::mat4();
 	m_position = { 0, 0, 0 };
 	m_rotation = { 0, 0, 0 };
+	m_scale = { 1, 1, 1 };
+	m_lightPosition = { 0, 0, 0 };
+	m_lightColor = { 1, 1, 1 };
 }
 
 Mesh::~Mesh()
@@ -92,27 +95,20 @@ void Mesh::Cleanup()
 	m_texture2.Cleanup();
 }
 
-void Mesh::Render(glm::mat4 _wvp)
+void Mesh::BindAttributes()
 {
-	glUseProgram(m_shader->GetProgramId()); // Use our shader
-
-	m_shader->SetVec3("AmbientLight", { 0.1f, 0.1, 0.1f }); //set the ambient lighting
-	m_shader->SetVec3("DiffuseColor", { 1.0f, 1.0f, 1.0f }); //set the diffuse color to white
-	m_shader->SetVec3("LightDirection", { 1.0f, 0.5f, 0.0f }); //Light direction
-	m_shader->SetVec3("LightColor", { 0.5f, 0.9f, 0.5f }); //Light color
-
-	// First attribute buffer : vertices
+	// 1st attribute buffer : vertices
 	glEnableVertexAttribArray(m_shader->GetAttrVertices());
 	glVertexAttribPointer(m_shader->GetAttrVertices(), // The attribute we want to configure
 		3,			/*size*/
-		GL_FLOAT,	/*type*/ 
+		GL_FLOAT,	/*type*/
 		GL_FALSE,	/*normalized?*/
 		8 * sizeof(float),			/*stride*/
 		(void*)0);	/*array buffer offset*/
 
-	// Second attribute buffer : normals
+	// 2nd attribute buffer : normals
 	glEnableVertexAttribArray(m_shader->GetAttrNormals());
-	glVertexAttribPointer(m_shader->GetAttrNormals(), 
+	glVertexAttribPointer(m_shader->GetAttrNormals(),
 		3,							// size of color attribute (3 components per color
 		GL_FLOAT,					// type
 		GL_FALSE,					// normalized?
@@ -129,17 +125,8 @@ void Mesh::Render(glm::mat4 _wvp)
 		8 * sizeof(float),			// stride (8 floats per vertex definition
 		(void*)(6 * sizeof(float))	// array buffer offset
 	);
-
-
-	// 4th attribute buffer : WVP
-	m_rotation.y += 0.005f;
-	glm::mat4 translate = glm::translate(_wvp, m_position);
-	glm::mat4 transform = glm::rotate(translate, m_rotation.y, glm::vec3(0, 1, 0)); //rotate around the y axis
-	glUniformMatrix4fv(m_shader->GetAttrWVP(), 1, GL_FALSE, &transform[0][0]);
-
-
+	
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
 
 	//explicitly set our texture to use the first texture unit (16 texture units total)
 	glActiveTexture(GL_TEXTURE0); //Texture Unit 0
@@ -150,11 +137,39 @@ void Mesh::Render(glm::mat4 _wvp)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_texture2.GetTexture());
 	glUniform1i(m_shader->GetSampler2(), 1);
+}
+
+void Mesh::CalculateTransform()
+{
+	m_world = glm::translate(glm::mat4(1.0f), m_position);
+	m_world = glm::rotate(m_world, m_rotation.y, glm::vec3(0, 1, 0));
+	m_world = glm::scale(m_world, m_scale);
+}
+
+void Mesh::SetShaderVariables(glm::mat4 _pv)
+{
+	m_shader->SetMat4("World", m_world);
+	m_shader->SetVec3("AmbientLight", { 0.1f, 0.1, 0.1f }); //set the ambient lighting
+	m_shader->SetVec3("DiffuseColor", { 1.0f, 1.0f, 1.0f }); //set the diffuse color to white
+	m_shader->SetVec3("LightPosition", m_lightPosition);
+	m_shader->SetVec3("LightColor", m_lightColor); //Light color
+	m_shader->SetMat4("WVP", _pv * m_world);
+
+}
+
+void Mesh::Render(glm::mat4 _pv)
+{
+	glUseProgram(m_shader->GetProgramId()); // Use our shader
+
+	m_rotation.y += 0.005f;
+
+	CalculateTransform();
+	SetShaderVariables(_pv);
+	BindAttributes();
 
 	glDrawArrays(GL_TRIANGLES, 0, m_vertexData.size());
 
 	glDisableVertexAttribArray(m_shader->GetAttrNormals());
-	glDisableVertexAttribArray(m_shader->GetAttrColors());
 	glDisableVertexAttribArray(m_shader->GetAttrVertices());
 	glDisableVertexAttribArray(m_shader->GetAttrTexCoords());
 }

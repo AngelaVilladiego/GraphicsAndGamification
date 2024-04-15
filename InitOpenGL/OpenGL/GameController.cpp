@@ -4,9 +4,11 @@
 
 GameController::GameController()
 {
-	m_shader = { };
+	m_shaderColor = { };
+	m_shaderDiffuse = { };
 	m_camera = { };
-	m_mesh = { };
+	m_meshBox = { };
+	m_meshLight = { };
 }
 
 void GameController::Initialize()
@@ -23,44 +25,40 @@ void GameController::Initialize()
 
 void GameController::RunGame()
 {
-	// Show the C++/CLI tool window
-	/*
-	OpenGL::ToolWindow^ window = gcnew OpenGL::ToolWindow();
-	window->Show();
-	*/
-	
 
 	// Create and compile our GLSL program from the shaders
-	m_shader = Shader();
-	m_shader.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+	m_shaderColor = Shader();
+	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
 
-	m_mesh = Mesh();
-	m_mesh.Create(&m_shader);
+	m_shaderDiffuse = Shader();
+	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+
+	// Create meshes
+	m_meshLight = Mesh();
+	m_meshLight.Create(&m_shaderColor);
+	m_meshLight.SetPosition({ 1, 0.5f, 0.5f });
+	m_meshLight.SetScale({ 0.1f, 0.1f, 0.1f });
+
+	m_meshBox = Mesh();
+	m_meshBox.Create(&m_shaderDiffuse);
+	m_meshBox.SetLightColor({ 0.5f, 0.9f, 0.5f });
+	m_meshBox.SetLightPosition(m_meshLight.GetPosition());
 
 	
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 	do
 	{
-		/*
-		System::Windows::Forms::Application::DoEvents(); // Handle C++/CLI form events
-
-		GLint loc = glGetUniformLocation(m_shader.GetProgramId(), "RenderRedChannel");
-		glUniform1i(loc, (int)OpenGL::ToolWindow::RenderRedChannel);
-		loc = glGetUniformLocation(m_shader.GetProgramId(), "RenderGreenChannel");
-		glUniform1i(loc, (int)OpenGL::ToolWindow::RenderGreenChannel);
-		loc = glGetUniformLocation(m_shader.GetProgramId(), "RenderBlueChannel");
-		glUniform1i(loc, (int)OpenGL::ToolWindow::RenderBlueChannel);
-		*/
-
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
-		m_mesh.Render(m_camera.GetProjection() * m_camera.GetView());
+		m_meshBox.Render(m_camera.GetProjection() * m_camera.GetView());
+		m_meshLight.Render(m_camera.GetProjection() * m_camera.GetView());
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
 	} 
 	while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(win) == 0); // Check if window was closed
 
-	m_mesh.Cleanup();
-	m_shader.Cleanup();
+	m_meshLight.Cleanup();
+	m_meshBox.Cleanup();
+	m_shaderDiffuse.Cleanup();
+	m_shaderColor.Cleanup();
 }

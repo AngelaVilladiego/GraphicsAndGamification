@@ -4,14 +4,23 @@ in vec3 vertices; // Value sent from application to this attribute
 in vec3 normals; // input color from application
 in vec2 texCoords; // input value of texture coordinates
 
+uniform mat4 World;
 uniform mat4 WVP;
 
 out vec3 retNormal; // output a color to the fragment shader
 out vec2 retTexCoord; // output texture coordinates (just a passthrough variable)
+out vec3 retFragPos;
 
 void main()
 {
 	gl_Position = WVP * vec4(vertices, 1.0); // Transform the model to screen projection
-	retNormal = normals;
+	retNormal = normalize(mat3(transpose(inverse(World))) * normals); // convert normals to world position
+	/*	
+		we cannot just multiply a normal by world matrix; 
+		were using a normal matrix which is defined as the transpose of the inverse of the upper-left 3x3 part of the model matrix; 
+		this avoids issues with non-uniform scaling affecting the normal so that it no longer is correct;
+		additionally, it will not transpose correctly as a normal is simple a direction without a position
+	*/
 	retTexCoord = texCoords;
+	retFragPos = vec3(World * vec4(vertices, 1.0f)); // convert fragments to world positions
 }
