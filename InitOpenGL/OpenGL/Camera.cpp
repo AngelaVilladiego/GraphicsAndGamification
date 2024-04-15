@@ -19,7 +19,7 @@ Camera::Camera(Resolution _screenResolution)
 
 	// Camera matrix
 	m_view = glm::lookAt(
-		glm::vec3(200, 200, 200),	// camera position in world space
+		glm::vec3(100, 100, 100),	// camera position in world space
 		glm::vec3(0, 0, 0),			// camera looks at origin
 		glm::vec3(0, 1, 0)			// head is up (set to 0 -1 0 to look upside down)
 	);
