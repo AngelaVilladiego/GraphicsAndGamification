@@ -8,7 +8,7 @@ Mesh::Mesh()
 	m_texture2 = { };
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	m_world = glm::mat4(1.0f);
+	//m_world = glm::mat4(1.0f);
 	m_position = { 0, 0, 0 };
 	m_rotation = { 0, 0, 0 };
 }
@@ -27,14 +27,44 @@ void Mesh::Create(Shader* _shader)
 	m_texture2 = Texture();
 	m_texture2.LoadTexture("../Assets/Textures/Emoji.jpg");
 
-	float a = 26.0f;
-	float b = 42.0f;
 	m_vertexData = { 
-		/* Position */			/*	RGB Color	*/		/* Texture Coords */
-		50.0f, 50.0f, 0.0f,		1.0f, 0.0f, 0.0f,		1.0f, 1.0f,			//top-right		
-		50.0f, -50.0f, 0.0f,	0.0f, 1.0f, 0.0f,		1.0f, 0.0f,			//bottom-right	
-		-50.0f, -50.0f, 0.0f,	0.0f, 0.0f, 1.0f,		0.0f, 0.0f,			//bottom-left	
-		-50.0f, 50.0f, 0.0f,	1.0f, 1.0f, 1.0f,		0.0f, 1.0f,			//top-left	
+		/* Position */				/* Normals */		/* Texture Coords*/
+		-0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	0.0f, 0.0f,
+		0.5f, -0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	1.0f, 1.0f,
+		0.5f, 0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	1.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
+		0.5f, -0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f,			-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f,			-1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,		-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,		-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f,			-1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f,			-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,			1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, -0.5f,			1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,			1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,			1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, 0.5f,			1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,			1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, -0.5f, -0.5f,			0.0f, -1.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, -0.5f, 0.5f,			0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f,			0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, 0.5f,			0.0f, -1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
+		-0.5f, 0.5f, -0.5f,			0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
+		0.5f, 0.5f, -0.5f,			0.0f, 1.0f, 0.0f,	1.0f, 1.0f,
+		0.5f, 0.5f, 0.5f,			0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		0.5f, 0.5f, 0.5f,			0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
+		-0.5f, 0.5f, 0.5f,			0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, -0.5f,			0.0f, 1.0f, 0.0f,	0.0f, 1.0f
 
 	};
 
@@ -43,6 +73,7 @@ void Mesh::Create(Shader* _shader)
 	//vector<>.data() Returns a direct pointer to the memory array used internally by the vector to store its owned elements.
 	glBufferData(GL_ARRAY_BUFFER, m_vertexData.size() * sizeof(float), m_vertexData.data(), GL_STATIC_DRAW);
 
+	/*
 	m_indexData = {
 		2, 0, 3, 2, 1, 0
 	};
@@ -50,6 +81,7 @@ void Mesh::Create(Shader* _shader)
 	glGenBuffers(1, &m_indexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexData.size() * sizeof(float), m_indexData.data(), GL_STATIC_DRAW);
+	*/
 }
 
 void Mesh::Cleanup()
@@ -73,9 +105,9 @@ void Mesh::Render(glm::mat4 _wvp)
 		8 * sizeof(float),			/*stride*/
 		(void*)0);	/*array buffer offset*/
 
-	// Second attribute buffer : colors
-	glEnableVertexAttribArray(m_shader->GetAttrColors());
-	glVertexAttribPointer(m_shader->GetAttrColors(), 
+	// Second attribute buffer : normals
+	glEnableVertexAttribArray(m_shader->GetAttrNormals());
+	glVertexAttribPointer(m_shader->GetAttrNormals(), 
 		3,							// size of color attribute (3 components per color
 		GL_FLOAT,					// type
 		GL_FALSE,					// normalized?
@@ -95,9 +127,10 @@ void Mesh::Render(glm::mat4 _wvp)
 
 
 	// 4th attribute buffer : WVP
-	m_world = glm::rotate(m_world, 0.001f, { 0, 1, 0 }); // Rotate the camera a tiny bit around the y axis every frame
-	_wvp *= m_world;
-	glUniformMatrix4fv(m_shader->GetAttrWVP(), 1, GL_FALSE, &_wvp[0][0]);
+	m_rotation.y += 0.005f;
+	glm::mat4 translate = glm::translate(_wvp, m_position);
+	glm::mat4 transform = glm::rotate(translate, m_rotation.y, glm::vec3(0, 1, 0)); //rotate around the y axis
+	glUniformMatrix4fv(m_shader->GetAttrWVP(), 1, GL_FALSE, &transform[0][0]);
 
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
@@ -113,8 +146,9 @@ void Mesh::Render(glm::mat4 _wvp)
 	glBindTexture(GL_TEXTURE_2D, m_texture2.GetTexture());
 	glUniform1i(m_shader->GetSampler2(), 1);
 
-	glDrawElements(GL_TRIANGLES, m_indexData.size(), GL_UNSIGNED_BYTE, (void*)0);	//Draw the triangle
+	glDrawArrays(GL_TRIANGLES, 0, m_vertexData.size());
 
+	glDisableVertexAttribArray(m_shader->GetAttrNormals());
 	glDisableVertexAttribArray(m_shader->GetAttrColors());
 	glDisableVertexAttribArray(m_shader->GetAttrVertices());
 	glDisableVertexAttribArray(m_shader->GetAttrTexCoords());

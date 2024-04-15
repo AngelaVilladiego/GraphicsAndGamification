@@ -15,7 +15,7 @@ void GameController::Initialize()
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
-	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 
 	// Create a default perspective camera
 	m_camera = Camera(WindowController::GetInstance().GetResolution());
@@ -32,7 +32,7 @@ void GameController::RunGame()
 
 	// Create and compile our GLSL program from the shaders
 	m_shader = Shader();
-	m_shader.LoadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+	m_shader.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
 	m_mesh = Mesh();
 	m_mesh.Create(&m_shader);
@@ -53,7 +53,7 @@ void GameController::RunGame()
 		*/
 
 
-		glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
 		m_mesh.Render(m_camera.GetProjection() * m_camera.GetView());
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
