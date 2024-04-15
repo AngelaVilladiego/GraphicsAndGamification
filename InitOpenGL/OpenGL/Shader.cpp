@@ -19,6 +19,15 @@ void Shader::Cleanup()
 	glDeleteProgram(m_programID);
 }
 
+void Shader::SetFloat(const char* _name, float _value)
+{
+	GLint loc = glGetUniformLocation(m_programID, _name);
+	if (loc != -1)
+	{
+		glUniform1f(loc, _value);
+	}
+}
+
 void Shader::SetVec3(const char* _name, glm::vec3 _value)
 {
 	GLint loc = glGetUniformLocation(m_programID, _name);
