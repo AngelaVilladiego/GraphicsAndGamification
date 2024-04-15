@@ -97,7 +97,11 @@ void Mesh::Render(glm::mat4 _wvp)
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+
+	//explicitly set our texture to use the first texture unit (16 texture units total)
+	glActiveTexture(GL_TEXTURE0); //Texture Unit 0
 	glBindTexture(GL_TEXTURE_2D, m_texture.GetTexture());
+	glUniform1i(m_shader->GetSampler1(), 0);
 
 	glDrawElements(GL_TRIANGLES, m_indexData.size(), GL_UNSIGNED_BYTE, (void*)0);	//Draw the triangle
 
