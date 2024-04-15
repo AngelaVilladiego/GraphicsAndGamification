@@ -5,6 +5,7 @@ Mesh::Mesh()
 {
 	m_shader = nullptr;
 	m_texture = { };
+	m_texture2 = { };
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
 	m_world = glm::mat4(1.0f);
@@ -22,6 +23,9 @@ void Mesh::Create(Shader* _shader)
 
 	m_texture = Texture();
 	m_texture.LoadTexture("../Assets/Textures/Wood.jpg");
+
+	m_texture2 = Texture();
+	m_texture2.LoadTexture("../Assets/Textures/Emoji.jpg");
 
 	float a = 26.0f;
 	float b = 42.0f;
@@ -53,6 +57,7 @@ void Mesh::Cleanup()
 	glDeleteBuffers(1, &m_indexBuffer);
 	glDeleteBuffers(1, &m_vertexBuffer);
 	m_texture.Cleanup();
+	m_texture2.Cleanup();
 }
 
 void Mesh::Render(glm::mat4 _wvp)
@@ -102,6 +107,11 @@ void Mesh::Render(glm::mat4 _wvp)
 	glActiveTexture(GL_TEXTURE0); //Texture Unit 0
 	glBindTexture(GL_TEXTURE_2D, m_texture.GetTexture());
 	glUniform1i(m_shader->GetSampler1(), 0);
+
+	//Set our second texture to use the second texture unit
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_texture2.GetTexture());
+	glUniform1i(m_shader->GetSampler2(), 1);
 
 	glDrawElements(GL_TRIANGLES, m_indexData.size(), GL_UNSIGNED_BYTE, (void*)0);	//Draw the triangle
 
