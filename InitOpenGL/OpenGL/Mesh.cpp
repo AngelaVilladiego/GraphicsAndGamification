@@ -25,10 +25,10 @@ void Mesh::Create(Shader* _shader)
 	m_shader = _shader;
 
 	m_texture = Texture();
-	m_texture.LoadTexture("../Assets/Textures/Wood.jpg");
+	m_texture.LoadTexture("../Assets/Textures/MetalFrameWood.jpg");
 
 	m_texture2 = Texture();
-	m_texture2.LoadTexture("../Assets/Textures/Emoji.jpg");
+	m_texture2.LoadTexture("../Assets/Textures/MetalFrame.jpg");
 
 	m_vertexData = { 
 		/* Position */				/* Normals */		/* Texture Coords*/
@@ -76,15 +76,6 @@ void Mesh::Create(Shader* _shader)
 	//vector<>.data() Returns a direct pointer to the memory array used internally by the vector to store its owned elements.
 	glBufferData(GL_ARRAY_BUFFER, m_vertexData.size() * sizeof(float), m_vertexData.data(), GL_STATIC_DRAW);
 
-	/*
-	m_indexData = {
-		2, 0, 3, 2, 1, 0
-	};
-
-	glGenBuffers(1, &m_indexBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indexData.size() * sizeof(float), m_indexData.data(), GL_STATIC_DRAW);
-	*/
 }
 
 void Mesh::Cleanup()
@@ -127,16 +118,6 @@ void Mesh::BindAttributes()
 	);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-
-	//explicitly set our texture to use the first texture unit (16 texture units total)
-	glActiveTexture(GL_TEXTURE0); //Texture Unit 0
-	glBindTexture(GL_TEXTURE_2D, m_texture.GetTexture());
-	glUniform1i(m_shader->GetSampler1(), 0);
-
-	//Set our second texture to use the second texture unit
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_texture2.GetTexture());
-	glUniform1i(m_shader->GetSampler2(), 1);
 }
 
 void Mesh::CalculateTransform()
@@ -149,14 +130,20 @@ void Mesh::CalculateTransform()
 void Mesh::SetShaderVariables(glm::mat4 _pv)
 {
 	m_shader->SetMat4("World", m_world);
-	m_shader->SetVec3("AmbientLight", { 0.1f, 0.1, 0.1f }); //set the ambient lighting
-	m_shader->SetVec3("DiffuseColor", { 1.0f, 1.0f, 1.0f }); //set the diffuse color to white
-	m_shader->SetFloat("SpecularStrength", 4);
-	m_shader->SetVec3("SpecularColor", { 3.0f, 0.0f, 0.0f });
-	m_shader->SetVec3("LightPosition", m_lightPosition);
-	m_shader->SetVec3("LightColor", m_lightColor); //Light color
 	m_shader->SetMat4("WVP", _pv * m_world);
 	m_shader->SetVec3("CameraPosition", m_cameraPosition);
+
+	// Configure light
+	m_shader->SetVec3("light.position", m_lightPosition);
+	m_shader->SetVec3("light.color", m_lightColor); //Light color
+	m_shader->SetVec3("light.ambientColor", { 0.1f, 0.1, 0.1f }); //set the ambient lighting
+	m_shader->SetVec3("light.diffuseColor", { 1.0f, 1.0f, 1.0f }); //set the diffuse color to white
+	m_shader->SetVec3("light.specularColor", { 3.0f, 3.0f, 3.0f });
+
+	// configure material
+	m_shader->SetFloat("material.specularStrength", 8);
+	m_shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE0, 0, m_texture.GetTexture());
+	m_shader->SetTextureSampler("material.specularTexture", GL_TEXTURE1, 1, m_texture2.GetTexture());
 
 }
 
@@ -164,7 +151,7 @@ void Mesh::Render(glm::mat4 _pv)
 {
 	glUseProgram(m_shader->GetProgramId()); // Use our shader
 
-	m_rotation.y += 0.005f;
+	m_rotation.y += 0.001f;
 
 	CalculateTransform();
 	SetShaderVariables(_pv);
