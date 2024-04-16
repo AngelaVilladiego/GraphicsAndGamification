@@ -7,6 +7,7 @@
 
 //include standard headers
 #include <vector>
+#include <map>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -24,6 +25,10 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp> // View / Projection
+
+// Font Includes
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 #include  "Resolution.h"
 #include "Singleton.h"
