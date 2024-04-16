@@ -350,6 +350,7 @@ namespace OpenGLTechniques {
 			this->checkBoxTranslate->TabIndex = 21;
 			this->checkBoxTranslate->Text = L"Translate";
 			this->checkBoxTranslate->UseVisualStyleBackColor = true;
+			this->checkBoxTranslate->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxTranslate_CheckedChanged);
 			// 
 			// checkBoxRotate
 			// 
@@ -360,6 +361,7 @@ namespace OpenGLTechniques {
 			this->checkBoxRotate->TabIndex = 22;
 			this->checkBoxRotate->Text = L"Rotate";
 			this->checkBoxRotate->UseVisualStyleBackColor = true;
+			this->checkBoxRotate->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxRotate_CheckedChanged);
 			// 
 			// checkBoxScale
 			// 
@@ -370,6 +372,7 @@ namespace OpenGLTechniques {
 			this->checkBoxScale->TabIndex = 23;
 			this->checkBoxScale->Text = L"Scale";
 			this->checkBoxScale->UseVisualStyleBackColor = true;
+			this->checkBoxScale->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxScale_CheckedChanged);
 			// 
 			// label5
 			// 
@@ -439,6 +442,7 @@ namespace OpenGLTechniques {
 			this->checkBoxWireframeRender->TabIndex = 30;
 			this->checkBoxWireframeRender->Text = L"Wireframe Render";
 			this->checkBoxWireframeRender->UseVisualStyleBackColor = true;
+			this->checkBoxWireframeRender->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxWireframeRender_CheckedChanged);
 			// 
 			// checkBoxTintBlue
 			// 
@@ -449,6 +453,7 @@ namespace OpenGLTechniques {
 			this->checkBoxTintBlue->TabIndex = 31;
 			this->checkBoxTintBlue->Text = L"Tint Blue";
 			this->checkBoxTintBlue->UseVisualStyleBackColor = true;
+			this->checkBoxTintBlue->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::checkBoxTintBlue_CheckedChanged);
 			// 
 			// ToolWindow
 			// 
@@ -569,6 +574,22 @@ private: System::Void trackBarAmplitude_Scroll(System::Object^ sender, System::E
 	float val = trackBarAmplitude->Value / 100.0f;
 	Amplitude = val;
 	labelAmplitude->Text = System::Convert::ToString(val);
+}
+private: System::Void checkBoxTranslate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+	TranslateChecked = checkBoxTranslate->Checked;
+}
+private: System::Void checkBoxRotate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+	RotateChecked = checkBoxRotate->Checked;
+
+}
+private: System::Void checkBoxScale_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+	ScaleChecked = checkBoxScale->Checked;
+}
+private: System::Void checkBoxWireframeRender_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+	WireframeRenderChecked = checkBoxWireframeRender->Checked;
+}
+private: System::Void checkBoxTintBlue_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+	TintBlueChecked = checkBoxTintBlue->Checked;
 }
 };
 }
