@@ -1,9 +1,5 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
-  Camera.cpp
   GameController.cpp
 C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\OpenGL\GameController.cpp(21,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Mesh.cpp
-C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\OpenGL\Mesh.cpp(169,49): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Generating Code...
   OpenGL.vcxproj -> C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\InitOpenGL\x64\Debug\OpenGL.exe
