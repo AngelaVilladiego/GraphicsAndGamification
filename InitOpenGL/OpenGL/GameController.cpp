@@ -44,59 +44,29 @@ void GameController::RunGame()
 	//m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
 	// Create meshes
-
-	
 	Mesh m = Mesh();
 	m.Create(&m_shaderColor, "../Assets/Models/Teapot.obj");
-	m.SetPosition({ 1.0f, 0.0f, 0.0f });
+	m.SetPosition({ 1.5f, 0.0f, 1.0f });
 	m.SetColor({ 1.0f, 1.0f, 1.0f });
 	m.SetScale({ 0.01f, 0.01f, 0.01f });
 	Mesh::Lights.push_back(m);
 
-	/*
-	Mesh teapot = Mesh();
-	teapot.Create(&m_shaderDiffuse, "../Assets/Models/Teapot.obj");
-	teapot.SetCameraPosition(m_camera.GetPosition());
-	teapot.SetScale({ 0.02f, 0.02f, 0.02f });
-	teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_meshBoxes.push_back(teapot);
-	*/
-
+	
 	Mesh box = Mesh();
 	box.Create(&m_shaderDiffuse, "../Assets/Models/Cube.obj");
 	box.SetCameraPosition(m_camera.GetPosition());
-	box.SetScale({ 0.5f, 0.5f, 0.5f });
-	box.SetPosition({ 1.0f, 0.0f, 5.0f });
+	box.SetScale({ 0.25f, 0.25f, 0.25f });
+	box.SetPosition({ 0.0f, 1.0f, 1.0f });
 	m_meshBoxes.push_back(box);
-
-	Skybox skybox = Skybox();
-	skybox.Create(&m_shaderSkybox, "../Assets/Models/Skybox.obj",
-		{
-			"../Assets/Textures/Skybox/right.jpg",
-			"../Assets/Textures/Skybox/left.jpg",
-			"../Assets/Textures/Skybox/top.jpg",
-			"../Assets/Textures/Skybox/bottom.jpg",
-			"../Assets/Textures/Skybox/front.jpg",
-			"../Assets/Textures/Skybox/back.jpg",
-		});
-
-	/*
-	Mesh plane = Mesh();
-	plane.Create(&m_shaderDiffuse, "../Assets/Models/Plane.obj");
-	plane.SetCameraPosition(m_camera.GetPosition());
-	plane.SetScale({ 0.3f, 0.3f, 0.3f });
-	plane.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_meshBoxes.push_back(plane);
-	*/
-
-	/*
-	Mesh window = Mesh();
-	window.Create(&m_shaderDiffuse, "../Assets/Models/Window.obj");
-	window.SetCameraPosition(m_camera.GetPosition());
-	window.SetScale({ 0.1f, 0.1f, 0.1f });
-	window.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_meshBoxes.push_back(window);
-	*/
+	
+	
+	Mesh wall = Mesh();
+	wall.Create(&m_shaderDiffuse, "../Assets/Models/BrickWall.obj");
+	wall.SetCameraPosition(m_camera.GetPosition());
+	wall.SetScale({ 0.05f, 0.05f, 0.05f });
+	wall.SetPosition({ 0.0f, 0.0f, 0.0f });
+	m_meshBoxes.push_back(wall);
+	
 
 	//Fonts f = Fonts();
 	//f.Create(&m_shaderFont, "arial.ttf", 100);
@@ -105,9 +75,8 @@ void GameController::RunGame()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
 
-		m_camera.Rotate();
+		//m_camera.Rotate();
 		glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetView()));
-		skybox.Render(m_camera.GetProjection() * view);
 
 		for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
 		{
@@ -118,7 +87,7 @@ void GameController::RunGame()
 		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 		{
 			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
-			//Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
+			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
 		
 		//f.RenderText("Testing text", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
@@ -140,7 +109,6 @@ void GameController::RunGame()
 		m_meshBoxes[count].Cleanup();
 		//m_meshBoxes[count].Cleanup();
 	}
-	skybox.Cleanup();
 
 	m_shaderDiffuse.Cleanup();
 	m_shaderColor.Cleanup();

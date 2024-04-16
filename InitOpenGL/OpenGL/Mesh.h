@@ -35,15 +35,18 @@ private:
 	void SetShaderVariables(glm::mat4 _pv);
 	void BindAttributes();
 	string Concat(string _s1, int _index, string _s2);
+	string RemoveFolder(string _map);
 
 	// Members
 	Shader* m_shader;
-	Texture m_texture;
-	Texture m_texture2;
+	Texture m_textureDiffuse;
+	Texture m_textureSpecular;
+	Texture m_textureNormal;
 	GLuint m_vertexBuffer; // GPU buffer
 	GLuint m_indexBuffer; // GPU buffer
 	std::vector<GLfloat> m_vertexData; // Store vertex data in RAM
 	std::vector<GLubyte> m_indexData; // Store index data in RAM
+	bool m_enableNormalMap;
 
 	// Transform
 	glm::mat4 m_world;

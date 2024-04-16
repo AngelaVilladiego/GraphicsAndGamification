@@ -12,6 +12,7 @@ out vec3 retNormal; // output a color to the fragment shader
 out vec2 retTexCoord; // output texture coordinates (just a passthrough variable)
 out vec3 retFragPos;
 out vec3 retViewDirection;
+out mat4 retWorld;
 
 void main()
 {
@@ -26,4 +27,5 @@ void main()
 	retTexCoord = texCoords;
 	retFragPos = vec3(World * vec4(vertices, 1.0f)); // convert fragments to world positions
 	retViewDirection = normalize(CameraPosition - retFragPos);
+	retWorld = transpose(inverse(World));
 }
