@@ -111,7 +111,7 @@ void Fonts::RenderText(std::string _text, float _x, float _y, float _scale, glm:
 		};
 
 		// Render glyph texture over quad
-		m_shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE0, 0, ch.TextureID);
+		m_shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE2, 2, ch.TextureID);
 
 		// update content of vertex buffer memory
 		glEnableVertexAttribArray(m_shader->GetAttrVertices());

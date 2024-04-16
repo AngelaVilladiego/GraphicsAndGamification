@@ -62,15 +62,22 @@ void GameController::RunGame()
 	do
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
+
+
 		for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
 		{
 			m_meshBoxes[count].Render(m_camera.GetProjection() * m_camera.GetView());
+			m_meshBoxes[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
+		
 		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 		{
 			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
+		
 		f.RenderText("Testing text", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
+
+
 		glfwSwapBuffers(win); // Swap the front and back buffers
 		glfwPollEvents();
 	} 

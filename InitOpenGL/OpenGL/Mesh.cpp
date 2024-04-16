@@ -151,7 +151,6 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 	m_shader->SetFloat("material.specularStrength", 8);
 	m_shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE0, 0, m_texture.GetTexture());
 	m_shader->SetTextureSampler("material.specularTexture", GL_TEXTURE1, 1, m_texture2.GetTexture());
-
 }
 
 void Mesh::Render(glm::mat4 _pv)
@@ -169,4 +168,5 @@ void Mesh::Render(glm::mat4 _pv)
 	glDisableVertexAttribArray(m_shader->GetAttrNormals());
 	glDisableVertexAttribArray(m_shader->GetAttrVertices());
 	glDisableVertexAttribArray(m_shader->GetAttrTexCoords());
+
 }
