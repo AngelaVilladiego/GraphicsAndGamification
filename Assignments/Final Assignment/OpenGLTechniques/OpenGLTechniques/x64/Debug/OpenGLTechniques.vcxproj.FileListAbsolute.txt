@@ -1,0 +1,3 @@
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\x64\Debug\OpenGLTechniques.vcxproj.AssemblyReference.cache
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\x64\Debug\OpenGLTechniques.ToolWindow.resources
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\x64\Debug\OpenGLTechniques.vcxproj.GenerateResource.cache

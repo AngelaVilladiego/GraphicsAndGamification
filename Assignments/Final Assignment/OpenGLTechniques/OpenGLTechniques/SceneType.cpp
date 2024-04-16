@@ -1,0 +1,7 @@
+enum SceneType
+{
+	MOVIE_LIGHT = 1,
+	TRANSFORM = 2,
+	WATER_SCENE = 3,
+	SPACE_SCENE = 4
+};
