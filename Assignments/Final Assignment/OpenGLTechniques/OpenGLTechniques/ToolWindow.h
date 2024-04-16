@@ -210,7 +210,7 @@ namespace OpenGLTechniques {
 			this->trackBarSpecularStrength->LargeChange = 8;
 			this->trackBarSpecularStrength->Location = System::Drawing::Point(134, 66);
 			this->trackBarSpecularStrength->Maximum = 256;
-			this->trackBarSpecularStrength->Minimum = 2;
+			this->trackBarSpecularStrength->Minimum = 1;
 			this->trackBarSpecularStrength->Name = L"trackBarSpecularStrength";
 			this->trackBarSpecularStrength->Size = System::Drawing::Size(267, 45);
 			this->trackBarSpecularStrength->TabIndex = 5;

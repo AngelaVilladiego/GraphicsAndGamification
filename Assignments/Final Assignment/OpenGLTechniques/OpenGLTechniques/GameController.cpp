@@ -9,7 +9,7 @@ GameController::GameController()
 	m_shaderDiffuse = { };
 	m_shaderFont = { };
 	m_camera = { };
-	m_meshBoxes.clear();
+	m_meshes.clear();
 }
 
 void GameController::Initialize(string title = "Sample", bool fullscreen = true)
@@ -17,7 +17,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	GLFWwindow* window = WindowController::GetInstance().GetWindow(fullscreen); // Call this first as it creates a window required by GLEW
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
-	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Grey background
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -34,12 +34,34 @@ void GameController::RunGame()
 	OpenGLTechniques::ToolWindow^ window = gcnew OpenGLTechniques::ToolWindow();
 	window->Show();
 
+#pragma region DefineShaders
+	m_shaderColor = Shader();
+	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
+#pragma endregion DefineShaders
+
+
+#pragma region MovieLights
+	Mesh light = Mesh();
+	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
+	light.SetPosition({ 0.0f, 0.0f, 5.0f });
+	light.SetColor({ 1.0f, 1.0f, 1.0f });
+	light.SetScale({ 0.5f, 0.5f, 0.5f });
+	Mesh::Lights.push_back(light);
+
+
+#pragma endregion MovieLights
+
+
 	do
 	{
-
 		System::Windows::Forms::Application::DoEvents(); // handle form events
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
+
+		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+		{
+			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
+		}
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
 		glfwPollEvents();
@@ -49,12 +71,10 @@ void GameController::RunGame()
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
-		//Mesh::Lights[count].Cleanup();
 	}
-	for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
+	for (unsigned int count = 0; count < m_meshes.size(); count++)
 	{
-		m_meshBoxes[count].Cleanup();
-		//m_meshBoxes[count].Cleanup();
+		m_meshes[count].Cleanup();
 	}
 
 	m_shaderDiffuse.Cleanup();

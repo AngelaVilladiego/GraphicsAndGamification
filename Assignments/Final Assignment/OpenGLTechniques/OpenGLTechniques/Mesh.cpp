@@ -110,7 +110,10 @@ void Mesh::Create(Shader* _shader, string _file)
 
 
 	m_textureDiffuse = Texture();
-	m_textureDiffuse.LoadTexture("../Assets/Textures/" + RemoveFolder(Loader.LoadedMaterials[0].map_Kd));
+	if (Loader.LoadedMaterials[0].map_Kd != "")
+	{
+		m_textureDiffuse.LoadTexture("../Assets/Textures/" + RemoveFolder(Loader.LoadedMaterials[0].map_Kd));
+	}
 
 	m_textureSpecular = Texture();
 	if (Loader.LoadedMaterials[0].map_Ks != "")
@@ -257,8 +260,6 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 void Mesh::Render(glm::mat4 _pv)
 {
 	glUseProgram(m_shader->GetProgramId()); // Use our shader
-
-	m_rotation.x += 0.1f;
 
 	CalculateTransform();
 	SetShaderVariables(_pv);

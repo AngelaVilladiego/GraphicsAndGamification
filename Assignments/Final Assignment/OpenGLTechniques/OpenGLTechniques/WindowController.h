@@ -12,7 +12,7 @@ public:
 
 	//Accessors
 	GLFWwindow* GetWindow(bool fullscreen) { if (m_window == nullptr) { NewWindow(fullscreen); } return m_window; }
-	GLFWwindow* GetWindow() { if (m_window == nullptr) { NewWindow(true); } return m_window; }
+	GLFWwindow* GetWindow() { if (m_window == nullptr) { NewWindow(false); } return m_window; }
 
 	//Methods
 	void NewWindow(bool fullscreen);
