@@ -41,6 +41,7 @@ void GameController::RunGame()
 	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
 	// Create meshes
+
 	Mesh m = Mesh();
 	m.Create(&m_shaderColor, "../Assets/Models/Teapot.obj");
 	m.SetPosition({ 1.0f, 0.0f, 0.0f });
@@ -55,12 +56,21 @@ void GameController::RunGame()
 	teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
 	m_meshBoxes.push_back(teapot);
 
+	/*
 	Mesh box = Mesh();
 	box.Create(&m_shaderDiffuse, "../Assets/Models/Cube.obj");
 	box.SetCameraPosition(m_camera.GetPosition());
 	box.SetScale({ 0.5f, 0.5f, 0.5f });
 	box.SetPosition({ -1.0f, -1.0f, -1.0f });
 	m_meshBoxes.push_back(box);
+	*/
+
+	Mesh plane = Mesh();
+	plane.Create(&m_shaderDiffuse, "../Assets/Models/Plane.obj");
+	plane.SetCameraPosition(m_camera.GetPosition());
+	plane.SetScale({ 0.3f, 0.3f, 0.3f });
+	plane.SetPosition({ 0.0f, 0.0f, 0.0f });
+	m_meshBoxes.push_back(plane);
 
 	Fonts f = Fonts();
 	f.Create(&m_shaderFont, "arial.ttf", 100);
@@ -83,7 +93,7 @@ void GameController::RunGame()
 			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
 		
-		f.RenderText("Testing text", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
+		//f.RenderText("Testing text", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
 
 
 		glfwSwapBuffers(win); // Swap the front and back buffers
