@@ -134,7 +134,6 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 	m_shader->SetVec3("CameraPosition", m_cameraPosition);
 
 	// Configure light
-	m_shader->SetVec3("light.position", m_lightPosition);
 	m_shader->SetVec3("light.color", m_lightColor); //Light color
 	m_shader->SetFloat("light.constant", 1.0f);
 	m_shader->SetFloat("light.linear", 0.9f);
@@ -144,6 +143,11 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 	m_shader->SetVec3("light.ambientColor", { 0.1f, 0.1f, 0.1f }); //set the ambient lighting
 	m_shader->SetVec3("light.diffuseColor", { 1.0f, 1.0f, 1.0f }); //set the diffuse color to white
 	m_shader->SetVec3("light.specularColor", { 3.0f, 3.0f, 3.0f });
+
+	m_shader->SetVec3("light.position", m_lightPosition);
+	m_shader->SetVec3("light.direction", glm::normalize(glm::vec3 ({ 0, 0, 0}) - m_lightPosition));
+	m_shader->SetFloat("light.coneAngle", glm::radians(15.0f));
+	m_shader->SetFloat("light.falloff", 100);
 
 	// configure material
 	m_shader->SetFloat("material.specularStrength", 8);
