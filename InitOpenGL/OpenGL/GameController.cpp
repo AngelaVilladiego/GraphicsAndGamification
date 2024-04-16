@@ -37,11 +37,12 @@ void GameController::RunGame()
 	m_shaderDiffuse = Shader();
 	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
-	m_shaderFont = Shader();
-	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
+	//m_shaderFont = Shader();
+	//m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
 	// Create meshes
 
+	
 	Mesh m = Mesh();
 	m.Create(&m_shaderColor, "../Assets/Models/Teapot.obj");
 	m.SetPosition({ 1.0f, 0.0f, 0.0f });
@@ -56,14 +57,12 @@ void GameController::RunGame()
 	teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
 	m_meshBoxes.push_back(teapot);
 
-	/*
 	Mesh box = Mesh();
 	box.Create(&m_shaderDiffuse, "../Assets/Models/Cube.obj");
 	box.SetCameraPosition(m_camera.GetPosition());
 	box.SetScale({ 0.5f, 0.5f, 0.5f });
 	box.SetPosition({ -1.0f, -1.0f, -1.0f });
 	m_meshBoxes.push_back(box);
-	*/
 
 	Mesh plane = Mesh();
 	plane.Create(&m_shaderDiffuse, "../Assets/Models/Plane.obj");
@@ -72,8 +71,15 @@ void GameController::RunGame()
 	plane.SetPosition({ 0.0f, 0.0f, 0.0f });
 	m_meshBoxes.push_back(plane);
 
-	Fonts f = Fonts();
-	f.Create(&m_shaderFont, "arial.ttf", 100);
+	Mesh window = Mesh();
+	window.Create(&m_shaderDiffuse, "../Assets/Models/Window.obj");
+	window.SetCameraPosition(m_camera.GetPosition());
+	window.SetScale({ 0.1f, 0.1f, 0.1f });
+	window.SetPosition({ 0.0f, 0.0f, 0.0f });
+	m_meshBoxes.push_back(window);
+
+	//Fonts f = Fonts();
+	//f.Create(&m_shaderFont, "arial.ttf", 100);
 	
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 	do
@@ -105,9 +111,11 @@ void GameController::RunGame()
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
+		Mesh::Lights[count].Cleanup();
 	}
 	for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
 	{
+		m_meshBoxes[count].Cleanup();
 		m_meshBoxes[count].Cleanup();
 	}
 	m_shaderDiffuse.Cleanup();
