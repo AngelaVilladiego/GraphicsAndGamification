@@ -30,7 +30,7 @@ void Texture::LoadTexture(string _fileName)
 	// Load and generate the texture
 	stbi_set_flip_vertically_on_load(true); //flip the image so that 0.0 y on input is bottom side like expected by OpenGL
 	GLubyte* data = stbi_load(_fileName.c_str(), &m_width, &m_height, &m_channels, 0);
-	M_ASSERT(data != nullptr, "Failed to load texture");
+	M_ASSERT(data != nullptr, _fileName.c_str());
 
 	if (EndsWith(_fileName, ".png"))
 	{

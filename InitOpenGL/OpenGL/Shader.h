@@ -15,9 +15,9 @@ public:
 	GLuint GetAttrVertices() { return m_attrVertices; }
 	GLuint GetAttrColors() { return m_attrColors; }
 	GLuint GetAttrNormals() { return m_attrNormals; }
+	GLuint GetAttrTangents() { return m_attrTangents; }
+	GLuint GetAttrBitangents() { return m_attrBitangents; }
 	GLuint GetAttrTexCoords() { return m_attrTexCoords; }
-	GLuint GetSampler1() { return m_sampler1; }
-	GLuint GetSampler2() { return m_sampler2; }
 	GLuint GetAttrWVP() { return m_attrWVP; }
 
 	// Methods
@@ -41,10 +41,10 @@ private:
 	GLuint m_attrVertices; // Handle for the attribute vertex buffer
 	GLuint m_attrColors;
 	GLuint m_attrNormals;
+	GLuint m_attrTangents;
+	GLuint m_attrBitangents;
 	GLuint m_attrTexCoords;
 	GLuint m_attrWVP;
-	GLuint m_sampler1;
-	GLuint m_sampler2;
 	GLint m_result = GL_FALSE;
 	int m_infoLogLength;
 };
