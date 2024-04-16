@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "Shader.h"
+#include "OBJ_loader.h"
 
 vector<Mesh> Mesh::Lights;
 
@@ -22,56 +23,42 @@ Mesh::~Mesh()
 {
 }
 
-void Mesh::Create(Shader* _shader)
+void Mesh::Create(Shader* _shader, string _file)
 {
 	m_shader = _shader;
 
+	objl::Loader Loader; // Initialize Loader
+	M_ASSERT(Loader.LoadFile(_file) == true, "Failed to load mesh,"); // Load .obj File
+
+	for (unsigned int i = 0; i < Loader.LoadedMeshes.size(); i++)
+	{
+		objl::Mesh curMesh = Loader.LoadedMeshes[i];
+		for (unsigned int j = 0; j < curMesh.Vertices.size(); j++)
+		{
+			m_vertexData.push_back(curMesh.Vertices[j].Position.X);
+			m_vertexData.push_back(curMesh.Vertices[j].Position.Y);
+			m_vertexData.push_back(curMesh.Vertices[j].Position.Z);
+			m_vertexData.push_back(curMesh.Vertices[j].Normal.X);
+			m_vertexData.push_back(curMesh.Vertices[j].Normal.Y);
+			m_vertexData.push_back(curMesh.Vertices[j].Normal.Z);
+			m_vertexData.push_back(curMesh.Vertices[j].TextureCoordinate.X);
+			m_vertexData.push_back(curMesh.Vertices[j].TextureCoordinate.Y);
+		}
+	}
+
+	// Remove directory if present
+	string diffuseMap = Loader.LoadedMaterials[0].map_Kd;
+	const size_t last_slash_idx = diffuseMap.find_last_of("\\");
+	if (std::string::npos != last_slash_idx)
+	{
+		diffuseMap.erase(0, last_slash_idx + 1);
+	}
+
 	m_texture = Texture();
-	m_texture.LoadTexture("../Assets/Textures/MetalFrameWood.jpg");
+	m_texture.LoadTexture("../Assets/Textures/" + diffuseMap);
 
 	m_texture2 = Texture();
-	m_texture2.LoadTexture("../Assets/Textures/MetalFrame.jpg");
-
-	m_vertexData = { 
-		/* Position */				/* Normals */		/* Texture Coords*/
-		-0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	0.0f, 0.0f,
-		0.5f, -0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	1.0f, 1.0f,
-		0.5f, 0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	1.0f, 1.0f,
-		-0.5f, 0.5f, -0.5f,			0.0f, 0.0f, -1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,		0.0f, 0.0f, -1.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		0.5f, -0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f, 0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f,			0.0f, 0.0f, 1.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.5f,			-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, 0.5f, -0.5f,			-1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,		-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,		-1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f,			-1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, 0.5f,			-1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,			1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, -0.5f,			1.0f, 0.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,			1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,			1.0f, 0.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, 0.5f,			1.0f, 0.0f, 0.0f,	0.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,			1.0f, 0.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, -0.5f, -0.5f,			0.0f, -1.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, -0.5f, 0.5f,			0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
-		0.5f, -0.5f, 0.5f,			0.0f, -1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, 0.5f,			0.0f, -1.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,		0.0f, -1.0f, 0.0f,	0.0f, 1.0f,
-		-0.5f, 0.5f, -0.5f,			0.0f, 1.0f, 0.0f,	0.0f, 1.0f,
-		0.5f, 0.5f, -0.5f,			0.0f, 1.0f, 0.0f,	1.0f, 1.0f,
-		0.5f, 0.5f, 0.5f,			0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		0.5f, 0.5f, 0.5f,			0.0f, 1.0f, 0.0f,	1.0f, 0.0f,
-		-0.5f, 0.5f, 0.5f,			0.0f, 1.0f, 0.0f,	0.0f, 0.0f,
-		-0.5f, 0.5f, -0.5f,			0.0f, 1.0f, 0.0f,	0.0f, 1.0f
-
-	};
+	m_texture2.LoadTexture("../Assets/Textures/" + diffuseMap);
 
 	glGenBuffers(1, &m_vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);

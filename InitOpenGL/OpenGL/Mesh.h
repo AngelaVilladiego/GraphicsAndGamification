@@ -3,6 +3,7 @@
 
 #include "StandardIncludes.h"
 #include "Texture.h"
+
 class Shader;
 
 class Mesh
@@ -21,7 +22,7 @@ public:
 	void SetCameraPosition(glm::vec3 _cameraPosition) { m_cameraPosition = _cameraPosition; }
 
 	// Methods
-	void Create(Shader* _shader);
+	void Create(Shader* _shader, string _file);
 	void Cleanup();
 	void Render(glm::mat4 _pv);
 	void CalculateTransform();
