@@ -248,7 +248,7 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 
 	
 	// configure material
-	m_shader->SetFloat("material.specularStrength", 8);
+	m_shader->SetFloat("material.specularStrength", 8.0f);
 	m_shader->SetTextureSampler("material.diffuseTexture", GL_TEXTURE0, 0, m_textureDiffuse.GetTexture());
 	m_shader->SetTextureSampler("material.specularTexture", GL_TEXTURE1, 1, m_textureSpecular.GetTexture());
 	m_shader->SetTextureSampler("material.normalTexture", GL_TEXTURE2, 2, m_textureNormal.GetTexture());

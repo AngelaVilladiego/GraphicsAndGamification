@@ -1,0 +1,13 @@
+#version 330 // OpenGL version 2.1 (minimum requirement)
+
+in vec4 vertices; 
+
+uniform mat4 Projection;
+
+out vec2 retTexCoords;
+
+void main()
+{
+	gl_Position = Projection * vec4(vertices.xy, 0.0f, 1.0f);
+	retTexCoords = vertices.zw;
+}

@@ -21,6 +21,11 @@ public:
 	void SetColor(glm::vec3 _color) { m_color = _color; }
 	glm::vec3 GetColor() { return m_color; }
 	void SetCameraPosition(glm::vec3 _cameraPosition) { m_cameraPosition = _cameraPosition; }
+	void SetLightPosition(glm::vec3 _position) { m_lightPosition = _position; }
+	void SetSpecularStrength(float _specularStrength) { m_specularStrength = _specularStrength; }
+	void SetSpecularColor(glm::vec3 _specularColor) { m_specularColor = _specularColor; }
+	void SetDiffuseColor(glm::vec3 _diffuseColor) { m_diffuseColor = _diffuseColor; }
+	GLuint GetShaderProgram();
 
 	// Methods
 	void Create(Shader* _shader, string _file);
@@ -57,6 +62,13 @@ private:
 	glm::vec3 m_scale;
 	glm::vec3 m_color;
 	glm::vec3 m_cameraPosition;
+
+	// LIGHT
+	glm::vec3 m_lightPosition;
+	float m_specularStrength;
+	glm::vec3 m_specularColor;
+	glm::vec3 m_diffuseColor;
+
 };
 
 #endif // MESH_H

@@ -89,6 +89,8 @@ void Shader::EvaluateShader(int _infoLength, GLuint _id)
 
 GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 {
+	std::cout << "loading shader: " << _filePath << endl;
+
 	GLuint shaderID = glCreateShader(_type); // Create the shader
 
 	// Read the Shader code from the file
@@ -96,7 +98,7 @@ GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 	std::ifstream shaderStream(_filePath, std::ios::in);
 	M_ASSERT(shaderStream.is_open(), ("Impossible to open %s. Are you in the right directory? Don't forget to read teh FAQ!\n", _filePath));
 
-	std::string Line;
+	std::string Line = "";
 	while (getline(shaderStream, Line))
 		shaderCode += "\n" + Line;
 	shaderStream.close();
@@ -110,6 +112,7 @@ GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &m_result);
 	glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &m_infoLogLength);
 	EvaluateShader(m_infoLogLength, shaderID);
+	std::cout << "shader " << shaderID << " compile status: " << m_result << endl;
 
 	// Attach shader to program
 	glAttachShader(m_programID, shaderID);
@@ -119,7 +122,14 @@ GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 
 void Shader::CreateShaderProgram(const char* _vertexFilePath, const char* _fragmentFilePath)
 {
+	if (m_programID != 0) {
+		glDeleteProgram(m_programID);
+	}
+
 	m_programID = glCreateProgram(); // Create the shader program
+
+	std::cout << "creating shader program: " << m_programID << endl;
+
 	GLuint vertexShaderID = LoadShaderFile(_vertexFilePath, GL_VERTEX_SHADER); // Load vertex shader
 	GLuint fragmentShaderID = LoadShaderFile(_fragmentFilePath, GL_FRAGMENT_SHADER); // Load fragment shader
 	glLinkProgram(m_programID); // Link the program
@@ -128,6 +138,9 @@ void Shader::CreateShaderProgram(const char* _vertexFilePath, const char* _fragm
 	glGetProgramiv(m_programID, GL_LINK_STATUS, &m_result);
 	glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &m_infoLogLength);
 	EvaluateShader(m_infoLogLength, m_programID);
+
+	std::cout << "shader program " << m_programID << " link status: " << m_result << endl;
+	std::cout << endl;
 
 	// Free resources
 	glDetachShader(m_programID, vertexShaderID);
