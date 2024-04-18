@@ -7,6 +7,7 @@
 #include "WindowController.h"
 #include "Mesh.h"
 #include "Camera.h"
+#include "SceneType.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -17,6 +18,7 @@ public:
 
 	//Methods
 	void Initialize(string title, bool fullscreen);
+	void ShowMovieLights();
 	void RunGame();
 
 private:
@@ -27,6 +29,10 @@ private:
 	Camera m_camera;
 	vector<Mesh> m_meshes;
 	Skybox m_skybox;
+	glm::vec2 m_mousePos;
+	float m_lightSpeed;
+	SceneType m_currScene;
+	vector<Mesh> m_spaceMeshes;
 };
 
 #endif // GAME_CONTROLLER_H

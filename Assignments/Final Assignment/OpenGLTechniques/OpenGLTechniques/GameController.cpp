@@ -10,6 +10,8 @@ GameController::GameController()
 	m_shaderFont = { };
 	m_camera = { };
 	m_meshes.clear();
+	m_lightSpeed = 10.0f;
+	m_currScene = MOVIE_LIGHT;
 }
 
 void GameController::Initialize(string title = "Sample", bool fullscreen = true)
@@ -43,11 +45,115 @@ void GameController::RunGame()
 	OpenGLTechniques::ToolWindow^ window = gcnew OpenGLTechniques::ToolWindow();
 	window->Show();
 
-#pragma region DefineShaders
-	
 	m_shaderColor = Shader();
 	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
-	
+
+	m_shaderDiffuse = Shader();
+	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+
+	m_shaderFont = Shader();
+	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
+
+	m_shaderSkybox = Shader();
+	m_shaderSkybox.LoadShaders("Skybox.vertexshader", "Skybox.fragmentshader");
+
+
+#pragma region SpaceMeshes
+
+	Mesh light = Mesh();
+	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
+	light.SetPosition({ 0.0f, 0.0f, 1.0f });
+	light.SetColor({ 1.0f, 1.0f, 1.0f });
+	light.SetScale({ 0.1f, 0.1f, 0.1f });
+	Mesh::Lights.push_back(light);
+
+
+	Skybox skybox = Skybox();
+	skybox.Create(&m_shaderSkybox, "../Assets/Models/Skybox.obj",
+		{
+			"../Assets/Textures/Skybox/right.jpg",
+			"../Assets/Textures/Skybox/left.jpg",
+			"../Assets/Textures/Skybox/top.jpg",
+			"../Assets/Textures/Skybox/bottom.jpg",
+			"../Assets/Textures/Skybox/front.jpg",
+			"../Assets/Textures/Skybox/back.jpg",
+		});
+
+
+
+	Mesh fighter = Mesh();
+	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
+	fighter.SetCameraPosition(m_camera.GetPosition());
+	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
+	fighter.SetScale({ 0.0008f, 0.0008f, 0.0008f });
+	fighter.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f });
+	fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
+	fighter.SetSpecularColor({ (float)OpenGLTechniques::ToolWindow::SpecularColorR, (float)OpenGLTechniques::ToolWindow::SpecularColorG, (float)OpenGLTechniques::ToolWindow::SpecularColorB });
+	m_spaceMeshes.push_back(fighter);
+#pragma endregion SpaceMeshes
+
+
+	do
+	{
+		System::Windows::Forms::Application::DoEvents();// handle form events
+
+		m_currScene = OpenGLTechniques::ToolWindow::SelectedSceneType;
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
+
+		if (m_currScene == SPACE_SCENE)
+		{
+			glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetView()));
+			skybox.Render(m_camera.GetProjection() * view);
+
+			for (unsigned int count = 0; count < m_spaceMeshes.size(); count++)
+			{
+				m_spaceMeshes[count].Render(m_camera.GetProjection() * m_camera.GetView());
+			}
+		}
+		else {
+
+			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+			{
+				Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
+			}
+		}
+
+		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
+		glfwPollEvents();
+	} while (glfwGetKey(WindowController::GetInstance().GetWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
+		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
+
+	skybox.Cleanup();
+
+	for (unsigned int count = 0; count < m_meshes.size(); count++)
+	{
+		m_meshes[count].Cleanup();
+	}
+
+	for (unsigned int count = 0; count < m_spaceMeshes.size(); count++)
+	{
+		m_spaceMeshes[count].Cleanup();
+	}
+
+	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+	{
+		Mesh::Lights[count].Cleanup();
+	}
+
+	m_shaderDiffuse.Cleanup();
+	m_shaderColor.Cleanup();
+	m_shaderSkybox.Cleanup();
+}
+
+void GameController::ShowMovieLights() 
+{
+
+#pragma region DefineShaders
+
+	m_shaderColor = Shader();
+	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
+
 	m_shaderDiffuse = Shader();
 	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
@@ -58,13 +164,15 @@ void GameController::RunGame()
 
 
 #pragma region MovieLights
-	
+
+	Resolution res = WindowController::GetInstance().GetResolution();
+
 	Mesh light = Mesh();
 	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
 	light.SetPosition({ 0.0f, 0.0f, 1.0f });
 	light.SetColor({ 1.0f, 1.0f, 1.0f });
 	light.SetScale({ 0.1f, 0.1f, 0.1f });
-	Mesh::Lights.push_back(light);	
+	Mesh::Lights.push_back(light);
 
 	Mesh fighter = Mesh();
 	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
@@ -84,10 +192,48 @@ void GameController::RunGame()
 	{
 		System::Windows::Forms::Application::DoEvents(); // handle form events
 
+#pragma region MousePos
+		// get mouse position
+		/*
+		double mouseX;
+		double mouseY;
+		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
+
+		m_mousePos.x = (float)mouseX;
+		m_mousePos.y = (float)mouseY;
+
+		float screenMouseX = m_mousePos.x / res.m_width;
+		float screenMouseY = m_mousePos.y / res.m_height;
+
+		glm::mat4 inversePV = inverse(m_camera.GetProjection() * m_camera.GetView());
+		glm::vec4 clipFar = inversePV * glm::vec4({ screenMouseX, screenMouseY, 1, 1 });
+		glm::vec4 clipNear = inversePV * glm::vec4({ screenMouseX, screenMouseY, 0, 1 });
+		glm::vec3 ray = glm::normalize(glm::vec3({ clipFar.x - clipNear.x, clipFar.y - clipNear.y, clipFar.z - clipNear.z }));
+		std::string mouseText = "Mouse Position: " + std::to_string(mouseX) + "   " + std::to_string(mouseY);
+
+
+		glm::vec3 lightPosition = m_camera.GetPosition() - ray;
+		*/
+
+		double mouseX;
+		double mouseY;
+		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
+
+		m_mousePos.x = (float)mouseX;
+		m_mousePos.y = (float)mouseY;
+		float centerX = res.m_width / 2.0f;
+		float centerY = res.m_height / 2.0f;
+
+		glm::vec3 dir = glm::normalize(glm::vec3({ m_mousePos.x - centerX, m_mousePos.y - centerY, 0 }));
+		std::string mouseText = "Mouse Position: " + std::to_string(mouseX) + "   " + std::to_string(mouseY);
+
+
+#pragma endregion MousePos
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
 
 		for (unsigned int count = 0; count < m_meshes.size(); count++)
-		{			
+		{
 			m_meshes[count].SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
 			m_meshes[count].SetSpecularColor({ (float)OpenGLTechniques::ToolWindow::SpecularColorR, (float)OpenGLTechniques::ToolWindow::SpecularColorG, (float)OpenGLTechniques::ToolWindow::SpecularColorB });
 			m_meshes[count].Render(m_camera.GetProjection() * m_camera.GetView());
@@ -95,10 +241,11 @@ void GameController::RunGame()
 
 		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 		{
+			Mesh::Lights[count].SetPosition(Mesh::Lights[count].GetPosition() + (dir * m_lightSpeed));
 			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
 
-		f.RenderText("Testing text", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
+		f.RenderText(mouseText, 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
 		glfwPollEvents();
