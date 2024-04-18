@@ -1,0 +1,3 @@
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\MultiRenders\x64\Debug\MultiRenders.vcxproj.AssemblyReference.cache
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\MultiRenders\x64\Debug\MultiRenders.ToolWindow.resources
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\MultiRenders\x64\Debug\MultiRenders.vcxproj.GenerateResource.cache
