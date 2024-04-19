@@ -2,6 +2,7 @@
 #include "WindowController.h"
 #include "Fonts.h"
 #include "ToolWindow.h"
+#include "FPSCounter.h"
 
 GameController::GameController()
 {
@@ -21,7 +22,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
+	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Gray background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -38,9 +39,12 @@ void GameController::RunGame()
 	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
 	window->Show();
 
+	FPSCounter fpsCounter = FPSCounter();
+
 	do
 	{
 		System::Windows::Forms::Application::DoEvents();// handle form events
+
 
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
