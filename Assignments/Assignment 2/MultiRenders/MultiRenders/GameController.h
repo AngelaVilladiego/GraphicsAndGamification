@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "SceneType.h"
+#include "PostProcessor.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -25,6 +26,9 @@ private:
 	Shader m_shaderDiffuse;
 	Shader m_shaderBasic;
 	Shader m_shaderFont;
+	Shader m_shaderPost;
+
+	PostProcessor m_postProcessor;
 	Camera m_camera;
 	vector<Mesh> m_meshes;
 	float m_lightSpeed;

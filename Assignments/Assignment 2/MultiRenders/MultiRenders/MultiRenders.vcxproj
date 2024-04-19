@@ -149,6 +149,7 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.9\lib-vc2022\glfw3.dll" "$(TargetDir)"
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="PostProcessor.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ToolWindow.cpp" />
@@ -160,6 +161,7 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.9\lib-vc2022\glfw3.dll" "$(TargetDir)"
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="PostProcessor.h" />
     <ClInclude Include="Resolution.h" />
     <ClInclude Include="SceneType.h" />
     <ClInclude Include="Shader.h" />
@@ -185,6 +187,8 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.9\lib-vc2022\glfw3.dll" "$(TargetDir)"
     <None Include="Diffuse.vertexshader" />
     <None Include="Font.fragmentshader" />
     <None Include="Font.vertexshader" />
+    <None Include="PostProcess.fragmentshader" />
+    <None Include="PostProcess.vertexshader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

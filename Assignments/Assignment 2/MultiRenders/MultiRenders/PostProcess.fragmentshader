@@ -1,0 +1,21 @@
+#version 330
+in vec2 retTexCoord;
+
+out vec4 FragColor;
+
+uniform sampler2D ScreenTexture;
+
+void main()
+{
+	vec2 center = vec2(0.5, 0.5);
+
+	float r = abs(retTexCoord.x - center.x) * 2.0f;
+	float g = abs(retTexCoord.y - center.y) * 2.0f;
+	float b = (0.5f - distance(retTexCoord, center)) * 2.0f;
+
+	vec3 tint = vec3(r, g, b);
+
+	vec3 finalColor = mix(texture(ScreenTexture, retTexCoord).rgb, tint, 0.5);
+
+	FragColor = vec4(finalColor, 1.0);
+}

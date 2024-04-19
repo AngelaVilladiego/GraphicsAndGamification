@@ -10,6 +10,8 @@ GameController::GameController()
 	m_shaderDiffuse = { };
 	m_shaderBasic = { };
 	m_shaderFont = { };
+	m_shaderPost = { };
+
 	m_camera = { };
 	m_meshes.clear();
 	m_lightSpeed = 10.0f;
@@ -78,6 +80,9 @@ void GameController::RunGame()
 	m_shaderBasic = Shader();
 	m_shaderBasic.LoadShaders("Basic.vertexshader", "Basic.fragmentshader");
 
+	m_shaderPost = Shader();
+	m_shaderPost.LoadShaders("PostProcess.vertexshader", "PostProcess.fragmentshader");
+
 
 
 	// Creating Meshes
@@ -98,8 +103,12 @@ void GameController::RunGame()
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
+
 	Fonts mousePosFont = Fonts();
 	mousePosFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	m_postProcessor = PostProcessor();
+	m_postProcessor.Create(&m_shaderPost);
 
 
 
@@ -170,8 +179,10 @@ void GameController::RunGame()
 
 		if (m_currScene == COLOR)
 		{
+			m_postProcessor.Start();
 			teapot.SetShader(&m_shaderBasic);
 			teapot.Render(pv);
+			m_postProcessor.End();
 		}
 
 
@@ -190,17 +201,21 @@ void GameController::RunGame()
 		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
 
 	// Cleanup
-
-	teapot.Cleanup();
-
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
 	}
-
 	m_shaderColor.Cleanup();
 	m_shaderDiffuse.Cleanup();
 	m_shaderFont.Cleanup();
+	m_shaderBasic.Cleanup();
+	m_shaderPost.Cleanup();
+
+	teapot.Cleanup();
+	fpsFont.Cleanup();
+	mousePosFont.Cleanup();
+	m_postProcessor.Cleanup();
+
 }
 
 

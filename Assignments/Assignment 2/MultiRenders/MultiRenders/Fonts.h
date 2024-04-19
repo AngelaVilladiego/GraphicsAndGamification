@@ -20,6 +20,7 @@ public:
 
 	// methods
 	void Create(Shader* _shader, string _name, FT_UInt _size);
+	void Cleanup();
 	void RenderText(std::string _text, float _x, float _y, float _scale, glm::vec3 _color);
 
 private:

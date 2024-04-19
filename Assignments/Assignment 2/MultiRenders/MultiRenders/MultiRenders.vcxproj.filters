@@ -48,6 +48,9 @@
     <ClCompile Include="FPSCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PostProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ToolWindow.h">
@@ -89,6 +92,9 @@
     <ClInclude Include="FPSCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PostProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Font.fragmentshader">
@@ -113,6 +119,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Basic.vertexshader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="PostProcess.vertexshader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="PostProcess.fragmentshader">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
