@@ -38,6 +38,7 @@ private:
 
 	// Methods
 	glm::vec3 CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);
+	glm::vec3 MoveToCenter(glm::vec3 currPos, float speed);
 	void AddCube();
 	float RandomFloat(float min, float max);
 };

@@ -63,6 +63,10 @@ void GameController::RunGame()
 	quadBottomLeft = { -centerVec.x, -centerVec.y, 0 };
 	quadBottomRight = { centerVec.x, -centerVec.y, 0 };
 
+	float cubeSpeed = 0.0002f;
+	float touchRadius = 0.001f;
+	vector<Mesh>::iterator cubeIt;
+
 	glm::mat4 pv = m_camera.GetProjection() * m_camera.GetView();
 	
 
@@ -173,6 +177,7 @@ void GameController::RunGame()
 
 
 
+
 		//Rendering
 		if (m_currScene == MOVE_LIGHT)
 		{
@@ -201,9 +206,20 @@ void GameController::RunGame()
 				Mesh::Lights[count].Render(pv);
 			}
 
-			for (unsigned int count = 0; count < m_cubes.size(); count++)
+			for (cubeIt = m_cubes.begin(); cubeIt != m_cubes.end();)
 			{
-				m_cubes[count].Render(pv);
+				cubeIt->SetPosition(MoveToCenter(cubeIt->GetPosition(), cubeSpeed));
+				cubeIt->Render(pv);
+
+				
+				if (glm::distance(cubeIt->GetPosition(), glm::vec3({ 0, 0, 0 })) <= touchRadius)
+				{
+					cubeIt = m_cubes.erase(cubeIt);
+				}
+				else
+				{
+					++cubeIt;
+				}
 			}
 
 			cubesFont.RenderText("Cubes: " + to_string(m_cubes.size()), 50, 150, 0.25, { 1.0f, 1.0f, 0.0f });
@@ -281,6 +297,14 @@ glm::vec3 GameController::CalculatePosition(glm::vec3 mousePos, glm::vec3 center
 	glm::vec3 newPosition = currPos + (direction * speed);
 
 	return newPosition;	
+}
+
+glm::vec3 GameController::MoveToCenter(glm::vec3 currPos, float speed)
+{
+	glm::vec3 direction = glm::normalize(glm::vec3({ 0, 0, 0 }) - currPos);
+	glm::vec3 newPosition = currPos + (direction * speed);
+	
+	return newPosition;
 }
 
 void GameController::AddCube()
