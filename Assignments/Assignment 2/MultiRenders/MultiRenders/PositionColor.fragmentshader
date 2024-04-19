@@ -1,0 +1,28 @@
+#version 330 // OpenGL version 2.1 (minimum requirement)
+
+in vec3 retNormal;
+in vec2 retTexCoord;
+in vec4 retScreenProjection;
+
+struct Material
+{
+	sampler2D diffuseTexture;
+};
+
+uniform Material material;
+
+out vec4 FragColor;
+
+void main()
+{
+	vec2 coords = (retScreenProjection.xy / retScreenProjection.w + 1.0) * 0.5;
+
+	float r = abs(coords.x - 0.5f) * 2.0f;
+	float g = abs(coords.y - 0.5f) * 2.0f;
+	float b = (0.5f - length(coords - 0.5f)) * 2.0f;
+
+	vec3 tint = vec3(r, g, b);
+
+	vec4 color = vec4(vec4(tint, 1.0f) * texture(material.diffuseTexture, retTexCoord));
+	FragColor = color;
+}

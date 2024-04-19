@@ -115,10 +115,10 @@
     <None Include="Diffuse.vertexshader">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Basic.fragmentshader">
+    <None Include="PositionColor.fragmentshader">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Basic.vertexshader">
+    <None Include="PositionColor.vertexshader">
       <Filter>Shaders</Filter>
     </None>
     <None Include="PostProcess.vertexshader">

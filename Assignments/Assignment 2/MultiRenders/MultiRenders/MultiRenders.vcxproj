@@ -179,8 +179,8 @@ copy /Y "$(SolutionDir)\External\glfw-3.3.9\lib-vc2022\glfw3.dll" "$(TargetDir)"
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Basic.fragmentshader" />
-    <None Include="Basic.vertexshader" />
+    <None Include="PositionColor.fragmentshader" />
+    <None Include="PositionColor.vertexshader" />
     <None Include="Color.fragmentshader" />
     <None Include="Color.vertexshader" />
     <None Include="Diffuse.fragmentshader" />

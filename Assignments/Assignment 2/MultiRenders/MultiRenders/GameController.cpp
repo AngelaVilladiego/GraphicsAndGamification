@@ -8,7 +8,7 @@ GameController::GameController()
 {
 	m_shaderColor = { };
 	m_shaderDiffuse = { };
-	m_shaderBasic = { };
+	m_shaderPositionColor = { };
 	m_shaderFont = { };
 	m_shaderPost = { };
 
@@ -77,8 +77,8 @@ void GameController::RunGame()
 	m_shaderDiffuse = Shader();
 	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
-	m_shaderBasic = Shader();
-	m_shaderBasic.LoadShaders("Basic.vertexshader", "Basic.fragmentshader");
+	m_shaderPositionColor = Shader();
+	m_shaderPositionColor.LoadShaders("PositionColor.vertexshader", "PositionColor.fragmentshader");
 
 	m_shaderPost = Shader();
 	m_shaderPost.LoadShaders("PostProcess.vertexshader", "PostProcess.fragmentshader");
@@ -168,6 +168,7 @@ void GameController::RunGame()
 		if (m_currScene == MOVE_LIGHT)
 		{
 			teapot.SetShader(&m_shaderDiffuse);
+			//teapot.SetAmbientColor({ 0.2f, 0.2f, 0.2f });
 			teapot.Render(pv);
 
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
@@ -179,10 +180,9 @@ void GameController::RunGame()
 
 		if (m_currScene == COLOR)
 		{
-			m_postProcessor.Start();
-			teapot.SetShader(&m_shaderBasic);
+			teapot.SetShader(&m_shaderPositionColor);
+			//teapot.SetAmbientColor({ 1.f, 1.f, 1.f });
 			teapot.Render(pv);
-			m_postProcessor.End();
 		}
 
 
@@ -208,7 +208,7 @@ void GameController::RunGame()
 	m_shaderColor.Cleanup();
 	m_shaderDiffuse.Cleanup();
 	m_shaderFont.Cleanup();
-	m_shaderBasic.Cleanup();
+	m_shaderPositionColor.Cleanup();
 	m_shaderPost.Cleanup();
 
 	teapot.Cleanup();

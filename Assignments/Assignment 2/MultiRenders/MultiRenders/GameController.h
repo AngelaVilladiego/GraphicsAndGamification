@@ -24,7 +24,7 @@ public:
 private:
 	Shader m_shaderColor;
 	Shader m_shaderDiffuse;
-	Shader m_shaderBasic;
+	Shader m_shaderPositionColor;
 	Shader m_shaderFont;
 	Shader m_shaderPost;
 

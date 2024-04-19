@@ -15,7 +15,7 @@ void main()
 
 	vec3 tint = vec3(r, g, b);
 
-	vec3 finalColor = mix(texture(ScreenTexture, retTexCoord).rgb, tint, 0.5);
+	vec3 finalColor = texture(ScreenTexture, retTexCoord).rgb * tint;
 
 	FragColor = vec4(finalColor, 1.0);
 }

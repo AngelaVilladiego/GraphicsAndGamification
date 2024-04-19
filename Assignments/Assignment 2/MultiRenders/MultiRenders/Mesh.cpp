@@ -17,7 +17,14 @@ Mesh::Mesh()
 	m_scale = { 1, 1, 1 };
 	m_color = { 0, 0, 0 };
 	m_cameraPosition = { 0, 0, 0 };
+	m_ambientColor = { 0.2f, 0.2f, 0.2f };
 	m_enableNormalMap = false;
+
+	m_lightPosition = { 0, 0, 0 };
+	m_specularStrength = 1;
+	m_specularColor = { 1.0f, 1.0f, 1.0f };
+	m_diffuseColor = { 0.0f, 0.0f, 0.0f };
+	m_ambientColor = { 0.2f, 0.2f, 0.2f };
 }
 
 Mesh::~Mesh()
@@ -154,7 +161,7 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 	for (unsigned int i = 0; i < Lights.size(); i++)
 	{
 		// Configure light
-		m_shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.2f, 0.2f, 0.2f }); //set the ambient lighting
+		m_shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), m_ambientColor); //set the ambient lighting
 		m_shader->SetVec3(Concat("light[", i, "].diffuseColor").c_str(), Lights[i].GetColor()); //set the diffuse color to white
 		m_shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), m_specularColor);
 		m_shader->SetVec3(Concat("light[", i, "].position").c_str(), Lights[i].GetPosition());
