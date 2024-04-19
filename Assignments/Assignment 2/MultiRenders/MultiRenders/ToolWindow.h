@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SceneType.h"
+#include <sstream>
+#include <iomanip>
 
 namespace MultiRenders {
 
@@ -354,23 +356,30 @@ namespace MultiRenders {
 		private: System::Void trackBarSpecularColorR_Scroll(System::Object^ sender, System::EventArgs^ e) {
 			float val = trackBarSpecularColorR->Value / 100.0f;
 			SpecularColorR = val;
-			labelSpecularColorR->Text = System::Convert::ToString(val);
+			labelSpecularColorR->Text = getFormattedString(val);
 		}
 		private: System::Void trackBarSpecularColorG_Scroll(System::Object^ sender, System::EventArgs^ e) {
 			float val = trackBarSpecularColorG->Value / 100.0f;
 			SpecularColorG = val;
-			labelSpecularColorG->Text = System::Convert::ToString(val);
+			labelSpecularColorG->Text = getFormattedString(val);
 		}
 		private: System::Void trackBarSpecularColorB_Scroll(System::Object^ sender, System::EventArgs^ e) {
 			float val = trackBarSpecularColorB->Value / 100.0f;
 			SpecularColorB = val;
-			labelSpecularColorB->Text = System::Convert::ToString(val);
+			labelSpecularColorB->Text = getFormattedString(val);
 		}
 		private: System::Void buttonResetLightPosition_Click(System::Object^ sender, System::EventArgs^ e) {
 			ResetLightPosition = true;
 		}
 		private: System::Void buttonResetTeapotPosition_Click(System::Object^ sender, System::EventArgs^ e) {
 			ResetTeapotPosition = true;
+		}
+
+		private: System::String^ getFormattedString(float val) {
+			std::stringstream stream;
+			stream << std::fixed << std::setprecision(2) << val;
+
+			return gcnew String(stream.str().c_str());
 		}
 	};
 }
