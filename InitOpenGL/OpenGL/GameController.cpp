@@ -8,8 +8,9 @@ GameController::GameController()
 	m_shaderColor = { };
 	m_shaderDiffuse = { };
 	m_shaderFont = { };
+	m_shaderPost = { };
 	m_camera = { };
-	m_meshBoxes.clear();
+	m_meshes.clear();
 }
 
 void GameController::Initialize()
@@ -17,24 +18,19 @@ void GameController::Initialize()
 	GLFWwindow* window = WindowController::GetInstance().GetWindow(); // Call this first as it creates a window required by GLEW
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
-	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Grey background
+	glClearColor(0, 0, 0, 1); // Black
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand((unsigned int)time(0));
-
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 
-	GLenum err = glGetError();
-
-	if (err != GL_NO_ERROR)
-	{
-		std::cout << "initialization errors: " << err << std::endl;
-	}
-
-	// Create a default perspective camera
-	m_camera = Camera(WindowController::GetInstance().GetResolution());
+	// create default perspective camera
+	Resolution r = WindowController::GetInstance().GetResolution();
+	glViewport(0, 0, r.m_width, r.m_height);
+	m_camera = Camera(r);
 }
 
 void GameController::RunGame()
@@ -53,6 +49,10 @@ void GameController::RunGame()
 	m_shaderFont = Shader();
 	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
+	m_shaderPost = Shader();
+	m_shaderPost.LoadShaders("PostProcess.vertexshader", "PostProcess.fragmentshader");
+
+
 	// Create meshes
 	Mesh m = Mesh();
 	m.Create(&m_shaderColor, "../Assets/Models/Teapot.obj");
@@ -62,11 +62,11 @@ void GameController::RunGame()
 	Mesh::Lights.push_back(m);
 
 	Mesh box = Mesh();
-	box.Create(&m_shaderDiffuse, "../Assets/Models/Cube.obj", 1000);
+	box.Create(&m_shaderDiffuse, "../Assets/Models/Cube.obj", 10);
 	box.SetCameraPosition(m_camera.GetPosition());
-	box.SetScale({ 0.05f, 0.05f, 0.05f });
+	box.SetScale({ 0.1f, 0.1f, 0.1f });
 	box.SetPosition({ 0.0f, 0.0f, 0.0f });
-	m_meshBoxes.push_back(box);
+	m_meshes.push_back(box);
 
 	/*
 	Mesh fighter = Mesh();
@@ -78,8 +78,10 @@ void GameController::RunGame()
 	*/
 
 	Fonts f = Fonts();
-	f.Create(&m_shaderFont, "arial.ttf", 100);
+	f.Create(&m_shaderFont, "arial.ttf", 40);
 
+	m_postProcessor = PostProcessor();
+	m_postProcessor.Create(&m_shaderPost);
 	 
 	//fps counting
 	double lastTime = glfwGetTime();
@@ -90,6 +92,17 @@ void GameController::RunGame()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
 
+		m_postProcessor.Start();
+		for (unsigned int count = 0; count < m_meshes.size(); count++)
+		{
+			m_meshes[count].Render(m_camera.GetProjection() * m_camera.GetView());
+		}
+		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+		{
+			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
+		}
+
+
 		double currentTime = glfwGetTime();
 		fps++;
 		if (currentTime - lastTime >= 1.0)
@@ -99,20 +112,9 @@ void GameController::RunGame()
 			lastTime += 1.0;
 		}
 
-		//m_camera.Rotate();
-		glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetView()));
-
-		for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
-		{
-			m_meshBoxes[count].Render(m_camera.GetProjection() * m_camera.GetView());
-		}
-		
-		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
-		{
-			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
-		}
-		
 		f.RenderText(fpsS, 100, 100, 0.5f, { 1.0f, 1.0f, 0.0f });
+		m_postProcessor.End();		
+
 
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
@@ -121,18 +123,21 @@ void GameController::RunGame()
 	while (glfwGetKey(WindowController::GetInstance().GetWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
 
+
+	//cleanup
+
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
-		//Mesh::Lights[count].Cleanup();
 	}
-	for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
+	for (unsigned int count = 0; count < m_meshes.size(); count++)
 	{
-		m_meshBoxes[count].Cleanup();
-		//m_meshBoxes[count].Cleanup();
+		m_meshes[count].Cleanup();
 	}
-
+	f.Cleanup();
+	m_postProcessor.Cleanup();
 	m_shaderDiffuse.Cleanup();
 	m_shaderColor.Cleanup();
 	m_shaderSkybox.Cleanup();
+	m_shaderPost.Cleanup();
 }
