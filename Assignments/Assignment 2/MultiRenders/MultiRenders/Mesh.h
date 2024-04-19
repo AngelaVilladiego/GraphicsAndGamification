@@ -22,10 +22,8 @@ public:
 	void SetColor(glm::vec3 _color) { m_color = _color; }
 	glm::vec3 GetColor() { return m_color; }
 	void SetCameraPosition(glm::vec3 _cameraPosition) { m_cameraPosition = _cameraPosition; }
-	void SetLightPosition(glm::vec3 _position) { m_lightPosition = _position; }
 	void SetSpecularStrength(float _specularStrength) { m_specularStrength = _specularStrength; }
 	void SetSpecularColor(glm::vec3 _specularColor) { m_specularColor = _specularColor; }
-	void SetDiffuseColor(glm::vec3 _diffuseColor) { m_diffuseColor = _diffuseColor; }
 	GLuint GetShaderProgram();
 
 	// Methods
@@ -50,9 +48,7 @@ private:
 	Texture m_textureSpecular;
 	Texture m_textureNormal;
 	GLuint m_vertexBuffer; // GPU buffer
-	GLuint m_indexBuffer; // GPU buffer
 	std::vector<GLfloat> m_vertexData; // Store vertex data in RAM
-	std::vector<GLubyte> m_indexData; // Store index data in RAM
 	bool m_enableNormalMap;
 
 	// Transform

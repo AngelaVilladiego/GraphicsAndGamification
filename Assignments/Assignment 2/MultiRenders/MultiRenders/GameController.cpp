@@ -29,6 +29,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Gray background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand((unsigned int)time(0));
 
@@ -50,7 +51,7 @@ void GameController::RunGame()
 	glm::vec3 centerVec = { res.m_width / 2.0f, res.m_height / 2.0f, 0 };
 	double mouseX = 0.0;
 	double mouseY = 0.0;
-	float maxSpeed = 0.05f;
+	float maxSpeed = 0.005f;
 	string mousePosString = "Mouse Pos: ";
 
 	//convert resolution to vectors with 0 at center and positive y up 
@@ -70,15 +71,26 @@ void GameController::RunGame()
 	m_shaderFont = Shader();
 	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
+	m_shaderDiffuse = Shader();
+	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+
 
 
 	// Creating Meshes
 	Mesh light = Mesh();
 	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
-	light.SetPosition({ 0.0f, 0.0f, 1.0f });
+	light.SetPosition({ 0.0f, 0.0f, 0.1f });
 	light.SetColor({ 1.0f, 1.0f, 1.0f });
-	light.SetScale({ 0.2f, 0.2f, 0.2f });
+	light.SetScale({ 0.005f, 0.005f, 0.005 });
 	Mesh::Lights.push_back(light);
+
+	Mesh teapot = Mesh();
+	teapot.Create(&m_shaderDiffuse, "../Assets/Models/Teapot.obj");
+	teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
+	teapot.SetScale({ 0.0035f, 0.0035f, 0.0035f });
+	teapot.SetCameraPosition(m_camera.GetPosition());
+	teapot.SetSpecularStrength(4.0f);
+	teapot.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
@@ -113,11 +125,17 @@ void GameController::RunGame()
 
 
 
+
 		//Rendering
+
+		teapot.Render(pv);
+
 		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 		{
 			Mesh::Lights[count].Render(pv);
 		}
+
+
 
 		fpsFont.RenderText(fpsString, 50, 50, 0.25f, {1.0f, 1.0f, 0.0f});
 		mousePosFont.RenderText(mousePosString, 50, 100, 0.25f, { 1.0f, 1.0f, 0.0f });
@@ -132,6 +150,16 @@ void GameController::RunGame()
 
 	// Cleanup
 
+	teapot.Cleanup();
+
+	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+	{
+		Mesh::Lights[count].Cleanup();
+	}
+
+	m_shaderColor.Cleanup();
+	m_shaderDiffuse.Cleanup();
+	m_shaderFont.Cleanup();
 }
 
 

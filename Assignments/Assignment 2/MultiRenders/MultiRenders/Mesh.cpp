@@ -11,7 +11,6 @@ Mesh::Mesh()
 	m_textureSpecular = { };
 	m_textureNormal = { };
 	m_vertexBuffer = 0;
-	m_indexBuffer = 0;
 	m_world = glm::mat4();
 	m_position = { 0, 0, 0 };
 	m_rotation = { 0, 0, 0 };
@@ -71,7 +70,6 @@ void Mesh::Create(Shader* _shader, string _file)
 	m_textureDiffuse = Texture();
 	m_textureDiffuse.LoadTexture("../Assets/Textures/" + RemoveFolder(Loader.LoadedMaterials[0].map_Kd));
 
-
 	m_textureSpecular = Texture();
 	if (Loader.LoadedMaterials[0].map_Ks != "")
 	{
@@ -99,7 +97,6 @@ string Mesh::Concat(string _s1, int _index, string _s2)
 
 void Mesh::Cleanup()
 {
-	glDeleteBuffers(1, &m_indexBuffer);
 	glDeleteBuffers(1, &m_vertexBuffer);
 	m_textureDiffuse.Cleanup();
 	m_textureSpecular.Cleanup();
@@ -144,8 +141,6 @@ void Mesh::CalculateTransform()
 {
 	m_world = glm::translate(glm::mat4(1.0f), m_position);
 	m_world = glm::rotate(m_world, m_rotation.x, glm::vec3(1, 0, 0));
-	m_world = glm::rotate(m_world, m_rotation.y, glm::vec3(0, 1, 0));
-	m_world = glm::rotate(m_world, m_rotation.z, glm::vec3(0, 0, 1));
 	m_world = glm::scale(m_world, m_scale);
 }
 
@@ -159,7 +154,7 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 	for (unsigned int i = 0; i < Lights.size(); i++)
 	{
 		// Configure light
-		m_shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.1f, 0.1f, 0.1f }); //set the ambient lighting
+		m_shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.2f, 0.2f, 0.2f }); //set the ambient lighting
 		m_shader->SetVec3(Concat("light[", i, "].diffuseColor").c_str(), Lights[i].GetColor()); //set the diffuse color to white
 		m_shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), m_specularColor);
 		m_shader->SetVec3(Concat("light[", i, "].position").c_str(), Lights[i].GetPosition());
@@ -175,6 +170,8 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 void Mesh::Render(glm::mat4 _pv)
 {
 	glUseProgram(m_shader->GetProgramId()); // Use our shader
+
+	m_rotation.x += 0.003f;
 
 	CalculateTransform();
 	SetShaderVariables(_pv);

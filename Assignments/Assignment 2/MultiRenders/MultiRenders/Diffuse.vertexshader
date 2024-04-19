@@ -1,0 +1,28 @@
+#version 330 // OpenGL version 2.1 (minimum requirement)
+
+in vec3 vertices; // Value sent from application to this attribute
+in vec3 normals; // input color from application
+in vec2 texCoords; // input value of texture coordinates
+
+uniform vec3 CameraPosition;
+uniform mat4 World;
+uniform mat4 WVP;
+
+out vec3 retNormal; // output a color to the fragment shader
+out vec2 retTexCoord; // output texture coordinates (just a passthrough variable)
+out vec3 retFragPos;
+out vec3 retViewDirection;
+out mat4 retWorld;
+
+void main()
+{
+	gl_Position = WVP * vec4(vertices, 1.0); // Transform the model to screen projection
+
+	retNormal = normalize(mat3(transpose(inverse(World))) * normals); // convert normals to world position
+	retTexCoord = texCoords;
+	retFragPos = vec3(World * vec4(vertices, 1.0f)); // convert fragments to world positions
+
+	retViewDirection = normalize(CameraPosition - retFragPos);
+
+	retWorld = transpose(inverse(World));
+}
