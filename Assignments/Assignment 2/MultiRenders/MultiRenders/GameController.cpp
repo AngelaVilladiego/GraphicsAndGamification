@@ -88,13 +88,13 @@ void GameController::RunGame()
 	light.SetScale({ 0.005f, 0.005f, 0.005 });
 	Mesh::Lights.push_back(light);
 
-	Mesh teapotDiffuse = Mesh();
-	teapotDiffuse.Create(&m_shaderDiffuse, "../Assets/Models/Teapot.obj");
-	teapotDiffuse.SetPosition({ 0.0f, 0.0f, 0.0f });
-	teapotDiffuse.SetScale({ 0.0035f, 0.0035f, 0.0035f });
-	teapotDiffuse.SetCameraPosition(m_camera.GetPosition());
-	teapotDiffuse.SetSpecularStrength(4.0f);
-	teapotDiffuse.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
+	Mesh teapot = Mesh();
+	teapot.Create(&m_shaderDiffuse, "../Assets/Models/Teapot.obj");
+	teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
+	teapot.SetScale({ 0.0035f, 0.0035f, 0.0035f });
+	teapot.SetCameraPosition(m_camera.GetPosition());
+	teapot.SetSpecularStrength(4.0f);
+	teapot.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
@@ -132,19 +132,28 @@ void GameController::RunGame()
 		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
-			Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+
+			if (m_currScene == MOVE_LIGHT)
+			{
+				Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+			}
+
+			if (m_currScene == COLOR)
+			{
+				teapot.SetPosition(CalculatePosition(mouseVec, centerVec, teapot.GetPosition(), maxSpeed));
+			}
 		}
 
-		teapotDiffuse.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
-		teapotDiffuse.SetSpecularColor({ MultiRenders::ToolWindow::SpecularColorR, MultiRenders::ToolWindow::SpecularColorG, MultiRenders::ToolWindow::SpecularColorB });
+		teapot.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
+		teapot.SetSpecularColor({ MultiRenders::ToolWindow::SpecularColorR, MultiRenders::ToolWindow::SpecularColorG, MultiRenders::ToolWindow::SpecularColorB });
 
 
 
 		//Rendering
 		if (m_currScene == MOVE_LIGHT)
 		{
-			teapotDiffuse.SetShader(&m_shaderDiffuse);
-			teapotDiffuse.Render(pv);
+			teapot.SetShader(&m_shaderDiffuse);
+			teapot.Render(pv);
 
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 			{
@@ -155,8 +164,8 @@ void GameController::RunGame()
 
 		if (m_currScene == COLOR)
 		{
-			teapotDiffuse.SetShader(&m_shaderBasic);
-			teapotDiffuse.Render(pv);
+			teapot.SetShader(&m_shaderBasic);
+			teapot.Render(pv);
 		}
 
 
@@ -176,7 +185,7 @@ void GameController::RunGame()
 
 	// Cleanup
 
-	teapotDiffuse.Cleanup();
+	teapot.Cleanup();
 
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
