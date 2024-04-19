@@ -45,8 +45,6 @@ void Mesh::Create(Shader* _shader, string _file)
 {
 	m_shader = _shader;
 
-	std::cout << "creating mesh for shader:" << _shader->GetProgramId() << endl;
-
 	objl::Loader Loader; // Initialize Loader
 	M_ASSERT(Loader.LoadFile(_file) == true, "Failed to load mesh,"); // Load .obj File
 

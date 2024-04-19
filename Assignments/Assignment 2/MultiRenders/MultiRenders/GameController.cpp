@@ -10,10 +10,14 @@ GameController::GameController()
 	m_shaderDiffuse = { };
 	m_shaderFont = { };
 	m_camera = { };
-	m_mousePos = { };
 	m_meshes.clear();
 	m_lightSpeed = 10.0f;
 	m_currScene = MOVE_LIGHT;
+
+	quadTopLeft = { 0, 0, 0 };
+	quadTopRight = { 0, 0, 0 };
+	quadBottomLeft = { 0, 0, 0 };
+	quadBottomRight = { 0, 0, 0 };
 }
 
 void GameController::Initialize(string title = "Sample", bool fullscreen = true)
@@ -21,7 +25,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	GLFWwindow* window = WindowController::GetInstance().GetWindow(fullscreen); // Call this first as it creates a window required by GLEW
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
+	glfwSetInputMode(window, GLFW_STICKY_KEYS | GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE); // Ensure we can capture the escape key
 	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Gray background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -37,15 +41,23 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 void GameController::RunGame()
 {
 	// variables
+	GLFWwindow* win = WindowController::GetInstance().GetWindow();
+
 	FPSCounter fpsCounter = FPSCounter();
 	string fpsString = "FPS: 0";
 
 	Resolution res = WindowController::GetInstance().GetResolution();
-	double centerX = res.m_width / 2.0;
-	double centerY = res.m_height / 2.0;
+	glm::vec3 centerVec = { res.m_width / 2.0f, res.m_height / 2.0f, 0 };
 	double mouseX = 0.0;
 	double mouseY = 0.0;
+	float maxSpeed = 0.05f;
 	string mousePosString = "Mouse Pos: ";
+
+	//convert resolution to vectors with 0 at center and positive y up 
+	quadTopLeft ={ -centerVec.x, centerVec.y, 0 };
+	quadTopRight = { centerVec.x, centerVec.y, 0 };
+	quadBottomLeft = { -centerVec.x, -centerVec.y, 0 };
+	quadBottomRight = { centerVec.x, -centerVec.y, 0 };
 
 	glm::mat4 pv = m_camera.GetProjection() * m_camera.GetView();
 	
@@ -93,6 +105,12 @@ void GameController::RunGame()
 		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
 		mousePosString = "Mouse Pos: " + to_string(mouseX) + " " + to_string(mouseY);
 		
+		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		{
+			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
+			Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+		}
+
 
 
 		//Rendering
@@ -114,4 +132,41 @@ void GameController::RunGame()
 
 	// Cleanup
 
+}
+
+
+glm::vec3 GameController::CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed)
+{
+
+	// identify which quadrant the mouse was clicked in	
+	glm::vec3 clickedQuadrant = quadTopLeft;
+
+	if (mousePos.x >= centerPos.x)
+	{
+		if (mousePos.y >= centerPos.y)
+		{
+			clickedQuadrant = quadBottomRight;
+		}
+		else
+		{
+			clickedQuadrant = quadTopRight;
+		}
+	}
+	else if (mousePos.y >= centerPos.y)
+	{
+		clickedQuadrant = quadBottomLeft;
+	}
+
+	// get distance into quadrant relative from center, clamped to be a maximum of the distance from center to corner
+	float maxDistance = glm::length(clickedQuadrant);
+	float distance = min(glm::distance(mousePos, centerPos), maxDistance);
+	
+	// calculate speed based off of depth of click into quadrant
+	float speed = (distance / maxDistance) * maxSpeed;
+
+	// calculate new position this frame based off speed, quadrant, and current position
+	glm::vec3 direction = glm::normalize(clickedQuadrant);
+	glm::vec3 newPosition = currPos + (direction * speed);
+
+	return newPosition;	
 }

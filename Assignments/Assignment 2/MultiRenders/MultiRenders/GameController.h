@@ -19,15 +19,23 @@ public:
 	void Initialize(string title, bool fullscreen);
 	void RunGame();
 
+
 private:
 	Shader m_shaderColor;
 	Shader m_shaderDiffuse;
 	Shader m_shaderFont;
 	Camera m_camera;
 	vector<Mesh> m_meshes;
-	glm::vec2 m_mousePos;
 	float m_lightSpeed;
-	SceneType m_currScene;
+	SceneType m_currScene;	
+
+	glm::vec3 quadTopLeft;
+	glm::vec3 quadTopRight;
+	glm::vec3 quadBottomLeft;
+	glm::vec3 quadBottomRight;
+
+	// Methods
+	glm::vec3 CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);
 };
 
 #endif // GAME_CONTROLLER_H
