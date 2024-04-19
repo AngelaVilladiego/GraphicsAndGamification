@@ -8,6 +8,7 @@ GameController::GameController()
 {
 	m_shaderColor = { };
 	m_shaderDiffuse = { };
+	m_shaderBasic = { };
 	m_shaderFont = { };
 	m_camera = { };
 	m_meshes.clear();
@@ -74,6 +75,9 @@ void GameController::RunGame()
 	m_shaderDiffuse = Shader();
 	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
+	m_shaderBasic = Shader();
+	m_shaderBasic.LoadShaders("Basic.vertexshader", "Basic.fragmentshader");
+
 
 
 	// Creating Meshes
@@ -84,13 +88,18 @@ void GameController::RunGame()
 	light.SetScale({ 0.005f, 0.005f, 0.005 });
 	Mesh::Lights.push_back(light);
 
-	Mesh teapot = Mesh();
-	teapot.Create(&m_shaderDiffuse, "../Assets/Models/Teapot.obj");
-	teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
-	teapot.SetScale({ 0.0035f, 0.0035f, 0.0035f });
-	teapot.SetCameraPosition(m_camera.GetPosition());
-	teapot.SetSpecularStrength(4.0f);
-	teapot.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
+	Mesh teapotDiffuse = Mesh();
+	teapotDiffuse.Create(&m_shaderDiffuse, "../Assets/Models/Teapot.obj");
+	teapotDiffuse.SetPosition({ 0.0f, 0.0f, 0.0f });
+	teapotDiffuse.SetScale({ 0.0035f, 0.0035f, 0.0035f });
+	teapotDiffuse.SetCameraPosition(m_camera.GetPosition());
+	teapotDiffuse.SetSpecularStrength(4.0f);
+	teapotDiffuse.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
+
+	Mesh teapotBasic = Mesh();
+	teapotBasic.Create(&m_shaderBasic, "../Assets/Models/Teapot.obj");
+	teapotBasic.SetPosition({ 0.0f, 0.0f, 0.0f });
+	teapotBasic.SetScale({ 0.0035f, 0.0035f, 0.0035f });
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
@@ -111,6 +120,8 @@ void GameController::RunGame()
 
 
 		//Updating values
+		m_currScene = MultiRenders::ToolWindow::SelectedSceneType;
+
 		fpsCounter.Tick();
 		fpsString = "FPS: " + to_string(fpsCounter.GetFPS());
 
@@ -129,20 +140,29 @@ void GameController::RunGame()
 			Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
 		}
 
-		teapot.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
-		teapot.SetSpecularColor({ MultiRenders::ToolWindow::SpecularColorR, MultiRenders::ToolWindow::SpecularColorG, MultiRenders::ToolWindow::SpecularColorB });
-
+		teapotDiffuse.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
+		teapotDiffuse.SetSpecularColor({ MultiRenders::ToolWindow::SpecularColorR, MultiRenders::ToolWindow::SpecularColorG, MultiRenders::ToolWindow::SpecularColorB });
 
 
 
 		//Rendering
-
-		teapot.Render(pv);
-
-		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+		if (m_currScene == MOVE_LIGHT)
 		{
-			Mesh::Lights[count].Render(pv);
+			teapotDiffuse.Render(pv);
+
+			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+			{
+				Mesh::Lights[count].Render(pv);
+			}
+
 		}
+
+		if (m_currScene == COLOR)
+		{
+			teapotBasic.Render(pv);
+		}
+
+
 
 
 
@@ -159,7 +179,7 @@ void GameController::RunGame()
 
 	// Cleanup
 
-	teapot.Cleanup();
+	teapotDiffuse.Cleanup();
 
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{

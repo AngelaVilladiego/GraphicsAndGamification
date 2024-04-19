@@ -23,6 +23,7 @@ public:
 private:
 	Shader m_shaderColor;
 	Shader m_shaderDiffuse;
+	Shader m_shaderBasic;
 	Shader m_shaderFont;
 	Camera m_camera;
 	vector<Mesh> m_meshes;
