@@ -7,7 +7,6 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "SceneType.h"
-#include "PostProcessor.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -26,11 +25,9 @@ private:
 	Shader m_shaderDiffuse;
 	Shader m_shaderPositionColor;
 	Shader m_shaderFont;
-	Shader m_shaderPost;
 
-	PostProcessor m_postProcessor;
 	Camera m_camera;
-	vector<Mesh> m_meshes;
+	vector<Mesh> m_cubes;
 	float m_lightSpeed;
 	SceneType m_currScene;	
 
@@ -41,6 +38,8 @@ private:
 
 	// Methods
 	glm::vec3 CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);
+	void AddCube();
+	float RandomFloat(float min, float max);
 };
 
 #endif // GAME_CONTROLLER_H

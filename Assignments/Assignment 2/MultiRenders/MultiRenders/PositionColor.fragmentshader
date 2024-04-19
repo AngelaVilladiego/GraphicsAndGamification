@@ -19,7 +19,6 @@ void main()
 {
 	vec3 distance = abs(retFragPos);
 
-
 	float r = distance.x / maxDistance * 3.0f;
 	float g = distance.y / maxDistance * 3.0f;
 	float b = distance.z / maxDistance * 3.0f;

@@ -26,6 +26,7 @@ public:
 	void SetSpecularStrength(float _specularStrength) { m_specularStrength = _specularStrength; }
 	void SetSpecularColor(glm::vec3 _specularColor) { m_specularColor = _specularColor; }
 	void SetAmbientColor(glm::vec3 _ambientColor) { m_ambientColor = _ambientColor; }
+	void SetEnableNormal(bool _enableNormal) { m_enableNormalMap = _enableNormal; }
 	GLuint GetShaderProgram();
 
 	// Methods

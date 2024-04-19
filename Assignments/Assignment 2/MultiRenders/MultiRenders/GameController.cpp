@@ -3,6 +3,7 @@
 #include "Fonts.h"
 #include "ToolWindow.h"
 #include "FPSCounter.h"
+#include <random>
 
 GameController::GameController()
 {
@@ -10,10 +11,9 @@ GameController::GameController()
 	m_shaderDiffuse = { };
 	m_shaderPositionColor = { };
 	m_shaderFont = { };
-	m_shaderPost = { };
 
 	m_camera = { };
-	m_meshes.clear();
+	m_cubes.clear();
 	m_lightSpeed = 10.0f;
 	m_currScene = MOVE_LIGHT;
 
@@ -80,9 +80,6 @@ void GameController::RunGame()
 	m_shaderPositionColor = Shader();
 	m_shaderPositionColor.LoadShaders("PositionColor.vertexshader", "PositionColor.fragmentshader");
 
-	m_shaderPost = Shader();
-	m_shaderPost.LoadShaders("PostProcess.vertexshader", "PostProcess.fragmentshader");
-
 
 
 	// Creating Meshes
@@ -90,7 +87,7 @@ void GameController::RunGame()
 	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
 	light.SetPosition({ 0.0f, 0.0f, 0.1f });
 	light.SetColor({ 1.0f, 1.0f, 1.0f });
-	light.SetScale({ 0.005f, 0.005f, 0.005 });
+	light.SetScale({ 0.005f, 0.005f, 0.005f });
 	Mesh::Lights.push_back(light);
 
 	Mesh teapot = Mesh();
@@ -101,15 +98,22 @@ void GameController::RunGame()
 	teapot.SetSpecularStrength(4.0f);
 	teapot.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
+	Mesh sphere = Mesh();
+	sphere.Create(&m_shaderDiffuse, "../Assets/Models/Sphere.obj");
+	sphere.SetPosition({ 0.0f, 0.0f, 0.0f });
+	sphere.SetScale({ 0.02f, 0.02f, 0.02f });
+	sphere.SetCameraPosition(m_camera.GetPosition());
+	sphere.SetSpecularStrength(2.0f);
+	sphere.SetSpecularColor({ 0.5f, 0.5f, 0.5f });
+
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 	Fonts mousePosFont = Fonts();
 	mousePosFont.Create(&m_shaderFont, "arial.ttf", 100);
 
-	m_postProcessor = PostProcessor();
-	m_postProcessor.Create(&m_shaderPost);
-
+	Fonts cubesFont = Fonts();
+	cubesFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 
 	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
@@ -157,6 +161,11 @@ void GameController::RunGame()
 			{
 				teapot.SetPosition(CalculatePosition(mouseVec, centerVec, teapot.GetPosition(), maxSpeed));
 			}
+
+			if (m_currScene == CUBES)
+			{
+				AddCube();
+			}
 		}
 
 		teapot.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
@@ -168,7 +177,6 @@ void GameController::RunGame()
 		if (m_currScene == MOVE_LIGHT)
 		{
 			teapot.SetShader(&m_shaderDiffuse);
-			//teapot.SetAmbientColor({ 0.2f, 0.2f, 0.2f });
 			teapot.Render(pv);
 
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
@@ -181,8 +189,24 @@ void GameController::RunGame()
 		if (m_currScene == COLOR)
 		{
 			teapot.SetShader(&m_shaderPositionColor);
-			//teapot.SetAmbientColor({ 1.f, 1.f, 1.f });
 			teapot.Render(pv);
+		}
+
+		if (m_currScene == CUBES)
+		{
+			sphere.Render(pv);
+
+			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+			{
+				Mesh::Lights[count].Render(pv);
+			}
+
+			for (unsigned int count = 0; count < m_cubes.size(); count++)
+			{
+				m_cubes[count].Render(pv);
+			}
+
+			cubesFont.RenderText("Cubes: " + to_string(m_cubes.size()), 50, 150, 0.25, { 1.0f, 1.0f, 0.0f });
 		}
 
 
@@ -201,20 +225,24 @@ void GameController::RunGame()
 		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
 
 	// Cleanup
-	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
-	{
-		Mesh::Lights[count].Cleanup();
-	}
 	m_shaderColor.Cleanup();
 	m_shaderDiffuse.Cleanup();
 	m_shaderFont.Cleanup();
 	m_shaderPositionColor.Cleanup();
-	m_shaderPost.Cleanup();
 
+	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+	{
+		Mesh::Lights[count].Cleanup();
+	}
+	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+	{
+		m_cubes[count].Cleanup();
+	}
 	teapot.Cleanup();
+
 	fpsFont.Cleanup();
 	mousePosFont.Cleanup();
-	m_postProcessor.Cleanup();
+	cubesFont.Cleanup();
 
 }
 
@@ -253,4 +281,30 @@ glm::vec3 GameController::CalculatePosition(glm::vec3 mousePos, glm::vec3 center
 	glm::vec3 newPosition = currPos + (direction * speed);
 
 	return newPosition;	
+}
+
+void GameController::AddCube()
+{
+	glm::vec3 min = { -0.2f, -0.1f, -0.5f };
+	glm::vec3 max = { 0.2f, 0.1f, 0.2f };
+
+	float x = RandomFloat(min.x, max.x);
+	float y = RandomFloat(min.y, max.y);
+	float z = RandomFloat(min.z, max.z);
+
+	Mesh cube = Mesh();
+	cube.Create(&m_shaderDiffuse, "../Assets/Models/Box.obj");
+	cube.SetPosition({ x, y, z });
+	cube.SetScale({ 0.001f, 0.001f, 0.001f });
+	cube.SetCameraPosition(m_camera.GetPosition());
+	cube.SetSpecularStrength(2.0f);
+	cube.SetSpecularColor({ 0.5f, 0.5f, 0.5f });
+	m_cubes.push_back(cube);
+}
+
+float GameController::RandomFloat(float min, float max) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis(min, max);
+	return dis(gen);
 }
