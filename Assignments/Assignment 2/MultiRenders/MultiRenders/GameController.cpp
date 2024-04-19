@@ -20,13 +20,6 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	GLFWwindow* window = WindowController::GetInstance().GetWindow(fullscreen); // Call this first as it creates a window required by GLEW
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 
-	GLenum err = glGetError();
-
-	if (err != GL_NO_ERROR)
-	{
-		std::cout << "initialization errors: " << err << std::endl;
-	}
-
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
 	glEnable(GL_DEPTH_TEST);

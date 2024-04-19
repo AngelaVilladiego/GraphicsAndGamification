@@ -1,0 +1,20 @@
+# 3ds Max Wavefront OBJ Exporter v0.99 - (c)2007 guruware
+# File Created: 18.04.2024 20:05:22
+
+newmtl 01___Default
+	Kd 0.5000 0.5000 0.5000
+	Ks 1.0000 1.0000 1.0000
+	Tr 0.0000
+	d 1.0000
+	Tf 1.0000 1.0000 1.0000
+	Pr 0.0000
+	Pm 0.0000
+	Pc 0.0000
+	Pcr 0.0000
+	Ni 1.5200
+	Ke 0.0000 0.0000 0.0000
+	illum 2
+	map_Kd C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\Assets\Textures\Teapot.jpg
+	map_Ks C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\Assets\Textures\TeapotSpecular.jpg
+	bump C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\Assets\Textures\TeapotNormal.jpg
+	map_bump C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Assignment 2\MultiRenders\Assets\Textures\TeapotNormal.jpg
