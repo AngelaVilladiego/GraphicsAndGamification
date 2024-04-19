@@ -151,6 +151,8 @@ void Mesh::Cleanup()
 void Mesh::BindAttributes()
 {
 
+	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+
 	int stride = 8;
 
 	
@@ -198,7 +200,7 @@ void Mesh::BindAttributes()
 			GL_FLOAT,					// type
 			GL_FALSE,					// normalized?
 			stride * sizeof(float),			// stride (8 floats per vertex definition
-			(void*)(3 * sizeof(float))	// array buffer offset
+			(void*)(8 * sizeof(float))	// array buffer offset
 		);
 		//bitangents
 		glEnableVertexAttribArray(m_shader->GetAttrBitangents());
@@ -207,11 +209,11 @@ void Mesh::BindAttributes()
 			GL_FLOAT,					// type
 			GL_FALSE,					// normalized?
 			stride * sizeof(float),			// stride (8 floats per vertex definition
-			(void*)(3 * sizeof(float))	// array buffer offset
+			(void*)(11 * sizeof(float))	// array buffer offset
 		);
 	}
 	
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
+	
 }
 
 void Mesh::CalculateTransform()
@@ -230,10 +232,6 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 
 	for (unsigned int i = 0; i < Lights.size(); i++)
 	{
-		// Configure light
-		m_shader->SetFloat(Concat("light[", i, "].constant").c_str(), 1.0f);
-		m_shader->SetFloat(Concat("light[", i, "].linear").c_str(), 0.09f);
-		m_shader->SetFloat(Concat("light[", i, "].quadratic").c_str(), 0.032f);
 
 
 		m_shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.1f, 0.1f, 0.1f }); //set the ambient lighting
@@ -241,9 +239,6 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 		m_shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), { 3.0f, 3.0f, 3.0f });
 
 		m_shader->SetVec3(Concat("light[", i, "].position").c_str(), Lights[i].GetPosition());
-		m_shader->SetVec3(Concat("light[", i, "].direction").c_str(), glm::normalize(glm::vec3({ 0.0f + i * 0.1f, 0, 0.0f + i * 0.1f }) - Lights[i].GetPosition()));
-		m_shader->SetFloat(Concat("light[", i, "].coneAngle").c_str(), glm::radians(5.0f));
-		m_shader->SetFloat(Concat("light[", i, "].falloff").c_str(), 200);
 	}
 
 	

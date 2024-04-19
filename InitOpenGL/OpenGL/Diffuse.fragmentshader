@@ -19,7 +19,6 @@ struct Material
 struct Light
 {
 	vec3 position;
-	vec3 color;
 	vec3 ambientColor;
 	vec3 diffuseColor;
 	vec3 specularColor;
@@ -28,7 +27,7 @@ struct Light
 uniform Material material;
 #define NR_LIGHTS 1
 uniform Light light[NR_LIGHTS];
-uniform bool EnableNormalMap;
+uniform bool EnableNormalMap = false;
 
 void main()
 {
