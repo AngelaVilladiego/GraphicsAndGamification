@@ -36,20 +36,46 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 
 void GameController::RunGame()
 {
+	// variables
+	FPSCounter fpsCounter = FPSCounter();
+	string fpsString = "FPS: 0";
+
+
 	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
 	window->Show();
 
-	FPSCounter fpsCounter = FPSCounter();
+
+	// Loading shaders
+	m_shaderFont = Shader();
+	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
+
+
+	// Creating Meshes
+	Fonts f = Fonts();
+	f.Create(&m_shaderFont, "arial.ttf", 100);
 
 	do
 	{
 		System::Windows::Forms::Application::DoEvents();// handle form events
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		//Updating values
+		fpsCounter.Tick();
+		fpsString = "FPS: " + to_string(fpsCounter.GetFPS());
+		
+
+		//Rendering
+		f.RenderText(fpsString, 50, 50, 0.25f, { 1.0f, 1.0f, 0.0f });
 
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
 		glfwPollEvents();
+
 	} while (glfwGetKey(WindowController::GetInstance().GetWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
+
+	// Cleanup
 
 }
