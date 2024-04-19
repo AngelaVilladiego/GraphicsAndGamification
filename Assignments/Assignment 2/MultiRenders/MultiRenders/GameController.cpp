@@ -125,10 +125,16 @@ void GameController::RunGame()
 
 		if (MultiRenders::ToolWindow::ResetLightPosition)
 		{
-			Mesh::Lights[0].SetPosition({ 0, 0, 0.1f });
+			Mesh::Lights[0].SetPosition({ 0.0f, 0.0f, 0.1f });
 			MultiRenders::ToolWindow::ResetLightPosition = false;
 		}
 		
+		if (MultiRenders::ToolWindow::ResetTeapotPosition)
+		{
+			teapot.SetPosition({ 0.0f, 0.0f, 0.0f });
+			MultiRenders::ToolWindow::ResetTeapotPosition = false;
+		}
+
 		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
