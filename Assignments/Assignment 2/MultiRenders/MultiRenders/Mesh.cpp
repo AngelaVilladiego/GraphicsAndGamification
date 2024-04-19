@@ -72,14 +72,12 @@ void Mesh::Create(Shader* _shader, string _file)
 
 	m_textureDiffuse = Texture();
 	m_textureDiffuse.LoadTexture("../Assets/Textures/" + RemoveFolder(Loader.LoadedMaterials[0].map_Kd));
-	std::cout << "diffuse texture added: " << RemoveFolder(Loader.LoadedMaterials[0].map_Kd) << endl;
 
 
 	m_textureSpecular = Texture();
 	if (Loader.LoadedMaterials[0].map_Ks != "")
 	{
 		m_textureSpecular.LoadTexture("../Assets/Textures/" + RemoveFolder(Loader.LoadedMaterials[0].map_Ks));
-		std::cout << "specular texture added: " << RemoveFolder(Loader.LoadedMaterials[0].map_Ks) << endl;
 	}
 
 	m_textureNormal = Texture();
@@ -87,8 +85,6 @@ void Mesh::Create(Shader* _shader, string _file)
 	{
 		m_textureNormal.LoadTexture("../Assets/Textures/" + RemoveFolder(Loader.LoadedMaterials[0].map_bump));
 		m_enableNormalMap = true;
-
-		std::cout << "map bump added: " << RemoveFolder(Loader.LoadedMaterials[0].map_bump) << endl;
 	}
 
 
@@ -122,7 +118,7 @@ void Mesh::BindAttributes()
 		3,			/*size*/
 		GL_FLOAT,	/*type*/
 		GL_FALSE,	/*normalized?*/
-		14 * sizeof(float),			/*stride*/
+		8 * sizeof(float),			/*stride*/
 		(void*)0);	/*array buffer offset*/
 
 	// 2nd attribute buffer : normals
@@ -131,7 +127,7 @@ void Mesh::BindAttributes()
 		3,							// size of color attribute (3 components per color
 		GL_FLOAT,					// type
 		GL_FALSE,					// normalized?
-		14 * sizeof(float),			// stride (8 floats per vertex definition
+		8 * sizeof(float),			// stride (8 floats per vertex definition
 		(void*)(3 * sizeof(float))	// array buffer offset
 	);
 
@@ -141,7 +137,7 @@ void Mesh::BindAttributes()
 		2,							// size (2 points per coordinate)
 		GL_FLOAT,					// type
 		GL_FALSE,					// normalized?
-		14 * sizeof(float),			// stride (8 floats per vertex definition
+		8 * sizeof(float),			// stride (8 floats per vertex definition
 		(void*)(6 * sizeof(float))	// array buffer offset
 	);
 }

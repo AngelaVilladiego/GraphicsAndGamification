@@ -46,27 +46,37 @@ void GameController::RunGame()
 	double mouseX = 0.0;
 	double mouseY = 0.0;
 	string mousePosString = "Mouse Pos: ";
+
+	glm::mat4 pv = m_camera.GetProjection() * m_camera.GetView();
 	
 
 
-	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
-	window->Show();
-
-
-
 	// Loading shaders
+	m_shaderColor = Shader();
+	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
+
 	m_shaderFont = Shader();
 	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
 
 
 	// Creating Meshes
+	Mesh light = Mesh();
+	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
+	light.SetPosition({ 0.0f, 0.0f, 1.0f });
+	light.SetColor({ 1.0f, 1.0f, 1.0f });
+	light.SetScale({ 0.2f, 0.2f, 0.2f });
+	Mesh::Lights.push_back(light);
+
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
 	Fonts mousePosFont = Fonts();
 	mousePosFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 
+
+	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
+	window->Show();
 
 	do
 	{
@@ -86,8 +96,15 @@ void GameController::RunGame()
 
 
 		//Rendering
+		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+		{
+			Mesh::Lights[count].Render(pv);
+		}
+
 		fpsFont.RenderText(fpsString, 50, 50, 0.25f, {1.0f, 1.0f, 0.0f});
 		mousePosFont.RenderText(mousePosString, 50, 100, 0.25f, { 1.0f, 1.0f, 0.0f });
+
+
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
 		glfwPollEvents();

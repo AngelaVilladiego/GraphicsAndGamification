@@ -97,5 +97,11 @@
     <None Include="Font.vertexshader">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Color.fragmentshader">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Color.vertexshader">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,0 +1,11 @@
+#version 330 // OpenGL version 2.1 (minimum requirement)
+
+in vec3 retNormal;
+in vec2 retTexCoord;
+
+out vec4 FragColor;
+
+void main()
+{
+	FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+}
