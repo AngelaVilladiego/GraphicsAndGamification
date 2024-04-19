@@ -108,7 +108,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\External\glfw-3.3.9\include;$(SolutionDir)\External\glew-2.1.0\include;$(SolutionDir)\External\glm;$(SolutionDir)\External\stb;$(SolutionDir)\External\obj_loader;$(SolutionDir)\External\freetype-2.10.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>NotSet</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\External\glfw-3.3.9\lib-vc2022;$(SolutionDir)\External\glew-2.1.0\lib\Release\x64;$(SolutionDir)\External\freetype-2.10.4\release static\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glfw3.lib;glew32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
