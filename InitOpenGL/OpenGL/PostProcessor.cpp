@@ -113,7 +113,7 @@ void PostProcessor::End()
 	glUseProgram(m_postShader->GetProgramId());
 	m_postShader->SetTextureSampler("ScreenTexture", GL_TEXTURE0, 0, m_textureColorbuffer);
 	BindVertices();
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisableVertexAttribArray(m_postShader->GetAttrVertices());
 	glDisableVertexAttribArray(m_postShader->GetAttrTexCoords());
