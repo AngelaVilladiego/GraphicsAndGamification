@@ -43,24 +43,20 @@ void main()
 	for(int i = 0; i < NR_LIGHTS; i++)
 	{
 		vec3 lightDir = normalize(light[i].position - retFragPos); // Normalize, for correct dot product results
-
-		/*
 		vec3 normal = retNormal;
 
 		if (EnableNormalMap == true)
 		{
 			normal = texture(material.normalTexture, retTexCoord).rgb;
-			normal = normal * 2.0f - 1.0f;
-			normal = normalize(mat3(retWorld) * normal);
+
+			//normal = normal * 2.0f - 1.0f;
+			//normal = normalize(mat3(retWorld) * normal);
+
+			normal = normalize(normal * 2.0 - 1.0);
 		}
-		*/
 
-		// float lambertianStrength = dot(lightDir, normal);
-		float lambertianStrength = dot(lightDir, retNormal);
-
-		//vec3 refl = reflect(-lightDir, normal);
-		vec3 refl = reflect(-lightDir, retNormal);
-
+		float lambertianStrength = dot(lightDir, normal);
+		vec3 refl = reflect(-lightDir, normal);
 		float specularStrength = pow(max(dot(retViewDirection, refl), 0.0f), material.specularStrength);
 
 		vec3 ambient = diffColor.rgb * light[i].ambientColor / NR_LIGHTS;
