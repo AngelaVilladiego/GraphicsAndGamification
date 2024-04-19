@@ -96,11 +96,6 @@ void GameController::RunGame()
 	teapotDiffuse.SetSpecularStrength(4.0f);
 	teapotDiffuse.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
-	Mesh teapotBasic = Mesh();
-	teapotBasic.Create(&m_shaderBasic, "../Assets/Models/Teapot.obj");
-	teapotBasic.SetPosition({ 0.0f, 0.0f, 0.0f });
-	teapotBasic.SetScale({ 0.0035f, 0.0035f, 0.0035f });
-
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
 	Fonts mousePosFont = Fonts();
@@ -148,6 +143,7 @@ void GameController::RunGame()
 		//Rendering
 		if (m_currScene == MOVE_LIGHT)
 		{
+			teapotDiffuse.SetShader(&m_shaderDiffuse);
 			teapotDiffuse.Render(pv);
 
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
@@ -159,7 +155,8 @@ void GameController::RunGame()
 
 		if (m_currScene == COLOR)
 		{
-			teapotBasic.Render(pv);
+			teapotDiffuse.SetShader(&m_shaderBasic);
+			teapotDiffuse.Render(pv);
 		}
 
 
