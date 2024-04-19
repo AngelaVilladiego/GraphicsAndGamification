@@ -95,7 +95,7 @@ void PostProcessor::BindVertices()
 		GL_FLOAT,	/*type*/
 		GL_FALSE,	/*normalized?*/
 		4 * sizeof(float),			/*stride*/
-		(void*)0);	/*array buffer offset*/
+		(void*)(2 * sizeof(float)));	/*array buffer offset*/
 }
 
 void PostProcessor::Start()
@@ -113,7 +113,7 @@ void PostProcessor::End()
 	glUseProgram(m_postShader->GetProgramId());
 	m_postShader->SetTextureSampler("ScreenTexture", GL_TEXTURE0, 0, m_textureColorbuffer);
 	BindVertices();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisableVertexAttribArray(m_postShader->GetAttrVertices());
 	glDisableVertexAttribArray(m_postShader->GetAttrTexCoords());
