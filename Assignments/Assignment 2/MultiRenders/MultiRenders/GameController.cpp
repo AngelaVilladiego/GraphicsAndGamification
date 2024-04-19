@@ -116,6 +116,12 @@ void GameController::RunGame()
 
 		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
 		mousePosString = "Mouse Pos: " + to_string(mouseX) + " " + to_string(mouseY);
+
+		if (MultiRenders::ToolWindow::ResetLightPosition)
+		{
+			Mesh::Lights[0].SetPosition({ 0, 0, 0.1f });
+			MultiRenders::ToolWindow::ResetLightPosition = false;
+		}
 		
 		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
