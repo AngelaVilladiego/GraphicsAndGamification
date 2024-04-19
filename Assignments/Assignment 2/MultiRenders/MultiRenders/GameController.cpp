@@ -51,7 +51,7 @@ void GameController::RunGame()
 	glm::vec3 centerVec = { res.m_width / 2.0f, res.m_height / 2.0f, 0 };
 	double mouseX = 0.0;
 	double mouseY = 0.0;
-	float maxSpeed = 0.005f;
+	float maxSpeed = 0.003f;
 	string mousePosString = "Mouse Pos: ";
 
 	//convert resolution to vectors with 0 at center and positive y up 
@@ -122,6 +122,9 @@ void GameController::RunGame()
 			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
 			Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
 		}
+
+		teapot.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
+		teapot.SetSpecularColor({ MultiRenders::ToolWindow::SpecularColorR, MultiRenders::ToolWindow::SpecularColorG, MultiRenders::ToolWindow::SpecularColorB });
 
 
 
