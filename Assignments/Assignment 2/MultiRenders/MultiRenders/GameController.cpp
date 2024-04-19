@@ -40,9 +40,18 @@ void GameController::RunGame()
 	FPSCounter fpsCounter = FPSCounter();
 	string fpsString = "FPS: 0";
 
+	Resolution res = WindowController::GetInstance().GetResolution();
+	double centerX = res.m_width / 2.0;
+	double centerY = res.m_height / 2.0;
+	double mouseX = 0.0;
+	double mouseY = 0.0;
+	string mousePosString = "Mouse Pos: ";
+	
+
 
 	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
 	window->Show();
+
 
 
 	// Loading shaders
@@ -50,9 +59,14 @@ void GameController::RunGame()
 	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
 
+
 	// Creating Meshes
-	Fonts f = Fonts();
-	f.Create(&m_shaderFont, "arial.ttf", 100);
+	Fonts fpsFont = Fonts();
+	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
+	Fonts mousePosFont = Fonts();
+	mousePosFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+
 
 	do
 	{
@@ -61,14 +75,19 @@ void GameController::RunGame()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+
 		//Updating values
 		fpsCounter.Tick();
 		fpsString = "FPS: " + to_string(fpsCounter.GetFPS());
+
+		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
+		mousePosString = "Mouse Pos: " + to_string(mouseX) + " " + to_string(mouseY);
 		
 
-		//Rendering
-		f.RenderText(fpsString, 50, 50, 0.25f, { 1.0f, 1.0f, 0.0f });
 
+		//Rendering
+		fpsFont.RenderText(fpsString, 50, 50, 0.25f, {1.0f, 1.0f, 0.0f});
+		mousePosFont.RenderText(mousePosString, 50, 100, 0.25f, { 1.0f, 1.0f, 0.0f });
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
 		glfwPollEvents();
