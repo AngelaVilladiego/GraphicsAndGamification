@@ -183,8 +183,9 @@ void GameController::RunGame()
 
 
 #pragma region Rendering
-		if (m_currScene == MOVE_LIGHT)
-		{
+
+		switch (m_currScene) {
+		case MOVE_LIGHT:
 			teapot.SetShader(&m_shaderDiffuse);
 			teapot.Render(pv);
 
@@ -193,16 +194,15 @@ void GameController::RunGame()
 				Mesh::Lights[count].Render(pv);
 			}
 
-		}
+			break;
 
-		if (m_currScene == COLOR)
-		{
+		case COLOR:
 			teapot.SetShader(&m_shaderPositionColor);
 			teapot.Render(pv);
-		}
 
-		if (m_currScene == CUBES)
-		{
+			break;
+
+		case CUBES:
 			sphere.Render(pv);
 
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
@@ -215,7 +215,7 @@ void GameController::RunGame()
 				cubeIt->SetPosition(MoveToCenter(cubeIt->GetPosition(), cubeSpeed));
 				cubeIt->Render(pv);
 
-				
+
 				if (glm::distance(cubeIt->GetPosition(), glm::vec3({ 0, 0, 0 })) <= touchRadius)
 				{
 					cubeIt->Cleanup();
@@ -228,6 +228,11 @@ void GameController::RunGame()
 			}
 
 			cubesFont.RenderText("Cubes: " + to_string(m_cubes.size()), 50, 150, 0.25, { 1.0f, 1.0f, 0.0f });
+
+			break;
+
+		default:
+			MultiRenders::ToolWindow::SelectedSceneType = MOVE_LIGHT;
 		}
 
 
