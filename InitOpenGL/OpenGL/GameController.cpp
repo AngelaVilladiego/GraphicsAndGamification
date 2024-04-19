@@ -55,16 +55,9 @@ void GameController::RunGame()
 	Mesh fighter = Mesh();
 	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighter.SetCameraPosition(m_camera.GetPosition());
-	fighter.SetScale({ 0.0008f, 0.0008f, 0.0008f });
+	fighter.SetScale({ 0.002f, 0.002f, 0.002f });
 	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
 	m_meshBoxes.push_back(fighter);
-	
-	Mesh wall = Mesh();
-	wall.Create(&m_shaderDiffuse, "../Assets/Models/BrickWall.obj");
-	wall.SetCameraPosition(m_camera.GetPosition());
-	wall.SetScale({ 0.02f, 0.02f, 0.02f });
-	wall.SetPosition({ 0.0f, 0.0f, -1.0f });
-	m_meshBoxes.push_back(wall);
 
 	Fonts f = Fonts();
 	f.Create(&m_shaderFont, "arial.ttf", 100);
