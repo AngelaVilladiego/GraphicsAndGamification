@@ -29,8 +29,7 @@ void WindowController::NewWindow()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
-	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-	M_ASSERT((m_window = glfwCreateWindow(mode->width/2, mode->height/2, "A sample scene", NULL, NULL)) != nullptr, "Failed to open GLFW window.");
+	Resolution r = GetResolution();
+	M_ASSERT((m_window = glfwCreateWindow(r.m_width, r.m_height, "A sample scene", NULL, NULL)) != nullptr, "Failed to open GLFW window.");
 	glfwMakeContextCurrent(m_window);
 }
