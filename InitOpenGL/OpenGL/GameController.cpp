@@ -23,6 +23,16 @@ void GameController::Initialize()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand((unsigned int)time(0));
 
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	GLenum err = glGetError();
+
+	if (err != GL_NO_ERROR)
+	{
+		std::cout << "initialization errors: " << err << std::endl;
+	}
+
 	// Create a default perspective camera
 	m_camera = Camera(WindowController::GetInstance().GetResolution());
 }
@@ -40,8 +50,8 @@ void GameController::RunGame()
 	m_shaderSkybox = Shader();
 	m_shaderSkybox.LoadShaders("Skybox.vertexshader", "Skybox.fragmentshader");
 
-	//m_shaderFont = Shader();
-	//m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
+	m_shaderFont = Shader();
+	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
 	// Create meshes
 	Mesh m = Mesh();
@@ -51,20 +61,43 @@ void GameController::RunGame()
 	m.SetScale({ 0.01f, 0.01f, 0.01f });
 	Mesh::Lights.push_back(m);
 
-	
+	Mesh box = Mesh();
+	box.Create(&m_shaderDiffuse, "../Assets/Models/Cube.obj", 1000);
+	box.SetCameraPosition(m_camera.GetPosition());
+	box.SetScale({ 0.05f, 0.05f, 0.05f });
+	box.SetPosition({ 0.0f, 0.0f, 0.0f });
+	m_meshBoxes.push_back(box);
+
+	/*
 	Mesh fighter = Mesh();
 	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighter.SetCameraPosition(m_camera.GetPosition());
 	fighter.SetScale({ 0.002f, 0.002f, 0.002f });
 	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
 	m_meshBoxes.push_back(fighter);
+	*/
 
 	Fonts f = Fonts();
 	f.Create(&m_shaderFont, "arial.ttf", 100);
 
+	 
+	//fps counting
+	double lastTime = glfwGetTime();
+	int fps = 0;
+	string fpsS = "0";
+
 	do
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
+
+		double currentTime = glfwGetTime();
+		fps++;
+		if (currentTime - lastTime >= 1.0)
+		{
+			fpsS = "FPS: " + to_string(fps);
+			fps = 0;
+			lastTime += 1.0;
+		}
 
 		//m_camera.Rotate();
 		glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetView()));
@@ -72,16 +105,14 @@ void GameController::RunGame()
 		for (unsigned int count = 0; count < m_meshBoxes.size(); count++)
 		{
 			m_meshBoxes[count].Render(m_camera.GetProjection() * m_camera.GetView());
-			m_meshBoxes[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
 		
 		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 		{
 			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
-			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
 		}
 		
-		//f.RenderText("Testing text", 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
+		f.RenderText(fpsS, 100, 100, 0.5f, { 1.0f, 1.0f, 0.0f });
 
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers

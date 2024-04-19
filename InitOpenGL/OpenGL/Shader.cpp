@@ -7,6 +7,7 @@ Shader::Shader()
 	m_attrColors = 0;
 	m_attrNormals = 0;
 	m_attrTexCoords = 0;
+	m_attrInstanceMatrix = 0;
 	m_attrWVP = 0;
 	m_attrTangents = 0;
 	m_attrBitangents = 0;
@@ -74,6 +75,7 @@ void Shader::LoadAttributes()
 	m_attrTangents = glGetAttribLocation(m_programID, "tangents"); // Get a handle for the normals buffer
 	m_attrBitangents = glGetAttribLocation(m_programID, "bitangents"); // Get a handle for the normals buffer
 	m_attrTexCoords = glGetAttribLocation(m_programID, "texCoords"); // Get a handle for the texCoords buffer
+	m_attrInstanceMatrix = glGetAttribLocation(m_programID, "instanceMatrix"); // Get a handle for the isntance matrix buffer
 	m_attrWVP = glGetUniformLocation(m_programID, "WVP"); // Get a hanle for the WVP matrix
 }
 

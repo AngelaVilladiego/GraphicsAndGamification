@@ -27,6 +27,7 @@ private:
 	Camera m_camera;
 	vector<Mesh> m_meshBoxes;
 	Skybox m_skybox;
+	GLuint vao;
 };
 
 #endif // GAME_CONTROLLER_H
