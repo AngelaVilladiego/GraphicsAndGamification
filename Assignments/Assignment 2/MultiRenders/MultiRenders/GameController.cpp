@@ -44,7 +44,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 
 void GameController::RunGame()
 {
-	// variables
+#pragma region Declaring variables
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 
 	FPSCounter fpsCounter = FPSCounter();
@@ -68,10 +68,11 @@ void GameController::RunGame()
 	vector<Mesh>::iterator cubeIt;
 
 	glm::mat4 pv = m_camera.GetProjection() * m_camera.GetView();
-	
+#pragma endregion 
 
 
-	// Loading shaders
+
+#pragma region Loading shaders
 	m_shaderColor = Shader();
 	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
 
@@ -83,10 +84,11 @@ void GameController::RunGame()
 
 	m_shaderPositionColor = Shader();
 	m_shaderPositionColor.LoadShaders("PositionColor.vertexshader", "PositionColor.fragmentshader");
+#pragma endregion
 
 
 
-	// Creating Meshes
+#pragma region Creating meshes
 	Mesh light = Mesh();
 	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
 	light.SetPosition({ 0.0f, 0.0f, 0.1f });
@@ -118,6 +120,8 @@ void GameController::RunGame()
 
 	Fonts cubesFont = Fonts();
 	cubesFont.Create(&m_shaderFont, "arial.ttf", 100);
+#pragma endregion
+
 
 
 	MultiRenders::ToolWindow^ window = gcnew MultiRenders::ToolWindow();
@@ -131,7 +135,7 @@ void GameController::RunGame()
 
 
 
-		//Updating values
+#pragma region Updating values
 		m_currScene = MultiRenders::ToolWindow::SelectedSceneType;
 
 		fpsCounter.Tick();
@@ -174,11 +178,11 @@ void GameController::RunGame()
 
 		teapot.SetSpecularStrength((float)MultiRenders::ToolWindow::SpecularStrength);
 		teapot.SetSpecularColor({ MultiRenders::ToolWindow::SpecularColorR, MultiRenders::ToolWindow::SpecularColorG, MultiRenders::ToolWindow::SpecularColorB });
+#pragma endregion
 
 
 
-
-		//Rendering
+#pragma region Rendering
 		if (m_currScene == MOVE_LIGHT)
 		{
 			teapot.SetShader(&m_shaderDiffuse);
@@ -214,6 +218,7 @@ void GameController::RunGame()
 				
 				if (glm::distance(cubeIt->GetPosition(), glm::vec3({ 0, 0, 0 })) <= touchRadius)
 				{
+					cubeIt->Cleanup();
 					cubeIt = m_cubes.erase(cubeIt);
 				}
 				else
@@ -227,11 +232,9 @@ void GameController::RunGame()
 
 
 
-
-
 		fpsFont.RenderText(fpsString, 50, 50, 0.25f, {1.0f, 1.0f, 0.0f});
 		mousePosFont.RenderText(mousePosString, 50, 100, 0.25f, { 1.0f, 1.0f, 0.0f });
-
+#pragma endregion
 
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
@@ -240,7 +243,9 @@ void GameController::RunGame()
 	} while (glfwGetKey(WindowController::GetInstance().GetWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
 
-	// Cleanup
+
+
+#pragma region Cleanup
 	m_shaderColor.Cleanup();
 	m_shaderDiffuse.Cleanup();
 	m_shaderFont.Cleanup();
@@ -250,7 +255,7 @@ void GameController::RunGame()
 	{
 		Mesh::Lights[count].Cleanup();
 	}
-	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+	for (unsigned int count = 0; count < m_cubes.size(); count++)
 	{
 		m_cubes[count].Cleanup();
 	}
@@ -259,6 +264,9 @@ void GameController::RunGame()
 	fpsFont.Cleanup();
 	mousePosFont.Cleanup();
 	cubesFont.Cleanup();
+#pragma endregion
+
+
 
 }
 
@@ -321,8 +329,8 @@ void GameController::AddCube()
 	cube.SetPosition({ x, y, z });
 	cube.SetScale({ 0.001f, 0.001f, 0.001f });
 	cube.SetCameraPosition(m_camera.GetPosition());
-	cube.SetSpecularStrength(2.0f);
-	cube.SetSpecularColor({ 0.5f, 0.5f, 0.5f });
+	cube.SetSpecularStrength(32.0f);
+	cube.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 	m_cubes.push_back(cube);
 }
 
