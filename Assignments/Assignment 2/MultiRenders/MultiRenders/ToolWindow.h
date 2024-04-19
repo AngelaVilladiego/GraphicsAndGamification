@@ -331,6 +331,7 @@ namespace MultiRenders {
 			this->Controls->Add(this->radioMoveLight);
 			this->Name = L"ToolWindow";
 			this->Text = L"ToolWindow";
+			this->TopMost = true;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarSpecularStrength))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarSpecularColorR))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarSpecularColorG))->EndInit();
