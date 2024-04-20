@@ -30,3 +30,5 @@ Class OpenGLTechniques.ToolWindow: AutoLayout, AnsiClass, Class, Public, BeforeF
     Single Amplitude : Public, Static
     Boolean WireframeRenderChecked : Public, Static
     Boolean TintBlueChecked : Public, Static
+    Boolean ResetLightPosition : Public, Static
+    Boolean ResetTransform : Public, Static

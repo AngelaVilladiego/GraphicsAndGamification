@@ -3,7 +3,6 @@
 
 #include "StandardIncludes.h"
 #include "Shader.h"
-#include "Skybox.h"
 #include "WindowController.h"
 #include "Mesh.h"
 #include "Camera.h"
@@ -18,21 +17,28 @@ public:
 
 	//Methods
 	void Initialize(string title, bool fullscreen);
-	void ShowMovieLights();
 	void RunGame();
+
 
 private:
 	Shader m_shaderColor;
 	Shader m_shaderDiffuse;
+	Shader m_shaderPositionColor;
 	Shader m_shaderFont;
-	Shader m_shaderSkybox;
+
 	Camera m_camera;
-	vector<Mesh> m_meshes;
-	Skybox m_skybox;
-	glm::vec2 m_mousePos;
+	vector<Mesh> m_cubes;
 	float m_lightSpeed;
 	SceneType m_currScene;
-	vector<Mesh> m_spaceMeshes;
+
+	glm::vec3 quadTopLeft;
+	glm::vec3 quadTopRight;
+	glm::vec3 quadBottomLeft;
+	glm::vec3 quadBottomRight;
+
+	// Methods
+	glm::vec3 CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);
+	float RandomFloat(float min, float max);
 };
 
 #endif // GAME_CONTROLLER_H

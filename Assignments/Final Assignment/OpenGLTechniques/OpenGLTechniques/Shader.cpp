@@ -8,8 +8,6 @@ Shader::Shader()
 	m_attrNormals = 0;
 	m_attrTexCoords = 0;
 	m_attrWVP = 0;
-	m_attrTangents = 0;
-	m_attrBitangents = 0;
 	m_result = GL_FALSE;
 	m_infoLogLength = 0;
 }
@@ -71,8 +69,6 @@ void Shader::LoadAttributes()
 	m_attrVertices = glGetAttribLocation(m_programID, "vertices"); // Get a handle for the vertex buffer
 	m_attrColors = glGetAttribLocation(m_programID, "colors"); // Get a handle for the colors buffer
 	m_attrNormals = glGetAttribLocation(m_programID, "normals"); // Get a handle for the normals buffer
-	m_attrTangents = glGetAttribLocation(m_programID, "tangents"); // Get a handle for the normals buffer
-	m_attrBitangents = glGetAttribLocation(m_programID, "bitangents"); // Get a handle for the normals buffer
 	m_attrTexCoords = glGetAttribLocation(m_programID, "texCoords"); // Get a handle for the texCoords buffer
 	m_attrWVP = glGetUniformLocation(m_programID, "WVP"); // Get a hanle for the WVP matrix
 }
@@ -89,7 +85,6 @@ void Shader::EvaluateShader(int _infoLength, GLuint _id)
 
 GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 {
-	std::cout << "loading shader: " << _filePath << endl;
 
 	GLuint shaderID = glCreateShader(_type); // Create the shader
 
@@ -112,7 +107,6 @@ GLuint Shader::LoadShaderFile(const char* _filePath, GLenum _type)
 	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &m_result);
 	glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &m_infoLogLength);
 	EvaluateShader(m_infoLogLength, shaderID);
-	std::cout << "shader " << shaderID << " compile status: " << m_result << endl;
 
 	// Attach shader to program
 	glAttachShader(m_programID, shaderID);
@@ -128,8 +122,6 @@ void Shader::CreateShaderProgram(const char* _vertexFilePath, const char* _fragm
 
 	m_programID = glCreateProgram(); // Create the shader program
 
-	std::cout << "creating shader program: " << m_programID << endl;
-
 	GLuint vertexShaderID = LoadShaderFile(_vertexFilePath, GL_VERTEX_SHADER); // Load vertex shader
 	GLuint fragmentShaderID = LoadShaderFile(_fragmentFilePath, GL_FRAGMENT_SHADER); // Load fragment shader
 	glLinkProgram(m_programID); // Link the program
@@ -138,9 +130,6 @@ void Shader::CreateShaderProgram(const char* _vertexFilePath, const char* _fragm
 	glGetProgramiv(m_programID, GL_LINK_STATUS, &m_result);
 	glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &m_infoLogLength);
 	EvaluateShader(m_infoLogLength, m_programID);
-
-	std::cout << "shader program " << m_programID << " link status: " << m_result << endl;
-	std::cout << endl;
 
 	// Free resources
 	glDetachShader(m_programID, vertexShaderID);

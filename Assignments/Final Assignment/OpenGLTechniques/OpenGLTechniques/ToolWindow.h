@@ -33,6 +33,9 @@ namespace OpenGLTechniques {
 		static bool WireframeRenderChecked;
 		static bool TintBlueChecked;
 
+		static bool ResetLightPosition;
+		static bool ResetTransform;
+
 		ToolWindow(void)
 		{
 			InitializeComponent();
@@ -202,8 +205,9 @@ namespace OpenGLTechniques {
 			this->buttonResetLightPosition->Name = L"buttonResetLightPosition";
 			this->buttonResetLightPosition->Size = System::Drawing::Size(130, 23);
 			this->buttonResetLightPosition->TabIndex = 4;
-			this->buttonResetLightPosition->Text = L"ResetLightPosition";
+			this->buttonResetLightPosition->Text = L"Reset Light Position";
 			this->buttonResetLightPosition->UseVisualStyleBackColor = true;
+			this->buttonResetLightPosition->Click += gcnew System::EventHandler(this, &ToolWindow::buttonResetLightPosition_Click);
 			// 
 			// trackBarSpecularStrength
 			// 
@@ -338,8 +342,9 @@ namespace OpenGLTechniques {
 			this->buttonResetTransform->Name = L"buttonResetTransform";
 			this->buttonResetTransform->Size = System::Drawing::Size(130, 23);
 			this->buttonResetTransform->TabIndex = 20;
-			this->buttonResetTransform->Text = L"ResetTransform";
+			this->buttonResetTransform->Text = L"Reset Transform";
 			this->buttonResetTransform->UseVisualStyleBackColor = true;
+			this->buttonResetTransform->Click += gcnew System::EventHandler(this, &ToolWindow::buttonResetTransform_Click);
 			// 
 			// checkBoxTranslate
 			// 
@@ -511,7 +516,7 @@ namespace OpenGLTechniques {
 	private: SceneType GetSelectedRadio()
 	{
 		if (this->radioMovieLight->Checked) {
-			return MOVIE_LIGHT;
+			return MOVE_LIGHT;
 		}
 		else if (this->radioTransform->Checked) {
 			return TRANSFORM;
@@ -533,7 +538,7 @@ namespace OpenGLTechniques {
 	}
 
 private: System::Void radioMovieLight_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	SetSelectedRadio(MOVIE_LIGHT);
+	SetSelectedRadio(MOVE_LIGHT);
 }
 private: System::Void radioTransform_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
 	SetSelectedRadio(TRANSFORM);
@@ -590,6 +595,12 @@ private: System::Void checkBoxWireframeRender_CheckedChanged(System::Object^ sen
 }
 private: System::Void checkBoxTintBlue_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
 	TintBlueChecked = checkBoxTintBlue->Checked;
+}
+private: System::Void buttonResetLightPosition_Click(System::Object^ sender, System::EventArgs^ e) {
+	ResetLightPosition = true;
+}
+private: System::Void buttonResetTransform_Click(System::Object^ sender, System::EventArgs^ e) {
+	ResetTransform = true;
 }
 };
 }

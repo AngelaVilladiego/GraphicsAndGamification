@@ -1,5 +1,6 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
+  GameController.cpp
   Camera.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
 freetype.lib(ftbase.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftbase.obj)' or at ''; linking object as if no debug info
 freetype.lib(ftinit.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftinit.obj)' or at ''; linking object as if no debug info

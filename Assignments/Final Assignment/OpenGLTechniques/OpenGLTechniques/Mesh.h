@@ -17,15 +17,16 @@ public:
 	//Accessors
 	void SetPosition(glm::vec3 _position) { m_position = _position; }
 	void SetRotation(glm::vec3 _rotation) { m_rotation = _rotation; }
+	void SetShader(Shader* _shader) { m_shader = _shader; }
 	glm::vec3 GetPosition() { return m_position; }
 	void SetScale(glm::vec3 _scale) { m_scale = _scale; }
 	void SetColor(glm::vec3 _color) { m_color = _color; }
 	glm::vec3 GetColor() { return m_color; }
 	void SetCameraPosition(glm::vec3 _cameraPosition) { m_cameraPosition = _cameraPosition; }
-	void SetLightPosition(glm::vec3 _position) { m_lightPosition = _position; }
 	void SetSpecularStrength(float _specularStrength) { m_specularStrength = _specularStrength; }
 	void SetSpecularColor(glm::vec3 _specularColor) { m_specularColor = _specularColor; }
-	void SetDiffuseColor(glm::vec3 _diffuseColor) { m_diffuseColor = _diffuseColor; }
+	void SetAmbientColor(glm::vec3 _ambientColor) { m_ambientColor = _ambientColor; }
+	void SetEnableNormal(bool _enableNormal) { m_enableNormalMap = _enableNormal; }
 	GLuint GetShaderProgram();
 
 	// Methods
@@ -43,7 +44,6 @@ private:
 	void BindAttributes();
 	string Concat(string _s1, int _index, string _s2);
 	string RemoveFolder(string _map);
-	void CalculateTangents(vector<objl::Vertex> _vertices, objl::Vector3& _tangent, objl::Vector3& _bitangent);
 
 	// Members
 	Shader* m_shader;
@@ -51,9 +51,7 @@ private:
 	Texture m_textureSpecular;
 	Texture m_textureNormal;
 	GLuint m_vertexBuffer; // GPU buffer
-	GLuint m_indexBuffer; // GPU buffer
 	std::vector<GLfloat> m_vertexData; // Store vertex data in RAM
-	std::vector<GLubyte> m_indexData; // Store index data in RAM
 	bool m_enableNormalMap;
 
 	// Transform
@@ -69,6 +67,7 @@ private:
 	float m_specularStrength;
 	glm::vec3 m_specularColor;
 	glm::vec3 m_diffuseColor;
+	glm::vec3 m_ambientColor;
 
 };
 

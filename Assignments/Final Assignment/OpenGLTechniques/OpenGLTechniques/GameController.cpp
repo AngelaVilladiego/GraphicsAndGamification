@@ -2,35 +2,37 @@
 #include "WindowController.h"
 #include "Fonts.h"
 #include "ToolWindow.h"
+#include "FPSCounter.h"
+#include <random>
 
 GameController::GameController()
 {
 	m_shaderColor = { };
 	m_shaderDiffuse = { };
+	m_shaderPositionColor = { };
 	m_shaderFont = { };
+
 	m_camera = { };
-	m_meshes.clear();
+	m_cubes.clear();
 	m_lightSpeed = 10.0f;
-	m_currScene = MOVIE_LIGHT;
+	m_currScene = MOVE_LIGHT;
+
+	quadTopLeft = { 0, 0, 0 };
+	quadTopRight = { 0, 0, 0 };
+	quadBottomLeft = { 0, 0, 0 };
+	quadBottomRight = { 0, 0, 0 };
 }
 
 void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 {
 	GLFWwindow* window = WindowController::GetInstance().GetWindow(fullscreen); // Call this first as it creates a window required by GLEW
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
-	
-	GLenum err = glGetError();
 
-	if (err != GL_NO_ERROR)
-	{
-		std::cout << "initialization errors: " << err << std::endl;
-	}
-
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE); // Ensure we can capture the escape key
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
+	glfwSetInputMode(window, GLFW_STICKY_KEYS | GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE); // Ensure we can capture the escape key
+	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Gray background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand((unsigned int)time(0));
 
@@ -42,24 +44,45 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 
 void GameController::RunGame()
 {
-	OpenGLTechniques::ToolWindow^ window = gcnew OpenGLTechniques::ToolWindow();
-	window->Show();
+#pragma region Declaring variables
+	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 
+	FPSCounter fpsCounter = FPSCounter();
+	string fpsString = "FPS: 0";
+
+	Resolution res = WindowController::GetInstance().GetResolution();
+	glm::vec3 centerVec = { res.m_width / 2.0f, res.m_height / 2.0f, 0 };
+	double mouseX = 0.0;
+	double mouseY = 0.0;
+	float maxSpeed = 0.003f;
+	string mousePosString = "Mouse Pos: ";
+
+	//convert resolution to vectors with 0 at center and positive y up 
+	quadTopLeft = { -centerVec.x, centerVec.y, 0 };
+	quadTopRight = { centerVec.x, centerVec.y, 0 };
+	quadBottomLeft = { -centerVec.x, -centerVec.y, 0 };
+	quadBottomRight = { centerVec.x, -centerVec.y, 0 };
+
+	glm::mat4 pv = m_camera.GetProjection() * m_camera.GetView();
+#pragma endregion 
+
+
+
+#pragma region Loading shaders
 	m_shaderColor = Shader();
 	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
-
-	m_shaderDiffuse = Shader();
-	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
 	m_shaderFont = Shader();
 	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
 
-	m_shaderSkybox = Shader();
-	m_shaderSkybox.LoadShaders("Skybox.vertexshader", "Skybox.fragmentshader");
+	m_shaderDiffuse = Shader();
+	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
+
+#pragma endregion
 
 
-#pragma region SpaceMeshes
 
+#pragma region Creating meshes
 	Mesh light = Mesh();
 	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
 	light.SetPosition({ 0.0f, 0.0f, 1.0f });
@@ -67,201 +90,160 @@ void GameController::RunGame()
 	light.SetScale({ 0.1f, 0.1f, 0.1f });
 	Mesh::Lights.push_back(light);
 
-
-	Skybox skybox = Skybox();
-	skybox.Create(&m_shaderSkybox, "../Assets/Models/Skybox.obj",
-		{
-			"../Assets/Textures/Skybox/right.jpg",
-			"../Assets/Textures/Skybox/left.jpg",
-			"../Assets/Textures/Skybox/top.jpg",
-			"../Assets/Textures/Skybox/bottom.jpg",
-			"../Assets/Textures/Skybox/front.jpg",
-			"../Assets/Textures/Skybox/back.jpg",
-		});
-
-
-
 	Mesh fighter = Mesh();
 	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
-	fighter.SetCameraPosition(m_camera.GetPosition());
 	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
 	fighter.SetScale({ 0.0008f, 0.0008f, 0.0008f });
-	fighter.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f });
-	fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
-	fighter.SetSpecularColor({ (float)OpenGLTechniques::ToolWindow::SpecularColorR, (float)OpenGLTechniques::ToolWindow::SpecularColorG, (float)OpenGLTechniques::ToolWindow::SpecularColorB });
-	m_spaceMeshes.push_back(fighter);
-#pragma endregion SpaceMeshes
+	fighter.SetCameraPosition(m_camera.GetPosition());
+	fighter.SetSpecularStrength(4.0f);
+	fighter.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
+
+	Fonts fpsFont = Fonts();
+	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	Fonts mousePosFont = Fonts();
+	mousePosFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+#pragma endregion
+
+	OpenGLTechniques::ToolWindow^ window = gcnew OpenGLTechniques::ToolWindow();
+	window->Show();
 
 	do
 	{
 		System::Windows::Forms::Application::DoEvents();// handle form events
 
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+
+#pragma region Updating values
 		m_currScene = OpenGLTechniques::ToolWindow::SelectedSceneType;
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
+		fpsCounter.Tick();
+		fpsString = "FPS: " + to_string(fpsCounter.GetFPS());
 
-		if (m_currScene == SPACE_SCENE)
+		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
+		mousePosString = "Mouse Pos: " + to_string(mouseX) + " " + to_string(mouseY);
+
+		if (OpenGLTechniques::ToolWindow::ResetLightPosition)
 		{
-			glm::mat4 view = glm::mat4(glm::mat3(m_camera.GetView()));
-			skybox.Render(m_camera.GetProjection() * view);
-
-			for (unsigned int count = 0; count < m_spaceMeshes.size(); count++)
-			{
-				m_spaceMeshes[count].Render(m_camera.GetProjection() * m_camera.GetView());
-			}
+			Mesh::Lights[0].SetPosition({ 0.0f, 0.0f, 0.1f });
+			OpenGLTechniques::ToolWindow::ResetLightPosition = false;
 		}
-		else {
+
+		if (OpenGLTechniques::ToolWindow::ResetTransform)
+		{
+			//TODO RESET TRANSFORM
+			OpenGLTechniques::ToolWindow::ResetTransform = false;
+		}
+
+		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		{
+			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
+
+			if (m_currScene == MOVE_LIGHT)
+			{
+				Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+			}
+
+		}
+
+		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
+		fighter.SetSpecularColor({ OpenGLTechniques::ToolWindow::SpecularColorR, OpenGLTechniques::ToolWindow::SpecularColorG, OpenGLTechniques::ToolWindow::SpecularColorB });
+#pragma endregion
+
+
+
+#pragma region Rendering
+
+		switch (m_currScene) {
+		case MOVE_LIGHT:
 
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 			{
-				Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
+				Mesh::Lights[count].Render(pv);
 			}
+
+			break;
+
+		default:
+			OpenGLTechniques::ToolWindow::SelectedSceneType = MOVE_LIGHT;
 		}
+
+
+
+		fpsFont.RenderText(fpsString, 50, 50, 0.2f, { 1.0f, 1.0f, 0.0f });
+		mousePosFont.RenderText(mousePosString, 50, 70, 0.2f, { 1.0f, 1.0f, 0.0f });
+#pragma endregion
+
 
 		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
 		glfwPollEvents();
+
 	} while (glfwGetKey(WindowController::GetInstance().GetWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
 		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
 
-	skybox.Cleanup();
 
-	for (unsigned int count = 0; count < m_meshes.size(); count++)
-	{
-		m_meshes[count].Cleanup();
-	}
 
-	for (unsigned int count = 0; count < m_spaceMeshes.size(); count++)
-	{
-		m_spaceMeshes[count].Cleanup();
-	}
+#pragma region Cleanup
+	m_shaderColor.Cleanup();
+	m_shaderDiffuse.Cleanup();
+	m_shaderFont.Cleanup();
 
+	fighter.Cleanup();
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
 	}
 
-	m_shaderDiffuse.Cleanup();
-	m_shaderColor.Cleanup();
-	m_shaderSkybox.Cleanup();
+	fpsFont.Cleanup();
+	mousePosFont.Cleanup();
+#pragma endregion
+
 }
 
-void GameController::ShowMovieLights() 
+
+glm::vec3 GameController::CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed)
 {
 
-#pragma region DefineShaders
+	// identify which quadrant the mouse was clicked in	
+	glm::vec3 clickedQuadrant = quadTopLeft;
 
-	m_shaderColor = Shader();
-	m_shaderColor.LoadShaders("Color.vertexshader", "Color.fragmentshader");
-
-	m_shaderDiffuse = Shader();
-	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
-
-	m_shaderFont = Shader();
-	m_shaderFont.LoadShaders("Font.vertexshader", "Font.fragmentshader");
-
-#pragma endregion DefineShaders
-
-
-#pragma region MovieLights
-
-	Resolution res = WindowController::GetInstance().GetResolution();
-
-	Mesh light = Mesh();
-	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
-	light.SetPosition({ 0.0f, 0.0f, 1.0f });
-	light.SetColor({ 1.0f, 1.0f, 1.0f });
-	light.SetScale({ 0.1f, 0.1f, 0.1f });
-	Mesh::Lights.push_back(light);
-
-	Mesh fighter = Mesh();
-	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
-	fighter.SetCameraPosition(m_camera.GetPosition());
-	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
-	fighter.SetScale({ 0.0008f, 0.0008f, 0.0008f });
-	fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
-	fighter.SetSpecularColor({ (float)OpenGLTechniques::ToolWindow::SpecularColorR, (float)OpenGLTechniques::ToolWindow::SpecularColorG, (float)OpenGLTechniques::ToolWindow::SpecularColorB });
-	m_meshes.push_back(fighter);
-
-	Fonts f = Fonts();
-	f.Create(&m_shaderFont, "arial.ttf", 100);
-
-#pragma endregion MovieLights
-
-	do
+	if (mousePos.x >= centerPos.x)
 	{
-		System::Windows::Forms::Application::DoEvents(); // handle form events
-
-#pragma region MousePos
-		// get mouse position
-		/*
-		double mouseX;
-		double mouseY;
-		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
-
-		m_mousePos.x = (float)mouseX;
-		m_mousePos.y = (float)mouseY;
-
-		float screenMouseX = m_mousePos.x / res.m_width;
-		float screenMouseY = m_mousePos.y / res.m_height;
-
-		glm::mat4 inversePV = inverse(m_camera.GetProjection() * m_camera.GetView());
-		glm::vec4 clipFar = inversePV * glm::vec4({ screenMouseX, screenMouseY, 1, 1 });
-		glm::vec4 clipNear = inversePV * glm::vec4({ screenMouseX, screenMouseY, 0, 1 });
-		glm::vec3 ray = glm::normalize(glm::vec3({ clipFar.x - clipNear.x, clipFar.y - clipNear.y, clipFar.z - clipNear.z }));
-		std::string mouseText = "Mouse Position: " + std::to_string(mouseX) + "   " + std::to_string(mouseY);
-
-
-		glm::vec3 lightPosition = m_camera.GetPosition() - ray;
-		*/
-
-		double mouseX;
-		double mouseY;
-		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
-
-		m_mousePos.x = (float)mouseX;
-		m_mousePos.y = (float)mouseY;
-		float centerX = res.m_width / 2.0f;
-		float centerY = res.m_height / 2.0f;
-
-		glm::vec3 dir = glm::normalize(glm::vec3({ m_mousePos.x - centerX, m_mousePos.y - centerY, 0 }));
-		std::string mouseText = "Mouse Position: " + std::to_string(mouseX) + "   " + std::to_string(mouseY);
-
-
-#pragma endregion MousePos
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear the screen
-
-		for (unsigned int count = 0; count < m_meshes.size(); count++)
+		if (mousePos.y >= centerPos.y)
 		{
-			m_meshes[count].SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
-			m_meshes[count].SetSpecularColor({ (float)OpenGLTechniques::ToolWindow::SpecularColorR, (float)OpenGLTechniques::ToolWindow::SpecularColorG, (float)OpenGLTechniques::ToolWindow::SpecularColorB });
-			m_meshes[count].Render(m_camera.GetProjection() * m_camera.GetView());
+			clickedQuadrant = quadBottomRight;
 		}
-
-		for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
+		else
 		{
-			Mesh::Lights[count].SetPosition(Mesh::Lights[count].GetPosition() + (dir * m_lightSpeed));
-			Mesh::Lights[count].Render(m_camera.GetProjection() * m_camera.GetView());
+			clickedQuadrant = quadTopRight;
 		}
-
-		f.RenderText(mouseText, 10, 500, 0.5f, { 1.0f, 1.0f, 0.0f });
-
-		glfwSwapBuffers(WindowController::GetInstance().GetWindow()); // Swap the front and back buffers
-		glfwPollEvents();
-	} while (glfwGetKey(WindowController::GetInstance().GetWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS && // Check if ESC key was pressed
-		glfwWindowShouldClose(WindowController::GetInstance().GetWindow()) == 0); // Check if window was closed
-
-	for (unsigned int count = 0; count < m_meshes.size(); count++)
+	}
+	else if (mousePos.y >= centerPos.y)
 	{
-		m_meshes[count].Cleanup();
+		clickedQuadrant = quadBottomLeft;
 	}
 
-	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
-	{
-		Mesh::Lights[count].Cleanup();
-	}
+	// get distance into quadrant relative from center, clamped to be a maximum of the distance from center to corner
+	float maxDistance = glm::length(clickedQuadrant);
+	float distance = min(glm::distance(mousePos, centerPos), maxDistance);
 
-	m_shaderDiffuse.Cleanup();
-	m_shaderColor.Cleanup();
+	// calculate speed based off of depth of click into quadrant
+	float speed = (distance / maxDistance) * maxSpeed;
+
+	// calculate new position this frame based off speed, quadrant, and current position
+	glm::vec3 direction = glm::normalize(clickedQuadrant);
+	glm::vec3 newPosition = currPos + (direction * speed);
+
+	return newPosition;
+}
+
+float GameController::RandomFloat(float min, float max) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis(min, max);
+	return dis(gen);
 }
