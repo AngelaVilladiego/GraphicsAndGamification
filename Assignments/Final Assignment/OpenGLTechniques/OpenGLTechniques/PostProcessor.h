@@ -21,6 +21,7 @@ public:
 	void SetAmplitude(float _amplitude) { m_amplitude = _amplitude; }
 	void SetTime(float _time) { m_time = _time; }
 	void SetWireframeMode(bool _wireframe) { m_wireframe = _wireframe; }
+	void SetTintBlue(bool _tintBlue) { m_tintBlue = _tintBlue; }
 
 private:
 	GLuint m_framebuffer;
@@ -34,6 +35,7 @@ private:
 	float m_time;
 
 	bool m_wireframe;
+	bool m_tintBlue;
 
 	void CreateVertices();
 	void CreateBuffers();

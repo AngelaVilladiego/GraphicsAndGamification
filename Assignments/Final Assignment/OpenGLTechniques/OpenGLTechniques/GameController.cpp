@@ -236,6 +236,7 @@ void GameController::RunGame()
 			m_postProcessor.SetTime(m_time);
 
 			m_postProcessor.SetWireframeMode(OpenGLTechniques::ToolWindow::WireframeRenderChecked);
+			m_postProcessor.SetTintBlue(OpenGLTechniques::ToolWindow::TintBlueChecked);
 		}
 
 		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);

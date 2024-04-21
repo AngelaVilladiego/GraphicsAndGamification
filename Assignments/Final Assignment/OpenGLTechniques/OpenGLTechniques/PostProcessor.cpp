@@ -121,6 +121,7 @@ void PostProcessor::End()
 	m_postShader->SetFloat("Frequency", m_frequency);
 	m_postShader->SetFloat("Amplitude", m_amplitude);
 	m_postShader->SetFloat("Time", m_time);
+	m_postShader->SetInt("TintBlue", m_tintBlue);
 
 	if (m_wireframe)
 	{

@@ -7,6 +7,7 @@ uniform sampler2D ScreenTexture;
 uniform float Frequency;
 uniform float Amplitude;
 uniform float Time;
+uniform bool TintBlue = false;
 
 void main()
 {
@@ -15,5 +16,13 @@ void main()
 	vec2 newFragPos = retTexCoord + sin(retTexCoord.x * Frequency + Time) * Amplitude;
 	vec3 col = texture(ScreenTexture, newFragPos).rgb;
 
-	FragColor = vec4(col, 1.0);
+	vec3 finalColor = col;
+
+	if (TintBlue)
+	{
+		finalColor.r = col.r / 2.0f;
+		finalColor.g = col.g / 2.0f;
+	}
+
+	FragColor = vec4(finalColor, 1.0);
 }
