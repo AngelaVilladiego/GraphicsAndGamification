@@ -300,10 +300,11 @@ void GameController::HandleTransform()
 		fighterTranslation = glm::vec3({ newX, newY, newZ });
 	}
 
+	Resolution res = WindowController::GetInstance().GetResolution();
+	float maxDistClamp = (float)max(res.m_width, res.m_height) / 2.0f;
+
 	if (OpenGLTechniques::ToolWindow::RotateChecked)
-	{
-		Resolution res = WindowController::GetInstance().GetResolution();
-		float maxDistClamp = (float)max(res.m_width, res.m_height) / 2.0f;
+	{		
 		glm::vec3 rotationAdjustment = { 0.0f, 0.0f, 0.0f };
 
 		float maxSpeed = 0.03f;
@@ -312,8 +313,8 @@ void GameController::HandleTransform()
 		{
 			glm::vec2 gesture = m_leftClickHandler.GetGestureVector();
 
-			float yAmount = gesture.x / (maxDistClamp);
-			float xAmount = gesture.y / (maxDistClamp);
+			float yAmount = gesture.x / maxDistClamp;
+			float xAmount = gesture.y / maxDistClamp;
 
 			rotationAdjustment.x = xAmount * maxSpeed;
 			rotationAdjustment.y = yAmount * maxSpeed;
@@ -324,14 +325,51 @@ void GameController::HandleTransform()
 		{
 			glm::vec2 gesture = m_middleClickHandler.GetGestureVector();
 
-			float yAmount = gesture.x / (maxDistClamp);
-			float zAmount = gesture.y / (maxDistClamp);
+			float yAmount = gesture.x / maxDistClamp;
+			float zAmount = gesture.y / maxDistClamp;
 			
 			rotationAdjustment.y = yAmount * maxSpeed;
 			rotationAdjustment.z = zAmount * maxSpeed;
 		}
 		rotationAdjustment.x = -rotationAdjustment.x;
 		fighterRotation = fighterRotation + rotationAdjustment;
+	}
+
+	if (OpenGLTechniques::ToolWindow::ScaleChecked)
+	{
+		glm::vec3 scaleAdjustment = { 0.0f, 0.0f, 0.0f };
+
+		float maxSpeed = 0.000005f;
+
+		if (m_leftClickHandler.IsInProgress())
+		{
+			glm::vec2 gesture = m_leftClickHandler.GetGestureVector();
+
+			float xAmount = gesture.x / maxDistClamp;
+			float yAmount = gesture.y / maxDistClamp;
+
+			scaleAdjustment.x = xAmount * maxSpeed;
+			scaleAdjustment.y = yAmount * maxSpeed;
+
+		}
+
+		if (m_middleClickHandler.IsInProgress())
+		{
+			glm::vec2 gesture = m_middleClickHandler.GetGestureVector();
+
+			float zAmount = gesture.x / maxDistClamp;
+			float yAmount = gesture.y / maxDistClamp;
+
+			scaleAdjustment.y = yAmount * maxSpeed;
+			scaleAdjustment.z = zAmount * maxSpeed;
+		}
+		
+		// do not allow scale to go into negatives
+		float scaleX = max(maxSpeed, fighterScale.x + scaleAdjustment.x);
+		float scaleY = max(maxSpeed, fighterScale.y + scaleAdjustment.y);
+		float scaleZ = max(maxSpeed, fighterScale.z + scaleAdjustment.z);
+
+		fighterScale = { scaleX, scaleY, scaleZ };
 	}
 }
 
