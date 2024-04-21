@@ -115,7 +115,7 @@ void GameController::RunGame()
 	fighter.SetSpecularStrength(4.0f);
 	fighter.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
-	Mesh* currFighter = &fighter;
+	Mesh* currMesh = &fighter;
 
 	Mesh fighterTransform = Mesh();
 	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
@@ -185,6 +185,8 @@ void GameController::RunGame()
 		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
 		mousePosString = "Mouse Pos: " + to_string(mouseX) + " " + to_string(mouseY);
 
+		string modelName = "Fighter";
+
 		m_leftClickHandler.Tick();
 		m_middleClickHandler.Tick();
 
@@ -228,7 +230,7 @@ void GameController::RunGame()
 
 		if (m_currScene == MOVE_LIGHT)
 		{
-			currFighter = &fighter;
+			currMesh = &fighter;
 			if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
 				glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
@@ -238,7 +240,7 @@ void GameController::RunGame()
 
 		if (m_currScene == TRANSFORM)
 		{
-			currFighter = &fighterTransform;
+			currMesh = &fighterTransform;
 			if (m_leftClickHandler.IsInProgress() || m_middleClickHandler.IsInProgress())
 			{
 				HandleTransform();
@@ -250,6 +252,9 @@ void GameController::RunGame()
 
 		if (m_currScene == WATER_SCENE)
 		{
+			modelName = "Fish";
+			currMesh = &fish;
+
 			m_time += 0.01f;
 			m_postProcessor.SetFrequency(OpenGLTechniques::ToolWindow::Frequency);
 			m_postProcessor.SetAmplitude(OpenGLTechniques::ToolWindow::Amplitude);
@@ -296,9 +301,9 @@ void GameController::RunGame()
 		mousePosFont.RenderText(mousePosString, 50, 70, 0.2f, { 1.0f, 1.0f, 0.0f });
 		leftBtnFont.RenderText("Left Button: " + leftBtnString, 50, 90, 0.2f, {1.0f, 1.0f, 0.0f});
 		middleBtnFont.RenderText("Middle Button: " + middleBtnString, 50, 110, 0.2f, {1.0f, 1.0f, 0.0f});
-		fighterPositionFont.RenderText("Fighter Position: " + vec3_to_string(currFighter->GetPosition()), 50, 130, 0.2f, { 1.0f, 1.0f, 0.0f });
-		fighterRotationFont.RenderText("Fighter Rotation: " + vec3_to_string(glm::degrees(currFighter->GetRotation())), 50, 150, 0.2f, { 1.0f, 1.0f, 0.0f });
-		fighterScaleFont.RenderText("Fighter Scale: " + vec3_to_string(currFighter->GetScale()), 50, 170, 0.2f, { 1.0f, 1.0f, 0.0f });
+		fighterPositionFont.RenderText(modelName + " Position: " + vec3_to_string(currMesh->GetPosition()), 50, 130, 0.2f, { 1.0f, 1.0f, 0.0f });
+		fighterRotationFont.RenderText(modelName + " Rotation: " + vec3_to_string(glm::degrees(currMesh->GetRotation())), 50, 150, 0.2f, { 1.0f, 1.0f, 0.0f });
+		fighterScaleFont.RenderText(modelName + " Scale: " + vec3_to_string(currMesh->GetScale()), 50, 170, 0.2f, { 1.0f, 1.0f, 0.0f });
 
 		if (m_currScene == WATER_SCENE) {
 			m_postProcessor.End();

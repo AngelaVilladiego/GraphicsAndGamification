@@ -1,6 +1,12 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
   GameController.cpp
+  Mesh.cpp
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Mesh.cpp(265,49): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  Skybox.cpp
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Skybox.cpp(77,49): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  main.cpp
+  Generating Code...
   Camera.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
 freetype.lib(ftbase.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftbase.obj)' or at ''; linking object as if no debug info
 freetype.lib(ftinit.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftinit.obj)' or at ''; linking object as if no debug info
