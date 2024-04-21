@@ -51,7 +51,7 @@ namespace OpenGLTechniques {
 			SpecularColorB = 1.0f;
 
 			Frequency = 4.0f;
-			Amplitude = 0.1f;
+			Amplitude = 0.01f;
 		}
 
 	protected:
