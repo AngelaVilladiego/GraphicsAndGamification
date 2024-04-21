@@ -264,8 +264,8 @@ void GameController::RunGame()
 			m_postProcessor.SetTintBlue(OpenGLTechniques::ToolWindow::TintBlueChecked);
 		}
 
-		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
-		fighter.SetSpecularColor({ OpenGLTechniques::ToolWindow::SpecularColorR, OpenGLTechniques::ToolWindow::SpecularColorG, OpenGLTechniques::ToolWindow::SpecularColorB });
+		currMesh->SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
+		currMesh->SetSpecularColor({ OpenGLTechniques::ToolWindow::SpecularColorR, OpenGLTechniques::ToolWindow::SpecularColorG, OpenGLTechniques::ToolWindow::SpecularColorB });
 #pragma endregion
 
 
