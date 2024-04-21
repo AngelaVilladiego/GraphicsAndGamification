@@ -36,7 +36,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS | GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE); // Ensure we can capture the escape key
-	glClearColor(0.1f, 0.1f, 0.1f, 0.0f); // Gray background
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
@@ -234,6 +234,8 @@ void GameController::RunGame()
 			m_postProcessor.SetFrequency(OpenGLTechniques::ToolWindow::Frequency);
 			m_postProcessor.SetAmplitude(OpenGLTechniques::ToolWindow::Amplitude);
 			m_postProcessor.SetTime(m_time);
+
+			m_postProcessor.SetWireframeMode(OpenGLTechniques::ToolWindow::WireframeRenderChecked);
 		}
 
 		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);

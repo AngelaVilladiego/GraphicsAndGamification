@@ -20,6 +20,7 @@ public:
 	void SetFrequency(float _frequency) { m_frequency = _frequency; }
 	void SetAmplitude(float _amplitude) { m_amplitude = _amplitude; }
 	void SetTime(float _time) { m_time = _time; }
+	void SetWireframeMode(bool _wireframe) { m_wireframe = _wireframe; }
 
 private:
 	GLuint m_framebuffer;
@@ -31,6 +32,8 @@ private:
 	float m_frequency;
 	float m_amplitude;
 	float m_time;
+
+	bool m_wireframe;
 
 	void CreateVertices();
 	void CreateBuffers();

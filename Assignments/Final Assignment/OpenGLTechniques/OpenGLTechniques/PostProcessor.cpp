@@ -13,6 +13,8 @@ PostProcessor::PostProcessor()
 	m_frequency = 4.0f;
 	m_amplitude = 0.1f;
 	m_time = 0.0f;
+
+	m_wireframe = false;
 }
 
 PostProcessor::~PostProcessor()
@@ -119,6 +121,15 @@ void PostProcessor::End()
 	m_postShader->SetFloat("Frequency", m_frequency);
 	m_postShader->SetFloat("Amplitude", m_amplitude);
 	m_postShader->SetFloat("Time", m_time);
+
+	if (m_wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 
 	BindVertices();
 	glDrawArrays(GL_TRIANGLES, 0, 6);
