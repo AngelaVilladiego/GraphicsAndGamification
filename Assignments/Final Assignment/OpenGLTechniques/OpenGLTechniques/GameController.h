@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "SceneType.h"
 #include "GestureManager.h"
+#include "PostProcessor.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -24,9 +25,10 @@ public:
 private:
 	Shader m_shaderColor;
 	Shader m_shaderDiffuse;
-	Shader m_shaderPositionColor;
 	Shader m_shaderFont;
+	Shader m_shaderPost;
 
+	PostProcessor m_postProcessor;
 	Camera m_camera;
 	float m_lightSpeed;
 	SceneType m_currScene;
@@ -44,6 +46,8 @@ private:
 
 	GestureManager m_leftClickHandler;
 	GestureManager m_middleClickHandler;
+
+	float m_time;
 
 	// Methods
 	glm::vec3 CalculateQuadrantPosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);

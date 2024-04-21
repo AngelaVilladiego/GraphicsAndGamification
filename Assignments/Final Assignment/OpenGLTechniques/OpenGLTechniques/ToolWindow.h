@@ -49,6 +49,9 @@ namespace OpenGLTechniques {
 			SpecularColorR = 1.0f;
 			SpecularColorG = 1.0f;
 			SpecularColorB = 1.0f;
+
+			Frequency = 4.0f;
+			Amplitude = 0.1f;
 		}
 
 	protected:
@@ -584,12 +587,12 @@ namespace OpenGLTechniques {
 		private: System::Void trackBarFrequency_Scroll(System::Object^ sender, System::EventArgs^ e) {
 			float val = trackBarFrequency->Value / 100.0f;
 			Frequency = val;
-			labelFrequency->Text = System::Convert::ToString(val);
+			labelFrequency->Text = getFormattedString(val);
 		}
 		private: System::Void trackBarAmplitude_Scroll(System::Object^ sender, System::EventArgs^ e) {
 			float val = trackBarAmplitude->Value / 100.0f;
 			Amplitude = val;
-			labelAmplitude->Text = System::Convert::ToString(val);
+			labelAmplitude->Text = getFormattedString(val);
 		}
 		private: System::Void checkBoxTranslate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
 			TranslateChecked = checkBoxTranslate->Checked;

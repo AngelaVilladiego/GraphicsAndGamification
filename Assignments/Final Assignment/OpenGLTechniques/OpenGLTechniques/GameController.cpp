@@ -9,8 +9,8 @@ GameController::GameController()
 {
 	m_shaderColor = { };
 	m_shaderDiffuse = { };
-	m_shaderPositionColor = { };
 	m_shaderFont = { };
+	m_shaderPost = { };
 
 	m_camera = { };
 	m_lightSpeed = 10.0f;
@@ -26,6 +26,8 @@ GameController::GameController()
 	fighterTranslation = { 0, 0, 0 };
 	fighterRotation = { 0, 0, 0 };
 	fighterScale = { 0, 0, 0 };
+
+	m_time = 0.0f;
 }
 
 void GameController::Initialize(string title = "Sample", bool fullscreen = true)
@@ -44,7 +46,9 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	WindowController::GetInstance().SetWindowTitle(title.c_str());
 
 	// Create a default perspective camera
-	m_camera = Camera(WindowController::GetInstance().GetResolution());
+	Resolution r = WindowController::GetInstance().GetResolution();
+	glViewport(0, 0, r.m_width, r.m_height);
+	m_camera = Camera(r);
 }
 
 void GameController::RunGame()
@@ -88,6 +92,8 @@ void GameController::RunGame()
 	m_shaderDiffuse = Shader();
 	m_shaderDiffuse.LoadShaders("Diffuse.vertexshader", "Diffuse.fragmentshader");
 
+	m_shaderPost = Shader();
+	m_shaderPost.LoadShaders("PostProcess.vertexshader", "PostProcess.fragmentshader");
 #pragma endregion
 
 
@@ -121,6 +127,15 @@ void GameController::RunGame()
 	fighterRotation = fighterTransform.GetRotation();
 	fighterScale = fighterTransform.GetScale();
 
+	Mesh fish = Mesh();
+	fish.Create(&m_shaderDiffuse, "../Assets/Models/Fish.obj");
+	fish.SetCameraPosition(m_camera.GetPosition());
+	fish.SetScale({ 0.003f, 0.003f, 0.003f });
+	fish.SetPosition({ 0.0f, 0.0f, 0.0f });
+	fish.SetSpecularStrength(4.0f);
+	fish.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
+	fish.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f });
+
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
 
@@ -132,6 +147,9 @@ void GameController::RunGame()
 
 	Fonts middleBtnFont = Fonts();
 	middleBtnFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	m_postProcessor = PostProcessor();
+	m_postProcessor.Create(&m_shaderPost);
 
 #pragma endregion
 
@@ -210,6 +228,14 @@ void GameController::RunGame()
 			fighterTransform.SetScale(fighterScale);
 		}
 
+		if (m_currScene == WATER_SCENE)
+		{
+			m_time += 0.01f;
+			m_postProcessor.SetFrequency(OpenGLTechniques::ToolWindow::Frequency);
+			m_postProcessor.SetAmplitude(OpenGLTechniques::ToolWindow::Amplitude);
+			m_postProcessor.SetTime(m_time);
+		}
+
 		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
 		fighter.SetSpecularColor({ OpenGLTechniques::ToolWindow::SpecularColorR, OpenGLTechniques::ToolWindow::SpecularColorG, OpenGLTechniques::ToolWindow::SpecularColorB });
 #pragma endregion
@@ -232,6 +258,8 @@ void GameController::RunGame()
 			break;
 
 		case WATER_SCENE:
+			m_postProcessor.Start();
+			fish.Render(pv);
 			break;
 		
 		case SPACE_SCENE:
@@ -245,6 +273,10 @@ void GameController::RunGame()
 		mousePosFont.RenderText(mousePosString, 50, 70, 0.2f, { 1.0f, 1.0f, 0.0f });
 		leftBtnFont.RenderText("Left Button: " + leftBtnString, 50, 90, 0.2f, {1.0f, 1.0f, 0.0f});
 		middleBtnFont.RenderText("Middle Button: " + middleBtnString, 50, 110, 0.2f, {1.0f, 1.0f, 0.0f});
+
+		if (m_currScene == WATER_SCENE) {
+			m_postProcessor.End();
+		}
 #pragma endregion
 
 
@@ -260,6 +292,7 @@ void GameController::RunGame()
 	m_shaderColor.Cleanup();
 	m_shaderDiffuse.Cleanup();
 	m_shaderFont.Cleanup();
+	m_shaderPost.Cleanup();
 
 	fighter.Cleanup();
 	fighterTransform.Cleanup();
@@ -272,6 +305,8 @@ void GameController::RunGame()
 	mousePosFont.Cleanup();
 	leftBtnFont.Cleanup();
 	middleBtnFont.Cleanup();
+
+	m_postProcessor.Cleanup();
 #pragma endregion
 
 }

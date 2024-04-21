@@ -72,7 +72,6 @@ private:
 	glm::vec3 m_specularColor;
 	glm::vec3 m_diffuseColor;
 	glm::vec3 m_ambientColor;
-
 };
 
 #endif // MESH_H
