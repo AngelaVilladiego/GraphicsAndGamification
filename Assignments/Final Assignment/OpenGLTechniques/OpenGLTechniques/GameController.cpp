@@ -339,10 +339,9 @@ void GameController::RunGame()
 
 void GameController::HandleTransform()
 {	
-	glm::vec3 axes = { m_leftClickHandler.IsInProgress(), 1, m_middleClickHandler.IsInProgress() };
-
 	if (OpenGLTechniques::ToolWindow::TranslateChecked)
 	{
+		glm::vec3 axes = { m_leftClickHandler.IsInProgress(), 1, m_middleClickHandler.IsInProgress() };
 		double mouseX;
 		double mouseY;
 
@@ -356,7 +355,7 @@ void GameController::HandleTransform()
 
 		float newX = fighterTranslation.x + (axes.x * (clickVector.x * speed));
 		float newY = fighterTranslation.y + (clickVector.y * speed);
-		float newZ = fighterTranslation.z + (axes.z * (clickVector.x * speed));
+		float newZ = fighterTranslation.z + (axes.z * (-clickVector.y * speed));
 
 		fighterTranslation = glm::vec3({ newX, newY, newZ });
 	}
@@ -385,11 +384,7 @@ void GameController::HandleTransform()
 		if (m_middleClickHandler.IsInProgress())
 		{
 			glm::vec2 gesture = m_middleClickHandler.GetGestureVector();
-
-			float yAmount = gesture.x / maxDistClamp;
 			float zAmount = gesture.y / maxDistClamp;
-			
-			rotationAdjustment.y = yAmount * maxSpeed;
 			rotationAdjustment.z = zAmount * maxSpeed;
 		}
 		rotationAdjustment.x = -rotationAdjustment.x;
@@ -418,10 +413,7 @@ void GameController::HandleTransform()
 		{
 			glm::vec2 gesture = m_middleClickHandler.GetGestureVector();
 
-			float zAmount = gesture.x / maxDistClamp;
-			float yAmount = gesture.y / maxDistClamp;
-
-			scaleAdjustment.y = yAmount * maxSpeed;
+			float zAmount = gesture.y / maxDistClamp;
 			scaleAdjustment.z = zAmount * maxSpeed;
 		}
 		
