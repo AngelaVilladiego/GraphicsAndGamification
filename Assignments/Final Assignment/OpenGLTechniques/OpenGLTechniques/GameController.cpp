@@ -16,10 +16,16 @@ GameController::GameController()
 	m_lightSpeed = 10.0f;
 	m_currScene = MOVE_LIGHT;
 
+	m_centerVec = { };
+
 	quadTopLeft = { 0, 0, 0 };
 	quadTopRight = { 0, 0, 0 };
 	quadBottomLeft = { 0, 0, 0 };
 	quadBottomRight = { 0, 0, 0 };
+
+	fighterTranslation = { 0, 0, 0 };
+	fighterRotation = { 0, 0, 0 };
+	fighterScale = { 0, 0, 0 };
 }
 
 void GameController::Initialize(string title = "Sample", bool fullscreen = true)
@@ -53,7 +59,7 @@ void GameController::RunGame()
 	string fpsString = "FPS: 0";
 
 	Resolution res = WindowController::GetInstance().GetResolution();
-	glm::vec3 centerVec = { res.m_width / 2.0f, res.m_height / 2.0f, 0 };
+	m_centerVec = { res.m_width / 2.0f, res.m_height / 2.0f, 0 };
 	double mouseX = 0.0;
 	double mouseY = 0.0;
 	float maxSpeed = 0.003f;
@@ -62,10 +68,10 @@ void GameController::RunGame()
 	string middleBtnString = "Up";
 
 	//convert resolution to vectors with 0 at center and positive y up 
-	quadTopLeft = { -centerVec.x, centerVec.y, 0 };
-	quadTopRight = { centerVec.x, centerVec.y, 0 };
-	quadBottomLeft = { -centerVec.x, -centerVec.y, 0 };
-	quadBottomRight = { centerVec.x, -centerVec.y, 0 };
+	quadTopLeft = { -m_centerVec.x, m_centerVec.y, 0 };
+	quadTopRight = { m_centerVec.x, m_centerVec.y, 0 };
+	quadBottomLeft = { -m_centerVec.x, -m_centerVec.y, 0 };
+	quadBottomRight = { m_centerVec.x, -m_centerVec.y, 0 };
 
 	glm::mat4 pv = m_camera.GetProjection() * m_camera.GetView();
 #pragma endregion 
@@ -106,11 +112,14 @@ void GameController::RunGame()
 	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighterTransform.SetPosition({ 0.0f, 0.0f, 0.0f });
 	fighterTransform.SetScale({ 0.00008f, 0.00008f, 0.00008f });
+	fighterTransform.SetRotation({ 1.0f, 0.0f, 0.0f });
 	fighterTransform.SetCameraPosition(m_camera.GetPosition());
 	fighterTransform.SetSpecularStrength(4.0f);
 	fighterTransform.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
-	fighter.SetRotation({ 0.1f, 0.0f, 0.0f });
 
+	fighterTranslation = fighterTransform.GetPosition();
+	fighterRotation = fighterTransform.GetRotation();
+	fighterScale = fighterTransform.GetScale();
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
@@ -175,19 +184,30 @@ void GameController::RunGame()
 
 		if (OpenGLTechniques::ToolWindow::ResetTransform)
 		{
-			//TODO RESET TRANSFORM
 			OpenGLTechniques::ToolWindow::ResetTransform = false;
+			glm::vec3 pos = { 0.0f, 0.0f, 0.0f };
+			glm::vec3 rot = { 1.0f, 0.0f, 0.0f };
+			glm::vec3 scale = { 0.00008f, 0.00008f, 0.00008f };
+			fighterTransform.SetPosition(pos);
+			fighterTransform.SetRotation(rot);
+			fighterTransform.SetScale(scale);
+			fighterTranslation = pos;
+			fighterRotation = rot;
+			fighterScale = scale;
 		}
 
 		if (m_currScene == MOVE_LIGHT && glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
-			Mesh::Lights[0].SetPosition(CalculateQuadrantPosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+			Mesh::Lights[0].SetPosition(CalculateQuadrantPosition(mouseVec, m_centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
 		}
 
-		if (m_currScene == TRANSFORM)
+		if (m_currScene == TRANSFORM && (m_leftClickHandler.IsInProgress() || m_middleClickHandler.IsInProgress()))
 		{
 			HandleTransform();
+			fighterTransform.SetPosition(fighterTranslation);
+			fighterTransform.SetRotation(fighterRotation);
+			fighterTransform.SetScale(fighterScale);
 		}
 
 		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
@@ -208,7 +228,7 @@ void GameController::RunGame()
 			}
 			break;
 		case TRANSFORM:
-
+			fighterTransform.Render(pv);
 			break;
 
 		case WATER_SCENE:
@@ -258,6 +278,27 @@ void GameController::RunGame()
 
 void GameController::HandleTransform()
 {	
+	glm::vec3 axes = { m_leftClickHandler.IsInProgress(), 1, m_middleClickHandler.IsInProgress() };
+
+	if (OpenGLTechniques::ToolWindow::TranslateChecked)
+	{
+		double mouseX;
+		double mouseY;
+
+		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
+
+		glm::vec3 clickVector = glm::vec3({ (float)mouseX, WindowController::GetInstance().GetResolution().m_height - (float)mouseY, 0 }) - m_centerVec;
+		float maxDistance = glm::length(quadBottomRight);
+		float distance = min(glm::length(clickVector), maxDistance);
+		float speed = 0.003f * (distance / maxDistance);
+		clickVector = glm::normalize(clickVector);
+
+		float newX = fighterTranslation.x + (axes.x * (clickVector.x * speed));
+		float newY = fighterTranslation.y + (clickVector.y * speed);
+		float newZ = fighterTranslation.z + (axes.z * (clickVector.x * speed));
+
+		fighterTranslation = glm::vec3({ newX, newY, newZ });
+	}
 }
 
 glm::vec3 GameController::CalculateQuadrantPosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed)

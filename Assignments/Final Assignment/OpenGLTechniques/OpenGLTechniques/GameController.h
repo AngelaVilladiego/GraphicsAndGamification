@@ -31,6 +31,8 @@ private:
 	float m_lightSpeed;
 	SceneType m_currScene;
 
+	glm::vec3 m_centerVec;
+
 	glm::vec3 quadTopLeft;
 	glm::vec3 quadTopRight;
 	glm::vec3 quadBottomLeft;
