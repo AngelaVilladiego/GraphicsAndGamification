@@ -1,8 +1,6 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
   GameController.cpp
-  ToolWindow.cpp
-  Generating Code...
   Camera.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
 freetype.lib(ftbase.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftbase.obj)' or at ''; linking object as if no debug info
 freetype.lib(ftinit.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftinit.obj)' or at ''; linking object as if no debug info
@@ -29,6 +27,7 @@ freetype.lib(ftbitmap.obj) : warning LNK4099: PDB '' was not found with 'freetyp
 freetype.lib(ftdebug.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftdebug.obj)' or at ''; linking object as if no debug info
 Fonts.obj : warning LNK4248: unresolved typeref token (01000023) for 'FT_LibraryRec_'; image may not run
 WindowController.obj : warning LNK4248: unresolved typeref token (0100001C) for 'GLFWwindow'; image may not run
+GestureManager.obj : warning LNK4248: unresolved typeref token (01000019) for 'GLFWwindow'; image may not run
 GameController.obj : warning LNK4248: unresolved typeref token (01000022) for 'GLFWwindow'; image may not run
 WindowController.obj : warning LNK4248: unresolved typeref token (01000023) for 'GLFWmonitor'; image may not run
   OpenGLTechniques.vcxproj -> C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\x64\Debug\OpenGLTechniques.exe

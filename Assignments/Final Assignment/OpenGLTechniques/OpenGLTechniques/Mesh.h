@@ -17,9 +17,11 @@ public:
 	//Accessors
 	void SetPosition(glm::vec3 _position) { m_position = _position; }
 	void SetRotation(glm::vec3 _rotation) { m_rotation = _rotation; }
-	void SetShader(Shader* _shader) { m_shader = _shader; }
-	glm::vec3 GetPosition() { return m_position; }
 	void SetScale(glm::vec3 _scale) { m_scale = _scale; }
+	glm::vec3 GetPosition() { return m_position; }
+	glm::vec3 GetRotation() { return m_rotation; }
+	glm::vec3 GetScale() { return m_scale; }
+	void SetShader(Shader* _shader) { m_shader = _shader; }
 	void SetColor(glm::vec3 _color) { m_color = _color; }
 	glm::vec3 GetColor() { return m_color; }
 	void SetCameraPosition(glm::vec3 _cameraPosition) { m_cameraPosition = _cameraPosition; }

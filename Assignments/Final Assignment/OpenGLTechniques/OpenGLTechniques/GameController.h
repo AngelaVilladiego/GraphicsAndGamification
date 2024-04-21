@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "SceneType.h"
+#include "GestureManager.h"
 
 class GameController : public Singleton<GameController>
 {
@@ -27,7 +28,6 @@ private:
 	Shader m_shaderFont;
 
 	Camera m_camera;
-	vector<Mesh> m_cubes;
 	float m_lightSpeed;
 	SceneType m_currScene;
 
@@ -36,8 +36,16 @@ private:
 	glm::vec3 quadBottomLeft;
 	glm::vec3 quadBottomRight;
 
+	glm::vec3 fighterTranslation;
+	glm::vec3 fighterRotation;
+	glm::vec3 fighterScale;
+
+	GestureManager m_leftClickHandler;
+	GestureManager m_middleClickHandler;
+
 	// Methods
-	glm::vec3 CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);
+	glm::vec3 CalculateQuadrantPosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed);
+	void HandleTransform();
 	float RandomFloat(float min, float max);
 };
 

@@ -13,7 +13,6 @@ GameController::GameController()
 	m_shaderFont = { };
 
 	m_camera = { };
-	m_cubes.clear();
 	m_lightSpeed = 10.0f;
 	m_currScene = MOVE_LIGHT;
 
@@ -47,6 +46,9 @@ void GameController::RunGame()
 #pragma region Declaring variables
 	GLFWwindow* win = WindowController::GetInstance().GetWindow();
 
+	m_leftClickHandler = GestureManager(GLFW_MOUSE_BUTTON_LEFT);
+	m_middleClickHandler = GestureManager(GLFW_MOUSE_BUTTON_MIDDLE);
+
 	FPSCounter fpsCounter = FPSCounter();
 	string fpsString = "FPS: 0";
 
@@ -56,6 +58,8 @@ void GameController::RunGame()
 	double mouseY = 0.0;
 	float maxSpeed = 0.003f;
 	string mousePosString = "Mouse Pos: ";
+	string leftBtnString = "Up";
+	string middleBtnString = "Up";
 
 	//convert resolution to vectors with 0 at center and positive y up 
 	quadTopLeft = { -centerVec.x, centerVec.y, 0 };
@@ -98,12 +102,27 @@ void GameController::RunGame()
 	fighter.SetSpecularStrength(4.0f);
 	fighter.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
+	Mesh fighterTransform = Mesh();
+	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
+	fighterTransform.SetPosition({ 0.0f, 0.0f, 0.0f });
+	fighterTransform.SetScale({ 0.00008f, 0.00008f, 0.00008f });
+	fighterTransform.SetCameraPosition(m_camera.GetPosition());
+	fighterTransform.SetSpecularStrength(4.0f);
+	fighterTransform.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
+	fighter.SetRotation({ 0.1f, 0.0f, 0.0f });
+
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 	Fonts mousePosFont = Fonts();
 	mousePosFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	Fonts leftBtnFont = Fonts();
+	leftBtnFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	Fonts middleBtnFont = Fonts();
+	middleBtnFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 #pragma endregion
 
@@ -127,6 +146,27 @@ void GameController::RunGame()
 		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
 		mousePosString = "Mouse Pos: " + to_string(mouseX) + " " + to_string(mouseY);
 
+		m_leftClickHandler.Tick();
+		m_middleClickHandler.Tick();
+
+		if (m_leftClickHandler.IsInProgress())
+		{
+			leftBtnString = "Down";
+		}
+		else
+		{
+			leftBtnString = "Up";
+		}
+
+		if (m_middleClickHandler.IsInProgress())
+		{
+			middleBtnString = "Down";
+		}
+		else
+		{
+			middleBtnString = "Up";
+		}
+
 		if (OpenGLTechniques::ToolWindow::ResetLightPosition)
 		{
 			Mesh::Lights[0].SetPosition({ 0.0f, 0.0f, 0.1f });
@@ -139,15 +179,15 @@ void GameController::RunGame()
 			OpenGLTechniques::ToolWindow::ResetTransform = false;
 		}
 
-		if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		if (m_currScene == MOVE_LIGHT && glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
+			Mesh::Lights[0].SetPosition(CalculateQuadrantPosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+		}
 
-			if (m_currScene == MOVE_LIGHT)
-			{
-				Mesh::Lights[0].SetPosition(CalculatePosition(mouseVec, centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
-			}
-
+		if (m_currScene == TRANSFORM)
+		{
+			HandleTransform();
 		}
 
 		fighter.SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
@@ -160,23 +200,31 @@ void GameController::RunGame()
 
 		switch (m_currScene) {
 		case MOVE_LIGHT:
-
+			fighter.SetRotation(glm::vec3({ fighter.GetRotation().x + 0.001f, 0.0f, 0.0f }));
 			fighter.Render(pv);
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 			{
 				Mesh::Lights[count].Render(pv);
 			}
+			break;
+		case TRANSFORM:
 
+			break;
+
+		case WATER_SCENE:
+			break;
+		
+		case SPACE_SCENE:
 			break;
 
 		default:
 			OpenGLTechniques::ToolWindow::SelectedSceneType = MOVE_LIGHT;
 		}
 
-
-
 		fpsFont.RenderText(fpsString, 50, 50, 0.2f, { 1.0f, 1.0f, 0.0f });
 		mousePosFont.RenderText(mousePosString, 50, 70, 0.2f, { 1.0f, 1.0f, 0.0f });
+		leftBtnFont.RenderText("Left Button: " + leftBtnString, 50, 90, 0.2f, {1.0f, 1.0f, 0.0f});
+		middleBtnFont.RenderText("Middle Button: " + middleBtnString, 50, 110, 0.2f, {1.0f, 1.0f, 0.0f});
 #pragma endregion
 
 
@@ -194,6 +242,7 @@ void GameController::RunGame()
 	m_shaderFont.Cleanup();
 
 	fighter.Cleanup();
+	fighterTransform.Cleanup();
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
@@ -201,12 +250,17 @@ void GameController::RunGame()
 
 	fpsFont.Cleanup();
 	mousePosFont.Cleanup();
+	leftBtnFont.Cleanup();
+	middleBtnFont.Cleanup();
 #pragma endregion
 
 }
 
+void GameController::HandleTransform()
+{	
+}
 
-glm::vec3 GameController::CalculatePosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed)
+glm::vec3 GameController::CalculateQuadrantPosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed)
 {
 
 	// identify which quadrant the mouse was clicked in	

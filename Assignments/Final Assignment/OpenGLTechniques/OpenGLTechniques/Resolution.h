@@ -11,6 +11,12 @@ struct Resolution
 		m_width = _width;
 		m_height = _height;
 	}
+
+	Resolution()
+	{
+		m_width = int();
+		m_height = int();
+	}
 };
 
 #endif RESOLUTION_H
