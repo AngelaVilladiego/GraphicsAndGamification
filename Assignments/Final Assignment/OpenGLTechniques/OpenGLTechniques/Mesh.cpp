@@ -17,14 +17,13 @@ Mesh::Mesh()
 	m_scale = { 1, 1, 1 };
 	m_color = { 0, 0, 0 };
 	m_cameraPosition = { 0, 0, 0 };
-	m_ambientColor = { 0.2f, 0.2f, 0.2f };
 	m_enableNormalMap = false;
 
 	m_lightPosition = { 0, 0, 0 };
 	m_specularStrength = 1;
 	m_specularColor = { 1.0f, 1.0f, 1.0f };
 	m_diffuseColor = { 0.0f, 0.0f, 0.0f };
-	m_ambientColor = { 0.2f, 0.2f, 0.2f };
+	m_ambientColor = { 0.5f, 0.5f, 0.5f };
 }
 
 Mesh::~Mesh()
@@ -40,6 +39,26 @@ string Mesh::RemoveFolder(string _map)
 	}
 
 	return _map;
+}
+
+void Mesh::CalculateTangents(vector<objl::Vertex> _vertices, objl::Vector3& _tangent, objl::Vector3& _bitangent)
+{
+	// calculate tangent/bitangent vectors of both triangles
+	objl::Vector3 edge1 = _vertices[1].Position - _vertices[0].Position;
+	objl::Vector3 edge2 = _vertices[2].Position - _vertices[0].Position;
+
+	objl::Vector2 deltaUV1 = _vertices[1].TextureCoordinate - _vertices[0].TextureCoordinate;
+	objl::Vector2 deltaUV2 = _vertices[2].TextureCoordinate - _vertices[0].TextureCoordinate;
+
+	float f = 1.0f / (deltaUV1.X * deltaUV2.Y - deltaUV2.X * deltaUV1.Y);
+
+	_tangent.X = f * (deltaUV2.Y * edge1.X - deltaUV1.Y * edge2.X);
+	_tangent.Y = f * (deltaUV2.Y * edge1.Y - deltaUV1.Y * edge2.Y);
+	_tangent.Z = f * (deltaUV2.Y * edge1.Z - deltaUV1.Y * edge2.Z);
+
+	_bitangent.X = f * (-deltaUV2.X * edge1.X + deltaUV1.X * edge2.X);
+	_bitangent.Y = f * (-deltaUV2.X * edge1.Y + deltaUV1.X * edge2.Y);
+	_bitangent.Z = f * (-deltaUV2.X * edge1.Z + deltaUV1.X * edge2.Z);
 }
 
 GLuint Mesh::GetShaderProgram()
@@ -60,6 +79,23 @@ void Mesh::Create(Shader* _shader, string _file)
 	{
 		objl::Mesh curMesh = Loader.LoadedMeshes[i];
 
+		vector<objl::Vector3> tangents;
+		vector<objl::Vector3> bitangents;
+		vector<objl::Vertex> triangle;
+		objl::Vector3 tangent;
+		objl::Vector3 bitangent;
+
+		for (unsigned int j = 0; j < curMesh.Vertices.size(); j += 3)
+		{
+			triangle.clear();
+			triangle.push_back(curMesh.Vertices[j]);
+			triangle.push_back(curMesh.Vertices[j + 1]);
+			triangle.push_back(curMesh.Vertices[j + 2]);
+			CalculateTangents(triangle, tangent, bitangent);
+			tangents.push_back(tangent);
+			bitangents.push_back(bitangent);
+		}
+
 		for (unsigned int j = 0; j < curMesh.Vertices.size(); j++)
 		{
 			m_vertexData.push_back(curMesh.Vertices[j].Position.X);
@@ -71,6 +107,16 @@ void Mesh::Create(Shader* _shader, string _file)
 			m_vertexData.push_back(curMesh.Vertices[j].TextureCoordinate.X);
 			m_vertexData.push_back(curMesh.Vertices[j].TextureCoordinate.Y);
 
+			if (Loader.LoadedMaterials[0].map_bump != "")
+			{
+				int index = j / 3;
+				m_vertexData.push_back(tangents[index].X);
+				m_vertexData.push_back(tangents[index].Y);
+				m_vertexData.push_back(tangents[index].Z);
+				m_vertexData.push_back(bitangents[index].X);
+				m_vertexData.push_back(bitangents[index].Y);
+				m_vertexData.push_back(bitangents[index].Z);
+			}
 		}
 	}
 
@@ -114,13 +160,21 @@ void Mesh::BindAttributes()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
 
+	int stride = 8;
+
+
+	if (m_enableNormalMap == true)
+	{
+		stride += 6;
+	}
+
 	// 1st attribute buffer : vertices
 	glEnableVertexAttribArray(m_shader->GetAttrVertices());
 	glVertexAttribPointer(m_shader->GetAttrVertices(), // The attribute we want to configure
 		3,			/*size*/
 		GL_FLOAT,	/*type*/
 		GL_FALSE,	/*normalized?*/
-		8 * sizeof(float),			/*stride*/
+		stride * sizeof(float),			/*stride*/
 		(void*)0);	/*array buffer offset*/
 
 	// 2nd attribute buffer : normals
@@ -129,7 +183,7 @@ void Mesh::BindAttributes()
 		3,							// size of color attribute (3 components per color
 		GL_FLOAT,					// type
 		GL_FALSE,					// normalized?
-		8 * sizeof(float),			// stride (8 floats per vertex definition
+		stride * sizeof(float),			// stride (8 floats per vertex definition
 		(void*)(3 * sizeof(float))	// array buffer offset
 	);
 
@@ -139,9 +193,31 @@ void Mesh::BindAttributes()
 		2,							// size (2 points per coordinate)
 		GL_FLOAT,					// type
 		GL_FALSE,					// normalized?
-		8 * sizeof(float),			// stride (8 floats per vertex definition
+		stride * sizeof(float),			// stride (8 floats per vertex definition
 		(void*)(6 * sizeof(float))	// array buffer offset
 	);
+
+	if (m_enableNormalMap == true)
+	{
+		//tangents
+		glEnableVertexAttribArray(m_shader->GetAttrTangents());
+		glVertexAttribPointer(m_shader->GetAttrTangents(), // The attribute to configure
+			3,							// size (2 points per coordinate)
+			GL_FLOAT,					// type
+			GL_FALSE,					// normalized?
+			stride * sizeof(float),			// stride (8 floats per vertex definition
+			(void*)(8 * sizeof(float))	// array buffer offset
+		);
+		//bitangents
+		glEnableVertexAttribArray(m_shader->GetAttrBitangents());
+		glVertexAttribPointer(m_shader->GetAttrBitangents(), // The attribute to configure
+			3,							// size (2 points per coordinate)
+			GL_FLOAT,					// type
+			GL_FALSE,					// normalized?
+			stride * sizeof(float),			// stride (8 floats per vertex definition
+			(void*)(11 * sizeof(float))	// array buffer offset
+		);
+	}
 }
 
 void Mesh::CalculateTransform()
@@ -189,5 +265,11 @@ void Mesh::Render(glm::mat4 _pv)
 	glDisableVertexAttribArray(m_shader->GetAttrNormals());
 	glDisableVertexAttribArray(m_shader->GetAttrVertices());
 	glDisableVertexAttribArray(m_shader->GetAttrTexCoords());
+
+	if (m_enableNormalMap)
+	{
+		glDisableVertexAttribArray(m_shader->GetAttrTangents());
+		glDisableVertexAttribArray(m_shader->GetAttrBitangents());
+	}
 
 }

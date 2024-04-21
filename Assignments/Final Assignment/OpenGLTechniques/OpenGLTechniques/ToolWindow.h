@@ -1,6 +1,8 @@
 #pragma once
 
 #include "SceneType.h"
+#include <sstream>
+#include <iomanip>
 
 namespace OpenGLTechniques {
 
@@ -39,7 +41,14 @@ namespace OpenGLTechniques {
 		ToolWindow(void)
 		{
 			InitializeComponent();
-			
+
+			ResetLightPosition = false;
+			ResetTransform = false;
+			SelectedSceneType = MOVE_LIGHT;
+			SpecularStrength = 4;
+			SpecularColorR = 1.0f;
+			SpecularColorG = 1.0f;
+			SpecularColorB = 1.0f;
 		}
 
 	protected:
@@ -53,7 +62,9 @@ namespace OpenGLTechniques {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::RadioButton^ radioMovieLight;
+	private: System::Windows::Forms::RadioButton^ radioMoveLight;
+	protected:
+
 	private: System::Windows::Forms::RadioButton^ radioTransform;
 	private: System::Windows::Forms::RadioButton^ radioWaterScene;
 	private: System::Windows::Forms::RadioButton^ radioSpaceScene;
@@ -107,7 +118,7 @@ namespace OpenGLTechniques {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->radioMovieLight = (gcnew System::Windows::Forms::RadioButton());
+			this->radioMoveLight = (gcnew System::Windows::Forms::RadioButton());
 			this->radioTransform = (gcnew System::Windows::Forms::RadioButton());
 			this->radioWaterScene = (gcnew System::Windows::Forms::RadioButton());
 			this->radioSpaceScene = (gcnew System::Windows::Forms::RadioButton());
@@ -145,20 +156,20 @@ namespace OpenGLTechniques {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBarAmplitude))->BeginInit();
 			this->SuspendLayout();
 			// 
-			// radioMovieLight
+			// radioMoveLight
 			// 
-			this->radioMovieLight->AutoSize = true;
-			this->radioMovieLight->Checked = true;
-			this->radioMovieLight->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->radioMoveLight->AutoSize = true;
+			this->radioMoveLight->Checked = true;
+			this->radioMoveLight->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 8.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->radioMovieLight->Location = System::Drawing::Point(13, 13);
-			this->radioMovieLight->Name = L"radioMovieLight";
-			this->radioMovieLight->Size = System::Drawing::Size(91, 17);
-			this->radioMovieLight->TabIndex = 0;
-			this->radioMovieLight->TabStop = true;
-			this->radioMovieLight->Text = L"Movie Light";
-			this->radioMovieLight->UseVisualStyleBackColor = true;
-			this->radioMovieLight->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::radioMovieLight_CheckedChanged);
+			this->radioMoveLight->Location = System::Drawing::Point(13, 13);
+			this->radioMoveLight->Name = L"radioMoveLight";
+			this->radioMoveLight->Size = System::Drawing::Size(88, 17);
+			this->radioMoveLight->TabIndex = 0;
+			this->radioMoveLight->TabStop = true;
+			this->radioMoveLight->Text = L"Move Light";
+			this->radioMoveLight->UseVisualStyleBackColor = true;
+			this->radioMoveLight->CheckedChanged += gcnew System::EventHandler(this, &ToolWindow::radioMoveLight_CheckedChanged);
 			// 
 			// radioTransform
 			// 
@@ -219,7 +230,7 @@ namespace OpenGLTechniques {
 			this->trackBarSpecularStrength->Size = System::Drawing::Size(267, 45);
 			this->trackBarSpecularStrength->TabIndex = 5;
 			this->trackBarSpecularStrength->TickFrequency = 2;
-			this->trackBarSpecularStrength->Value = 8;
+			this->trackBarSpecularStrength->Value = 4;
 			this->trackBarSpecularStrength->Scroll += gcnew System::EventHandler(this, &ToolWindow::trackBarSpecularStrength_Scroll);
 			// 
 			// label1
@@ -258,7 +269,7 @@ namespace OpenGLTechniques {
 			this->labelSpecularStrength->Name = L"labelSpecularStrength";
 			this->labelSpecularStrength->Size = System::Drawing::Size(13, 13);
 			this->labelSpecularStrength->TabIndex = 9;
-			this->labelSpecularStrength->Text = L"8";
+			this->labelSpecularStrength->Text = L"4";
 			// 
 			// R
 			// 
@@ -494,7 +505,7 @@ namespace OpenGLTechniques {
 			this->Controls->Add(this->radioSpaceScene);
 			this->Controls->Add(this->radioWaterScene);
 			this->Controls->Add(this->radioTransform);
-			this->Controls->Add(this->radioMovieLight);
+			this->Controls->Add(this->radioMoveLight);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedToolWindow;
 			this->Name = L"ToolWindow";
 			this->Text = L"ToolWindow";
@@ -513,94 +524,100 @@ namespace OpenGLTechniques {
 #pragma endregion
 
 
-	private: SceneType GetSelectedRadio()
-	{
-		if (this->radioMovieLight->Checked) {
-			return MOVE_LIGHT;
+		private: SceneType GetSelectedRadio()
+		{
+			if (this->radioMoveLight->Checked) {
+				return MOVE_LIGHT;
+			}
+			else if (this->radioTransform->Checked) {
+				return TRANSFORM;
+			}
+			else if (this->radioWaterScene->Checked) {
+				return WATER_SCENE;
+			}
+			else {
+				return SPACE_SCENE;
+			}
 		}
-		else if (this->radioTransform->Checked) {
-			return TRANSFORM;
+
+		private: System::Void SetSelectedRadio(SceneType _scene)
+		{
+			SelectedSceneType = _scene;
 		}
-		else if (this->radioWaterScene->Checked) {
-			return WATER_SCENE;
+
+		private: System::Void ToolWindow_Load(System::Object^ sender, System::EventArgs^ e) {
 		}
-		else {
-			return SPACE_SCENE;
+
+		private: System::Void radioMoveLight_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			SetSelectedRadio(MOVE_LIGHT);
 		}
-	}
+		private: System::Void radioTransform_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			SetSelectedRadio(TRANSFORM);
+		}
+		private: System::Void radioWaterScene_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			SetSelectedRadio(WATER_SCENE);
+		}
+		private: System::Void radioSpaceScene_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			SetSelectedRadio(SPACE_SCENE);
+		}
 
-	private: System::Void SetSelectedRadio(SceneType _scene)
-	{
-		SelectedSceneType = _scene;
-	}
+		private: System::Void trackBarSpecularStrength_Scroll(System::Object^ sender, System::EventArgs^ e) {
+			SpecularStrength = trackBarSpecularStrength->Value;
+			labelSpecularStrength->Text = System::Convert::ToString(SpecularStrength);
+		}
+		private: System::Void trackBarSpecularColorR_Scroll(System::Object^ sender, System::EventArgs^ e) {
+			float val = trackBarSpecularColorR->Value / 100.0f;
+			SpecularColorR = val;
+			labelSpecularColorR->Text = getFormattedString(val);
+		}
+		private: System::Void trackBarSpecularColorG_Scroll(System::Object^ sender, System::EventArgs^ e) {
+			float val = trackBarSpecularColorG->Value / 100.0f;
+			SpecularColorG = val;
+			labelSpecularColorG->Text = getFormattedString(val);
+		}
+		private: System::Void trackBarSpecularColorB_Scroll(System::Object^ sender, System::EventArgs^ e) {
+			float val = trackBarSpecularColorB->Value / 100.0f;
+			SpecularColorB = val;
+			labelSpecularColorB->Text = getFormattedString(val);
+		}
 
-	private: System::Void ToolWindow_Load(System::Object^ sender, System::EventArgs^ e) {
-	}
+		private: System::Void trackBarFrequency_Scroll(System::Object^ sender, System::EventArgs^ e) {
+			float val = trackBarFrequency->Value / 100.0f;
+			Frequency = val;
+			labelFrequency->Text = System::Convert::ToString(val);
+		}
+		private: System::Void trackBarAmplitude_Scroll(System::Object^ sender, System::EventArgs^ e) {
+			float val = trackBarAmplitude->Value / 100.0f;
+			Amplitude = val;
+			labelAmplitude->Text = System::Convert::ToString(val);
+		}
+		private: System::Void checkBoxTranslate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			TranslateChecked = checkBoxTranslate->Checked;
+		}
+		private: System::Void checkBoxRotate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			RotateChecked = checkBoxRotate->Checked;
 
-private: System::Void radioMovieLight_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	SetSelectedRadio(MOVE_LIGHT);
-}
-private: System::Void radioTransform_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	SetSelectedRadio(TRANSFORM);
-}
-private: System::Void radioWaterScene_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	SetSelectedRadio(WATER_SCENE);
-}
-private: System::Void radioSpaceScene_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	SetSelectedRadio(SPACE_SCENE);
-}
+		}
+		private: System::Void checkBoxScale_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			ScaleChecked = checkBoxScale->Checked;
+		}
+		private: System::Void checkBoxWireframeRender_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			WireframeRenderChecked = checkBoxWireframeRender->Checked;
+		}
+		private: System::Void checkBoxTintBlue_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+			TintBlueChecked = checkBoxTintBlue->Checked;
+		}
+		private: System::Void buttonResetLightPosition_Click(System::Object^ sender, System::EventArgs^ e) {
+			ResetLightPosition = true;
+		}
+		private: System::Void buttonResetTransform_Click(System::Object^ sender, System::EventArgs^ e) {
+			ResetTransform = true;
+		}
+	   private: System::String^ getFormattedString(float val) {
+		   std::stringstream stream;
+		   stream << std::fixed << std::setprecision(2) << val;
 
-private: System::Void trackBarSpecularStrength_Scroll(System::Object^ sender, System::EventArgs^ e) {
-	SpecularStrength = trackBarSpecularStrength->Value;
-	labelSpecularStrength->Text = System::Convert::ToString(SpecularStrength);
-}
-private: System::Void trackBarSpecularColorR_Scroll(System::Object^ sender, System::EventArgs^ e) {
-	float val = trackBarSpecularColorR->Value / 100.0f;
-	SpecularColorR = val;
-	labelSpecularColorR->Text = System::Convert::ToString(val);
-}
-private: System::Void trackBarSpecularColorG_Scroll(System::Object^ sender, System::EventArgs^ e) {
-	float val = trackBarSpecularColorG->Value / 100.0f;
-	SpecularColorG = val;
-	labelSpecularColorG->Text = System::Convert::ToString(val);
-}
-private: System::Void trackBarSpecularColorB_Scroll(System::Object^ sender, System::EventArgs^ e) {
-	float val = trackBarSpecularColorB->Value / 100.0f;
-	SpecularColorB = val;
-	labelSpecularColorB->Text = System::Convert::ToString(val);
-}
-
-private: System::Void trackBarFrequency_Scroll(System::Object^ sender, System::EventArgs^ e) {
-	float val = trackBarFrequency->Value / 100.0f;
-	Frequency = val;
-	labelFrequency->Text = System::Convert::ToString(val);
-}
-private: System::Void trackBarAmplitude_Scroll(System::Object^ sender, System::EventArgs^ e) {
-	float val = trackBarAmplitude->Value / 100.0f;
-	Amplitude = val;
-	labelAmplitude->Text = System::Convert::ToString(val);
-}
-private: System::Void checkBoxTranslate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	TranslateChecked = checkBoxTranslate->Checked;
-}
-private: System::Void checkBoxRotate_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	RotateChecked = checkBoxRotate->Checked;
-
-}
-private: System::Void checkBoxScale_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	ScaleChecked = checkBoxScale->Checked;
-}
-private: System::Void checkBoxWireframeRender_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	WireframeRenderChecked = checkBoxWireframeRender->Checked;
-}
-private: System::Void checkBoxTintBlue_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-	TintBlueChecked = checkBoxTintBlue->Checked;
-}
-private: System::Void buttonResetLightPosition_Click(System::Object^ sender, System::EventArgs^ e) {
-	ResetLightPosition = true;
-}
-private: System::Void buttonResetTransform_Click(System::Object^ sender, System::EventArgs^ e) {
-	ResetTransform = true;
-}
-};
+		   return gcnew String(stream.str().c_str());
+	   }
+	};
 }

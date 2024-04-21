@@ -44,6 +44,8 @@ private:
 	void BindAttributes();
 	string Concat(string _s1, int _index, string _s2);
 	string RemoveFolder(string _map);
+	void CalculateTangents(vector<objl::Vertex> _vertices, objl::Vector3& _tangent, objl::Vector3& _bitangent);
+
 
 	// Members
 	Shader* m_shader;

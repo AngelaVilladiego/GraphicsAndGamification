@@ -42,7 +42,6 @@ void main()
 	for(int i = 0; i < NR_LIGHTS; i++)
 	{
 		vec3 lightDir = normalize(light[i].position - retFragPos); // Normalize, for correct dot product results
-
 		vec3 normal = retNormal;
 
 		if (EnableNormalMap == true)

@@ -318,12 +318,9 @@ void Mesh::SetShaderVariables(glm::mat4 _pv)
 
 	for (unsigned int i = 0; i < Lights.size(); i++)
 	{
-
-
 		m_shader->SetVec3(Concat("light[", i, "].ambientColor").c_str(), { 0.1f, 0.1f, 0.1f }); //set the ambient lighting
 		m_shader->SetVec3(Concat("light[", i, "].diffuseColor").c_str(), Lights[i].GetColor()); //set the diffuse color to white
 		m_shader->SetVec3(Concat("light[", i, "].specularColor").c_str(), { 3.0f, 3.0f, 3.0f });
-
 		m_shader->SetVec3(Concat("light[", i, "].position").c_str(), Lights[i].GetPosition());
 	}
 

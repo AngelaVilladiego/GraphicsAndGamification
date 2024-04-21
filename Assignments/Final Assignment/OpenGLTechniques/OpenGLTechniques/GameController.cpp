@@ -85,15 +85,15 @@ void GameController::RunGame()
 #pragma region Creating meshes
 	Mesh light = Mesh();
 	light.Create(&m_shaderColor, "../Assets/Models/Sphere.obj");
-	light.SetPosition({ 0.0f, 0.0f, 1.0f });
+	light.SetPosition({ 0.0f, 0.0f, 0.1f });
 	light.SetColor({ 1.0f, 1.0f, 1.0f });
-	light.SetScale({ 0.1f, 0.1f, 0.1f });
+	light.SetScale({ 0.005f, 0.005f, 0.005f });
 	Mesh::Lights.push_back(light);
 
 	Mesh fighter = Mesh();
 	fighter.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
-	fighter.SetScale({ 0.0008f, 0.0008f, 0.0008f });
+	fighter.SetScale({ 0.00008f, 0.00008f, 0.00008f });
 	fighter.SetCameraPosition(m_camera.GetPosition());
 	fighter.SetSpecularStrength(4.0f);
 	fighter.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
@@ -161,6 +161,7 @@ void GameController::RunGame()
 		switch (m_currScene) {
 		case MOVE_LIGHT:
 
+			fighter.Render(pv);
 			for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 			{
 				Mesh::Lights[count].Render(pv);

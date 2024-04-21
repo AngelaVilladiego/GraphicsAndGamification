@@ -15,6 +15,8 @@ public:
 	GLuint GetAttrVertices() { return m_attrVertices; }
 	GLuint GetAttrColors() { return m_attrColors; }
 	GLuint GetAttrNormals() { return m_attrNormals; }
+	GLuint GetAttrTangents() { return m_attrTangents; }
+	GLuint GetAttrBitangents() { return m_attrBitangents; }
 	GLuint GetAttrTexCoords() { return m_attrTexCoords; }
 	GLuint GetAttrWVP() { return m_attrWVP; }
 
