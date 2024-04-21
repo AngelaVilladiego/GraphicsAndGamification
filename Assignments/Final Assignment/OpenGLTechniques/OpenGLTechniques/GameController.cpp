@@ -3,6 +3,7 @@
 #include "Fonts.h"
 #include "ToolWindow.h"
 #include "FPSCounter.h"
+#include "Vec3ToString.h"
 #include <random>
 
 GameController::GameController()
@@ -114,6 +115,8 @@ void GameController::RunGame()
 	fighter.SetSpecularStrength(4.0f);
 	fighter.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
+	Mesh* currFighter = &fighter;
+
 	Mesh fighterTransform = Mesh();
 	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighterTransform.SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -147,6 +150,15 @@ void GameController::RunGame()
 
 	Fonts middleBtnFont = Fonts();
 	middleBtnFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	Fonts fighterPositionFont = Fonts();
+	fighterPositionFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	Fonts fighterRotationFont = Fonts();
+	fighterRotationFont.Create(&m_shaderFont, "arial.ttf", 100);
+
+	Fonts fighterScaleFont = Fonts();
+	fighterScaleFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 	m_postProcessor = PostProcessor();
 	m_postProcessor.Create(&m_shaderPost);
@@ -214,19 +226,27 @@ void GameController::RunGame()
 			fighterScale = scale;
 		}
 
-		if (m_currScene == MOVE_LIGHT && glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		if (m_currScene == MOVE_LIGHT)
 		{
-			glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
-			Mesh::Lights[0].SetPosition(CalculateQuadrantPosition(mouseVec, m_centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+			currFighter = &fighter;
+			if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+			{
+				glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
+				Mesh::Lights[0].SetPosition(CalculateQuadrantPosition(mouseVec, m_centerVec, Mesh::Lights[0].GetPosition(), maxSpeed));
+			}
 		}
 
-		if (m_currScene == TRANSFORM && (m_leftClickHandler.IsInProgress() || m_middleClickHandler.IsInProgress()))
+		if (m_currScene == TRANSFORM)
 		{
-			HandleTransform();
-			fighterTransform.SetPosition(fighterTranslation);
-			fighterTransform.SetRotation(fighterRotation);
-			fighterTransform.SetScale(fighterScale);
-		}
+			currFighter = &fighterTransform;
+			if (m_leftClickHandler.IsInProgress() || m_middleClickHandler.IsInProgress())
+			{
+				HandleTransform();
+				fighterTransform.SetPosition(fighterTranslation);
+				fighterTransform.SetRotation(fighterRotation);
+				fighterTransform.SetScale(fighterScale);
+			}
+		} 
 
 		if (m_currScene == WATER_SCENE)
 		{
@@ -276,6 +296,9 @@ void GameController::RunGame()
 		mousePosFont.RenderText(mousePosString, 50, 70, 0.2f, { 1.0f, 1.0f, 0.0f });
 		leftBtnFont.RenderText("Left Button: " + leftBtnString, 50, 90, 0.2f, {1.0f, 1.0f, 0.0f});
 		middleBtnFont.RenderText("Middle Button: " + middleBtnString, 50, 110, 0.2f, {1.0f, 1.0f, 0.0f});
+		fighterPositionFont.RenderText("Fighter Position: " + vec3_to_string(currFighter->GetPosition()), 50, 130, 0.2f, { 1.0f, 1.0f, 0.0f });
+		fighterRotationFont.RenderText("Fighter Rotation: " + vec3_to_string(glm::degrees(currFighter->GetRotation())), 50, 150, 0.2f, { 1.0f, 1.0f, 0.0f });
+		fighterScaleFont.RenderText("Fighter Scale: " + vec3_to_string(currFighter->GetScale()), 50, 170, 0.2f, { 1.0f, 1.0f, 0.0f });
 
 		if (m_currScene == WATER_SCENE) {
 			m_postProcessor.End();
