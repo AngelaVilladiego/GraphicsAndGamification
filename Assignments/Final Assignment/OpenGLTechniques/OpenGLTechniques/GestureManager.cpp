@@ -63,11 +63,11 @@ glm::vec2 GestureManager::GetMousePosition()
 	glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
 
 	//clamp to screen resolution scale
-	mouseX = min(0.0, mouseX);
-	mouseY = min(0.0, mouseY);
+	mouseX = max(0.0, mouseX);
+	mouseY = max(0.0, mouseY);
 
-	mouseX = max((double)m_res.m_width, mouseX);
-	mouseY = max((double)m_res.m_height, mouseY);
+	mouseX = min((double)m_res.m_width, mouseX);
+	mouseY = min((double)m_res.m_height, mouseY);
 
 	//convert y directions to up positive (essentially 0,0 is now bottom left instead of top left)
 	mouseY = (double)m_res.m_height - mouseY;

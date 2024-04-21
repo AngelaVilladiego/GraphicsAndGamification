@@ -299,6 +299,40 @@ void GameController::HandleTransform()
 
 		fighterTranslation = glm::vec3({ newX, newY, newZ });
 	}
+
+	if (OpenGLTechniques::ToolWindow::RotateChecked)
+	{
+		Resolution res = WindowController::GetInstance().GetResolution();
+		float maxDistClamp = (float)max(res.m_width, res.m_height) / 2.0f;
+		glm::vec3 rotationAdjustment = { 0.0f, 0.0f, 0.0f };
+
+		float maxSpeed = 0.03f;
+
+		if (m_leftClickHandler.IsInProgress())
+		{
+			glm::vec2 gesture = m_leftClickHandler.GetGestureVector();
+
+			float yAmount = gesture.x / (maxDistClamp);
+			float xAmount = gesture.y / (maxDistClamp);
+
+			rotationAdjustment.x = xAmount * maxSpeed;
+			rotationAdjustment.y = yAmount * maxSpeed;
+
+		}
+
+		if (m_middleClickHandler.IsInProgress())
+		{
+			glm::vec2 gesture = m_middleClickHandler.GetGestureVector();
+
+			float yAmount = gesture.x / (maxDistClamp);
+			float zAmount = gesture.y / (maxDistClamp);
+			
+			rotationAdjustment.y = yAmount * maxSpeed;
+			rotationAdjustment.z = zAmount * maxSpeed;
+		}
+		rotationAdjustment.x = -rotationAdjustment.x;
+		fighterRotation = fighterRotation + rotationAdjustment;
+	}
 }
 
 glm::vec3 GameController::CalculateQuadrantPosition(glm::vec3 mousePos, glm::vec3 centerPos, glm::vec3 currPos, float maxSpeed)

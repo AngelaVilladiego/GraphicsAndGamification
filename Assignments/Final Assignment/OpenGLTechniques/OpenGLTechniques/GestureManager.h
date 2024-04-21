@@ -14,9 +14,11 @@ public:
 
 	// Accessors
 	bool IsInProgress() { return m_gestureIsInProgress; }
+	glm::vec2 GetGestureVector() { return m_gestureVec; }
+	glm::vec2 GetStartPosition() { return m_startPos; }
+	glm::vec2 GetCurrentPosition() { return m_currPos; }
 
 	// Methods
-	glm::vec2 GetGestureVector() { return m_gestureVec; }
 	void Tick();
 	
 private:
