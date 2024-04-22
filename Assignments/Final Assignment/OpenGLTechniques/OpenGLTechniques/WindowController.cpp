@@ -35,7 +35,7 @@ void WindowController::NewWindow(bool fullscreen)
 	// Open a window and create its OpenGL context
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	M_ASSERT((m_window = glfwCreateWindow(mode->width, mode->height, "Sample scene", monitor, NULL)) != nullptr, "Failed to open GLFW window.");
 	glfwMakeContextCurrent(m_window);
 }

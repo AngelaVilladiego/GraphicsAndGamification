@@ -30,6 +30,8 @@ private:
 	Shader m_shaderPost;
 	Shader m_shaderSkybox;
 
+	GLuint vao;
+
 	PostProcessor m_postProcessor;
 	Camera m_camera;
 	float m_lightSpeed;

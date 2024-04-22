@@ -45,6 +45,9 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	srand((unsigned int)time(0));
 
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
 	WindowController::GetInstance().SetWindowTitle(title.c_str());
 
 	// Create a default perspective camera
@@ -119,11 +122,20 @@ void GameController::RunGame()
 
 	Mesh* currMesh = &fighter;
 
+	/*
 	Mesh fighterTransform = Mesh();
 	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighterTransform.SetPosition({ 0.0f, 0.0f, 0.0f });
 	fighterTransform.SetScale({ 0.00008f, 0.00008f, 0.00008f });
 	fighterTransform.SetRotation({ glm::radians(45.0f), 0.0f, 0.0f});
+	fighterTransform.SetCameraPosition(m_camera.GetPosition());
+	*/
+
+	Mesh fighterTransform = Mesh();
+	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/asteroid.obj");
+	fighterTransform.SetPosition({ 0.0f, 0.0f, 0.0f });
+	fighterTransform.SetScale({ 0.002f, 0.002f, 0.002f });
+	fighterTransform.SetRotation({ 0.0f, 0.0f, 0.0f });
 	fighterTransform.SetCameraPosition(m_camera.GetPosition());
 
 	fighterTranslation = fighterTransform.GetPosition();
@@ -143,6 +155,14 @@ void GameController::RunGame()
 	fighterSpace.SetScale({ 0.00008f, 0.00008f, 0.00008f });
 	fighterSpace.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f});
 	fighterSpace.SetCameraPosition(m_camera.GetPosition());
+
+	Mesh asteroid = Mesh();
+	asteroid.Create(&m_shaderDiffuse, "../Assets/Models/asteroid.obj", 100);
+	asteroid.SetScale({ 0.002f, 0.002f, 0.002f });
+	asteroid.SetPosition({ 0.0f, 0.0f, 0.0f });
+	asteroid.SetCameraPosition(m_camera.GetPosition());
+	asteroid.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
+	asteroid.SetSpecularStrength( 4.0f );
 
 	Skybox skybox = Skybox();
 	skybox.Create(&m_shaderSkybox, "../Assets/Models/SkyBox.obj",
@@ -320,6 +340,7 @@ void GameController::RunGame()
 		case SPACE_SCENE:
 			skybox.Render(pv);
 			fighterSpace.Render(pv);
+			asteroid.Render(pv);
 			break;
 
 		default:
@@ -381,23 +402,33 @@ void GameController::HandleTransform()
 {	
 	if (OpenGLTechniques::ToolWindow::TranslateChecked)
 	{
-		glm::vec3 axes = { m_leftClickHandler.IsInProgress(), 1, m_middleClickHandler.IsInProgress() };
+		glm::vec3 trans = { 0.0f, 0.0f, 0.0f };
+		float maxSpeed = 0.003f;
+		
 		double mouseX;
 		double mouseY;
 
 		glfwGetCursorPos(WindowController::GetInstance().GetWindow(), &mouseX, &mouseY);
 
 		glm::vec3 clickVector = glm::vec3({ (float)mouseX, WindowController::GetInstance().GetResolution().m_height - (float)mouseY, 0 }) - m_centerVec;
+
 		float maxDistance = glm::length(quadBottomRight);
 		float distance = min(glm::length(clickVector), maxDistance);
 		float speed = 0.003f * (distance / maxDistance);
 		clickVector = glm::normalize(clickVector);
 
-		float newX = fighterTranslation.x + (axes.x * (clickVector.x * speed));
-		float newY = fighterTranslation.y + (clickVector.y * speed);
-		float newZ = fighterTranslation.z + (axes.z * (-clickVector.y * speed));
+		if (m_leftClickHandler.IsInProgress())
+		{
+			trans.x = clickVector.x * speed;
+			trans.y = clickVector.y * speed;
+		}
 
-		fighterTranslation = glm::vec3({ newX, newY, newZ });
+		if (m_middleClickHandler.IsInProgress())
+		{
+			trans.z = -clickVector.y * speed;
+		}
+
+		fighterTranslation = fighterTranslation + trans;
 	}
 
 	Resolution res = WindowController::GetInstance().GetResolution();

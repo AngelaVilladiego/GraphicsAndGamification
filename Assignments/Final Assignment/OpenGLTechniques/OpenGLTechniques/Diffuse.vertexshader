@@ -5,10 +5,12 @@ in vec3 normals;
 in vec2 texCoords;
 in vec3 tangents;
 in vec3 bitangents;
+layout (location=10) in mat4 instanceMatrix;
 
 uniform vec3 CameraPosition;
 uniform mat4 World;
 uniform mat4 WVP;
+uniform bool EnableInstancing = false;
 
 out vec3 retNormal; // output a color to the fragment shader
 out vec2 retTexCoord; // output texture coordinates (just a passthrough variable)
@@ -20,7 +22,15 @@ void main()
 {
 	mat4 world = World;
 
-	gl_Position = WVP * vec4(vertices, 1.0); // Transform the model to screen projection
+	if (EnableInstancing)
+	{
+		world *= instanceMatrix;
+		gl_Position = WVP * instanceMatrix * vec4(vertices, 1.0);
+	}
+	else
+	{
+		gl_Position = WVP * vec4(vertices, 1.0);
+	}
 
 	retNormal = normalize(mat3(transpose(inverse(world))) * normals); // convert normals to world position
 	retTexCoord = texCoords;

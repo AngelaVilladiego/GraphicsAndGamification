@@ -32,7 +32,7 @@ public:
 	GLuint GetShaderProgram();
 
 	// Methods
-	void Create(Shader* _shader, string _file);
+	void Create(Shader* _shader, string _file, int _instanceCount = 1);
 	void Cleanup();
 	void Render(glm::mat4 _pv);
 	void CalculateTransform();
@@ -55,8 +55,13 @@ private:
 	Texture m_textureSpecular;
 	Texture m_textureNormal;
 	GLuint m_vertexBuffer; // GPU buffer
+	GLuint m_instanceBuffer;
 	std::vector<GLfloat> m_vertexData; // Store vertex data in RAM
+	std::vector<GLfloat> m_instanceData;
 	bool m_enableNormalMap;
+	int m_instanceCount;
+	bool m_enableInstancing;
+	int m_elementSize;
 
 	// Transform
 	glm::mat4 m_world;
