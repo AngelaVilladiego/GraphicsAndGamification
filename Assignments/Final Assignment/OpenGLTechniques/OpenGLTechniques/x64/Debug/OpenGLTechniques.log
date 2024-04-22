@@ -1,6 +1,11 @@
 ﻿          1 file(s) copied.
           1 file(s) copied.
-  GameController.cpp
+  Mesh.cpp
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Mesh.cpp(179,20): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Mesh.cpp(180,30): warning C4018: '<': signed/unsigned mismatch
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Mesh.cpp(189,97): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Mesh.cpp(387,62): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\angie\OneDrive\Documents\MyStuff\School\Winter2024\3D Graphics and Gamification\Assignments\Final Assignment\OpenGLTechniques\OpenGLTechniques\Mesh.cpp(391,53): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
   Camera.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
 freetype.lib(ftbase.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftbase.obj)' or at ''; linking object as if no debug info
 freetype.lib(ftinit.obj) : warning LNK4099: PDB '' was not found with 'freetype.lib(ftinit.obj)' or at ''; linking object as if no debug info

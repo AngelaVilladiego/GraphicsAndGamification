@@ -31,7 +31,6 @@ uniform bool EnableNormalMap = false;
 
 void main()
 {
-	
 	// Early out if we have no color at this fragment position
 	vec4 diffColor = texture(material.diffuseTexture, retTexCoord);
 	if (diffColor.a == 0)

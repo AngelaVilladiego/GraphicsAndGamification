@@ -38,7 +38,7 @@ void GameController::Initialize(string title = "Sample", bool fullscreen = true)
 	M_ASSERT(glewInit() == GLEW_OK, "Failed to initialize GLEW."); // Initialize GLEW
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS | GLFW_STICKY_MOUSE_BUTTONS, GL_TRUE); // Ensure we can capture the escape key
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black background
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Black background
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
@@ -374,12 +374,13 @@ void GameController::RunGame()
 	m_shaderDiffuse.Cleanup();
 	m_shaderFont.Cleanup();
 	m_shaderPost.Cleanup();
+	m_shaderSkybox.Cleanup();
 
 	fighter.Cleanup();
 	fighterTransform.Cleanup();
 	fish.Cleanup();
 	fighterSpace.Cleanup();
-	skybox.Cleanup();
+	asteroid.Cleanup();
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
@@ -394,6 +395,7 @@ void GameController::RunGame()
 	scaleFont.Cleanup();
 
 	m_postProcessor.Cleanup();
+	skybox.Cleanup();
 #pragma endregion
 
 }

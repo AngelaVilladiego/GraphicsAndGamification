@@ -29,6 +29,10 @@ Mesh::Mesh()
 	m_instanceCount = 1;
 	m_enableInstancing = false;
 	m_elementSize = 0;
+
+	m_instanceBuffer = 0;
+	m_vertexData.clear();
+	m_instanceData.clear();
 }
 
 Mesh::~Mesh()
@@ -166,21 +170,31 @@ void Mesh::Create(Shader* _shader, string _file, int _instanceCount)
 		float minZ = -0.23f;
 		float maxZ = 0.55f;
 
+		float randomX, randomY, randomZ;
+		float distanceSquared;
+
+		glm::vec3 exclusionCenter(0.0f, 0.0f, 0.22f);
+		float exclusionRadius = 0.1f;
+
 		srand(glfwGetTime());
 		for (unsigned int i = 0; i < m_instanceCount; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
 
-			float randomX = minX + (float)( rand() / (float)(RAND_MAX / (maxX - minX)) );
-			float randomY = minY + (float)( rand() / (float)(RAND_MAX / (maxY - minY)) );
-			float randomZ = minZ + (float)( rand() / (float)(RAND_MAX / (maxZ - minZ)) );
+			do {
+				randomX = minX + (float)(rand() / (float)(RAND_MAX / (maxX - minX)));
+				randomY = minY + (float)(rand() / (float)(RAND_MAX / (maxY - minY)));
+				randomZ = minZ + (float)(rand() / (float)(RAND_MAX / (maxZ - minZ)));
+
+				distanceSquared = pow(randomX - exclusionCenter.x, 2) + pow(randomY - exclusionCenter.y, 2) + pow(randomZ - exclusionCenter.z, 2);
+			} while (distanceSquared <= pow(exclusionRadius, 2));
+
 
 			glm::vec3 randomPos = { randomX, randomY, randomZ };
 
-			std::cout << " for instance #" << i << ": " << vec3_to_string(randomPos) << endl;
-			std::cout << endl;
+			
 
-			model = glm::translate(model, glm::vec3(randomX, randomY, randomZ));
+			model = glm::translate(model, randomPos);
 
 			for (int x = 0; x < 4; x++)
 			{
@@ -205,6 +219,7 @@ string Mesh::Concat(string _s1, int _index, string _s2)
 void Mesh::Cleanup()
 {
 	glDeleteBuffers(1, &m_vertexBuffer);
+	glDeleteBuffers(1, &m_instanceBuffer);
 	m_textureDiffuse.Cleanup();
 	m_textureSpecular.Cleanup();
 	m_textureNormal.Cleanup();
@@ -277,7 +292,7 @@ void Mesh::BindAttributes()
 		m_elementSize += 6;
 	}
 
-	// bind instancing data
+	//bind instancing data
 	if (m_enableInstancing)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_instanceBuffer);
