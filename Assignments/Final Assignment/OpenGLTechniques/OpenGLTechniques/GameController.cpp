@@ -12,6 +12,7 @@ GameController::GameController()
 	m_shaderDiffuse = { };
 	m_shaderFont = { };
 	m_shaderPost = { };
+	m_shaderSkybox = { };
 
 	m_camera = { };
 	m_lightSpeed = 10.0f;
@@ -95,6 +96,9 @@ void GameController::RunGame()
 
 	m_shaderPost = Shader();
 	m_shaderPost.LoadShaders("PostProcess.vertexshader", "PostProcess.fragmentshader");
+
+	m_shaderSkybox = Shader();
+	m_shaderSkybox.LoadShaders("Skybox.vertexshader", "Skybox.fragmentshader");
 #pragma endregion
 
 

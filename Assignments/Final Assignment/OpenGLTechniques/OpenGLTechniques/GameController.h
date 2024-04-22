@@ -27,6 +27,7 @@ private:
 	Shader m_shaderDiffuse;
 	Shader m_shaderFont;
 	Shader m_shaderPost;
+	Shader m_shaderSkybox;
 
 	PostProcessor m_postProcessor;
 	Camera m_camera;
