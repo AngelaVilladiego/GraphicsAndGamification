@@ -247,6 +247,7 @@ void GameController::RunGame()
 		if (m_currScene == MOVE_LIGHT)
 		{
 			currMesh = &fighter;
+			m_camera.Reset();
 			if (glfwGetMouseButton(win, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
 				glm::vec3 mouseVec = { (float)mouseX, (float)mouseY, 0 };
@@ -257,6 +258,7 @@ void GameController::RunGame()
 		if (m_currScene == TRANSFORM)
 		{
 			currMesh = &fighterTransform;
+			m_camera.Reset();
 			if (m_leftClickHandler.IsInProgress() || m_middleClickHandler.IsInProgress())
 			{
 				HandleTransform();
@@ -270,6 +272,7 @@ void GameController::RunGame()
 		{
 			modelName = "Fish";
 			currMesh = &fish;
+			m_camera.Reset();
 
 			m_time += 0.01f;
 			m_postProcessor.SetFrequency(OpenGLTechniques::ToolWindow::Frequency);
@@ -283,7 +286,10 @@ void GameController::RunGame()
 		if (m_currScene == SPACE_SCENE)
 		{
 			currMesh = &fighterSpace;
+			m_camera.Rotate();
 		}
+
+		pv = m_camera.GetProjection() * m_camera.GetView();
 
 		currMesh->SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
 		currMesh->SetSpecularColor({ OpenGLTechniques::ToolWindow::SpecularColorR, OpenGLTechniques::ToolWindow::SpecularColorG, OpenGLTechniques::ToolWindow::SpecularColorB });
