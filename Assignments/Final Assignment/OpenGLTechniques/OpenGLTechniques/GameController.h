@@ -9,6 +9,7 @@
 #include "SceneType.h"
 #include "GestureManager.h"
 #include "PostProcessor.h"
+#include "Skybox.h"
 
 class GameController : public Singleton<GameController>
 {

@@ -144,6 +144,17 @@ void GameController::RunGame()
 	fighterSpace.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f});
 	fighterSpace.SetCameraPosition(m_camera.GetPosition());
 
+	Skybox skybox = Skybox();
+	skybox.Create(&m_shaderSkybox, "../Assets/Models/SkyBox.obj",
+		{
+			"../Assets/Textures/Skybox/right.jpg",
+			"../Assets/Textures/Skybox/left.jpg",
+			"../Assets/Textures/Skybox/top.jpg",
+			"../Assets/Textures/Skybox/bottom.jpg",
+			"../Assets/Textures/Skybox/front.jpg",
+			"../Assets/Textures/Skybox/back.jpg",
+		});
+
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
 
@@ -301,6 +312,7 @@ void GameController::RunGame()
 			break;
 		
 		case SPACE_SCENE:
+			skybox.Render(pv);
 			fighterSpace.Render(pv);
 			break;
 
@@ -339,6 +351,8 @@ void GameController::RunGame()
 	fighter.Cleanup();
 	fighterTransform.Cleanup();
 	fish.Cleanup();
+	fighterSpace.Cleanup();
+	skybox.Cleanup();
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
