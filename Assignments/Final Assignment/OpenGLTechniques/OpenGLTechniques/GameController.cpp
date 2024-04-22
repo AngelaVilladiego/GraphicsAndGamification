@@ -112,8 +112,6 @@ void GameController::RunGame()
 	fighter.SetPosition({ 0.0f, 0.0f, 0.0f });
 	fighter.SetScale({ 0.00008f, 0.00008f, 0.00008f });
 	fighter.SetCameraPosition(m_camera.GetPosition());
-	fighter.SetSpecularStrength(4.0f);
-	fighter.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
 	Mesh* currMesh = &fighter;
 
@@ -121,10 +119,8 @@ void GameController::RunGame()
 	fighterTransform.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
 	fighterTransform.SetPosition({ 0.0f, 0.0f, 0.0f });
 	fighterTransform.SetScale({ 0.00008f, 0.00008f, 0.00008f });
-	fighterTransform.SetRotation({ 1.0f, 0.0f, 0.0f });
+	fighterTransform.SetRotation({ glm::radians(45.0f), 0.0f, 0.0f});
 	fighterTransform.SetCameraPosition(m_camera.GetPosition());
-	fighterTransform.SetSpecularStrength(4.0f);
-	fighterTransform.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 
 	fighterTranslation = fighterTransform.GetPosition();
 	fighterRotation = fighterTransform.GetRotation();
@@ -135,9 +131,14 @@ void GameController::RunGame()
 	fish.SetCameraPosition(m_camera.GetPosition());
 	fish.SetScale({ 0.003f, 0.003f, 0.003f });
 	fish.SetPosition({ 0.0f, 0.0f, 0.0f });
-	fish.SetSpecularStrength(4.0f);
-	fish.SetSpecularColor({ 1.0f, 1.0f, 1.0f });
 	fish.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f });
+
+	Mesh fighterSpace = Mesh();
+	fighterSpace.Create(&m_shaderDiffuse, "../Assets/Models/Fighter.obj");
+	fighterSpace.SetPosition({ 0.0f, 0.0f, 0.0f });
+	fighterSpace.SetScale({ 0.00008f, 0.00008f, 0.00008f });
+	fighterSpace.SetRotation({ 0.0f, glm::radians(180.0f), 0.0f});
+	fighterSpace.SetCameraPosition(m_camera.GetPosition());
 
 	Fonts fpsFont = Fonts();
 	fpsFont.Create(&m_shaderFont, "arial.ttf", 100);
@@ -151,14 +152,14 @@ void GameController::RunGame()
 	Fonts middleBtnFont = Fonts();
 	middleBtnFont.Create(&m_shaderFont, "arial.ttf", 100);
 
-	Fonts fighterPositionFont = Fonts();
-	fighterPositionFont.Create(&m_shaderFont, "arial.ttf", 100);
+	Fonts positionFont = Fonts();
+	positionFont.Create(&m_shaderFont, "arial.ttf", 100);
 
-	Fonts fighterRotationFont = Fonts();
-	fighterRotationFont.Create(&m_shaderFont, "arial.ttf", 100);
+	Fonts rotationFont = Fonts();
+	rotationFont.Create(&m_shaderFont, "arial.ttf", 100);
 
-	Fonts fighterScaleFont = Fonts();
-	fighterScaleFont.Create(&m_shaderFont, "arial.ttf", 100);
+	Fonts scaleFont = Fonts();
+	scaleFont.Create(&m_shaderFont, "arial.ttf", 100);
 
 	m_postProcessor = PostProcessor();
 	m_postProcessor.Create(&m_shaderPost);
@@ -264,6 +265,11 @@ void GameController::RunGame()
 			m_postProcessor.SetTintBlue(OpenGLTechniques::ToolWindow::TintBlueChecked);
 		}
 
+		if (m_currScene == SPACE_SCENE)
+		{
+			currMesh = &fighterSpace;
+		}
+
 		currMesh->SetSpecularStrength((float)OpenGLTechniques::ToolWindow::SpecularStrength);
 		currMesh->SetSpecularColor({ OpenGLTechniques::ToolWindow::SpecularColorR, OpenGLTechniques::ToolWindow::SpecularColorG, OpenGLTechniques::ToolWindow::SpecularColorB });
 #pragma endregion
@@ -291,6 +297,7 @@ void GameController::RunGame()
 			break;
 		
 		case SPACE_SCENE:
+			fighterSpace.Render(pv);
 			break;
 
 		default:
@@ -301,9 +308,9 @@ void GameController::RunGame()
 		mousePosFont.RenderText(mousePosString, 50, 70, 0.2f, { 1.0f, 1.0f, 0.0f });
 		leftBtnFont.RenderText("Left Button: " + leftBtnString, 50, 90, 0.2f, {1.0f, 1.0f, 0.0f});
 		middleBtnFont.RenderText("Middle Button: " + middleBtnString, 50, 110, 0.2f, {1.0f, 1.0f, 0.0f});
-		fighterPositionFont.RenderText(modelName + " Position: " + vec3_to_string(currMesh->GetPosition()), 50, 130, 0.2f, { 1.0f, 1.0f, 0.0f });
-		fighterRotationFont.RenderText(modelName + " Rotation: " + vec3_to_string(glm::degrees(currMesh->GetRotation())), 50, 150, 0.2f, { 1.0f, 1.0f, 0.0f });
-		fighterScaleFont.RenderText(modelName + " Scale: " + vec3_to_string(currMesh->GetScale()), 50, 170, 0.2f, { 1.0f, 1.0f, 0.0f });
+		positionFont.RenderText(modelName + " Position: " + vec3_to_string(currMesh->GetPosition()), 50, 130, 0.2f, { 1.0f, 1.0f, 0.0f });
+		rotationFont.RenderText(modelName + " Rotation: " + vec3_to_string(glm::degrees(currMesh->GetRotation())), 50, 150, 0.2f, { 1.0f, 1.0f, 0.0f });
+		scaleFont.RenderText(modelName + " Scale: " + vec3_to_string(currMesh->GetScale()), 50, 170, 0.2f, { 1.0f, 1.0f, 0.0f });
 
 		if (m_currScene == WATER_SCENE) {
 			m_postProcessor.End();
@@ -327,6 +334,7 @@ void GameController::RunGame()
 
 	fighter.Cleanup();
 	fighterTransform.Cleanup();
+	fish.Cleanup();
 	for (unsigned int count = 0; count < Mesh::Lights.size(); count++)
 	{
 		Mesh::Lights[count].Cleanup();
@@ -336,6 +344,9 @@ void GameController::RunGame()
 	mousePosFont.Cleanup();
 	leftBtnFont.Cleanup();
 	middleBtnFont.Cleanup();
+	positionFont.Cleanup();
+	rotationFont.Cleanup();
+	scaleFont.Cleanup();
 
 	m_postProcessor.Cleanup();
 #pragma endregion
